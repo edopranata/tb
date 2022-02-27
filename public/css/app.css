@@ -1,0 +1,35 @@
+.tw-mt-3 {
+    margin-top: 0.75rem
+}
+.tw-mb-4 {
+    margin-bottom: 1rem
+}
+.tw-block {
+    display: block
+}
+.tw-list-inside {
+    list-style-position: inside
+}
+.tw-list-disc {
+    list-style-type: disc
+}
+.tw-border-red-700 {
+    --tw-border-opacity: 1;
+    border-color: rgb(185 28 28 / var(--tw-border-opacity))
+}
+.tw-text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem
+}
+.tw-font-medium {
+    font-weight: 500
+}
+.tw-text-green-600 {
+    --tw-text-opacity: 1;
+    color: rgb(22 163 74 / var(--tw-text-opacity))
+}
+.tw-text-red-600 {
+    --tw-text-opacity: 1;
+    color: rgb(220 38 38 / var(--tw-text-opacity))
+}
+
