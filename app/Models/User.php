@@ -46,6 +46,10 @@ class User extends Authenticatable implements HasMedia
         'media'
     ];
 
+    public function units()
+    {
+        return $this->hasMany(Unit::class);
+    }
     protected $appends = ['user_role'];
 
     public function getUserRoleAttribute()

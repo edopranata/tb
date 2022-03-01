@@ -14,8 +14,17 @@ class Unit extends Model
         'updated_at'    => 'date:Y-m-d'
     ];
     protected $guarded = ['id'];
+
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function scopeFilter($query, $filters)
+    {
+        $query
+            ->when($filters ?? null, function ($query, $search) {
+                $query->where('name', 'like', '%'.$search.'%');
+            });
     }
 }

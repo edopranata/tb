@@ -28,6 +28,14 @@ Route::middleware(['auth'])->group(function (){
     Route::group(['prefix' => 'dashboard', 'as' => 'dashboard.'], function (){
         Route::get('/', [\App\Http\Controllers\DashboardController::class, 'index'])->name('index');
     });
+
+    Route::group(['prefix' => 'pages', 'as' => 'pages.'], function (){
+        Route::group(['prefix' => 'units', 'as' => 'units.'], function (){
+            Route::get('/', \App\Http\Pages\Unit\UnitIndex::class)->name('index');
+            Route::get('/create', \App\Http\Pages\Unit\UnitCreate::class)->name('create');
+            Route::get('/{unit}', \App\Http\Pages\Unit\UnitEdit::class)->name('edit');
+        });
+    });
 });
 
 

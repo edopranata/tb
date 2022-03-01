@@ -16,7 +16,11 @@
         <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
         <!-- Styles -->
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+        <!-- Livewire Styles -->
+        <livewire:styles />
         @stack('css')
+
+
         <!-- Scripts -->
         <script src="{{ mix('js/app.js') }}" defer></script>
     </head>
@@ -57,6 +61,8 @@
         <script src="{{ asset('dist/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
         <!-- AdminLTE App -->
         <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
-    @stack('js')
+        <!-- Livewire Script -->
+        <livewire:scripts />
+        @stack('js')
     </body>
 </html>
