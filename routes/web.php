@@ -35,6 +35,16 @@ Route::middleware(['auth'])->group(function (){
             Route::get('/create', \App\Http\Pages\Unit\UnitCreate::class)->name('create');
             Route::get('/{unit}', \App\Http\Pages\Unit\UnitEdit::class)->name('edit');
         });
+        Route::group(['prefix' => 'categories', 'as' => 'categories.'], function (){
+            Route::get('/', \App\Http\Pages\Category\CategoryIndex::class)->name('index');
+            Route::get('/create', \App\Http\Pages\Category\CategoryCreate::class)->name('create');
+            Route::get('/{category}', \App\Http\Pages\Category\CategoryEdit::class)->name('edit');
+        });
+        Route::group(['prefix' => 'suppliers', 'as' => 'suppliers.'], function (){
+            Route::get('/', \App\Http\Pages\Suppliers\SuppliersIndex::class)->name('index');
+            Route::get('/create', \App\Http\Pages\Suppliers\SuppliersCreate::class)->name('create');
+            Route::get('/{supplier}', \App\Http\Pages\Suppliers\SuppliersEdit::class)->name('edit');
+        });
     });
 });
 

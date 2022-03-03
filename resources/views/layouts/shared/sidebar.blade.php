@@ -7,9 +7,9 @@
     </a>
 
     <!-- Sidebar -->
-    <div class="sidebar">
+    <div class="sidebar px-0">
         <!-- Sidebar user (optional) -->
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="user-panel mt-3 pb-3 px-2 mb-3 d-flex">
             <div class="image">
                 <img src="{{ asset('dist/img/avatar5.png') }}" class="img-circle elevation-2" alt="User Image">
             </div>
@@ -18,52 +18,68 @@
             </div>
         </div>
 
-        <!-- SidebarSearch Form -->
-        <div class="form-inline">
-            <div class="input-group" data-widget="sidebar-search">
-                <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-                <div class="input-group-append">
-                    <button class="btn btn-sidebar">
-                        <i class="fas fa-search fa-fw"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column nav-flat" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
-                <li class="nav-item menu-open">
-                    <a href="#" class="nav-link active">
+{{--                <x-sidebar.menu-item :href="route('dashboard.index')" :active="request()->routeIs('dashboard.index')">--}}
+{{--                    <x-slot name="icon">--}}
+{{--                        <i class="nav-icon fas fa-tachometer-alt"></i>--}}
+{{--                    </x-slot>--}}
+{{--                    Dashboard--}}
+{{--                </x-sidebar.menu-item>--}}
+                <x-sidebar.menu-item :title="$title = 'Dashboard'" :href="route('dashboard.index')" :active="request()->routeIs('dashboard.index')">
+                    <x-slot name="icon">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>
-                            Dashboard
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="../../index.html" class="nav-link active">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Dashboard v1</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="../../index2.html" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Dashboard v2</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="../../index3.html" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Dashboard v3</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                    </x-slot>
+                </x-sidebar.menu-item>
+
+                <x-sidebar.menu-dropdown :title="$title = 'Master Data'" :active="request()->routeIs('pages.units.*') || request()->routeIs('pages.categories.*') || request()->routeIs('pages.suppliers.*')">
+                    <x-slot name="icon">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                    </x-slot>
+                    <x-sidebar.menu-item :title="$title = 'Satuan Produk'" :href="route('pages.units.index')" :active="request()->routeIs('pages.units.*')"/>
+                    <x-sidebar.menu-item :title="$title = 'Kategori Produk'" :href="route('pages.categories.index')" :active="request()->routeIs('pages.categories.*')"/>
+                    <x-sidebar.menu-item :title="$title = 'Data Pemasok'" :href="route('pages.suppliers.index')" :active="request()->routeIs('pages.suppliers.*')"/>
+
+                </x-sidebar.menu-dropdown>
+
+{{--                <x-sidebar.menu-dropdown :title="$title = 'Master Data'" :href="#" :active="request()->routeIs('pages.units.*')">--}}
+{{--                    <x-slot name="icon">--}}
+{{--                        <i class="nav-icon fas fa-balance-scale-left"></i>--}}
+{{--                    </x-slot>--}}
+{{--                    <x-sidebar.menu-dropdown :title="$title = 'D 1'" :href="route('pages.units.index')" :active="request()->routeIs('pages.units.index')"/>--}}
+{{--                </x-sidebar.menu-dropdown>--}}
+
+                {{--                <li class="nav-item menu-open">--}}
+{{--                    <a href="#" class="nav-link active">--}}
+{{--                        <p>--}}
+{{--                            Dashboard--}}
+{{--                            <i class="right fas fa-angle-left"></i>--}}
+{{--                        </p>--}}
+{{--                    </a>--}}
+{{--                    <ul class="nav nav-treeview">--}}
+{{--                        <li class="nav-item">--}}
+{{--                            <a href="../../index.html" class="nav-link active">--}}
+{{--                                <i class="far fa-circle nav-icon"></i>--}}
+{{--                                <p>Dashboard v1</p>--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
+{{--                        <li class="nav-item">--}}
+{{--                            <a href="../../index2.html" class="nav-link">--}}
+{{--                                <i class="far fa-circle nav-icon"></i>--}}
+{{--                                <p>Dashboard v2</p>--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
+{{--                        <li class="nav-item">--}}
+{{--                            <a href="../../index3.html" class="nav-link">--}}
+{{--                                <i class="far fa-circle nav-icon"></i>--}}
+{{--                                <p>Dashboard v3</p>--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
+{{--                    </ul>--}}
+{{--                </li>--}}
                 <li class="nav-item">
                     <a href="../widgets.html" class="nav-link">
                         <i class="nav-icon fas fa-th"></i>

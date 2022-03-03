@@ -28,15 +28,30 @@
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="exampleInputEmail1">Satuan produk</label>
-                        <input wire:model.defer="name" type="text" class="form-control @error('name') is-invalid @enderror" id="exampleInputEmail1" placeholder="Satuan produk">
+                        <label>Nama Supplier / Pemasok</label>
+                        <input wire:model.defer="name" type="text" class="form-control @error('name') is-invalid @enderror" placeholder="Nama Supplier / Pemasok">
                         @error('name')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                     </div>
+                    <div class="form-group">
+                        <label>Deskripsi / Keterangan</label>
+                        <input wire:model.defer="description" type="text" class="form-control @error('description') is-invalid @enderror" placeholder="Deskripsi / keterangan pemasok">
+                        @error('description')<span class="text-danger text-sm">{{ $message }}</span>@enderror
+                    </div>
+                    <div class="form-group">
+                        <label>No Telp</label>
+                        <input wire:model.defer="phone" type="text" class="form-control @error('phone') is-invalid @enderror" placeholder="No Telp">
+                        @error('phone')<span class="text-danger text-sm">{{ $message }}</span>@enderror
+                    </div>
+                    <div class="form-group">
+                        <label>Alamat</label>
+                        <input wire:model.defer="address" type="text" class="form-control @error('address') is-invalid @enderror" placeholder="Alamat Pemasok">
+                        @error('address')<span class="text-danger text-sm">{{ $message }}</span>@enderror
+                    </div>
                 </div>
-                    <!-- /.card-body -->
+                <!-- /.card-body -->
 
                 <div class="card-footer">
-                    <button wire:click="update()" type="button" class="btn btn-primary btn-flat">Submit</button>
+                    <button wire:click="save()" type="button" class="btn btn-primary btn-flat">Submit</button>
                 </div>
                 </form>
             </div>

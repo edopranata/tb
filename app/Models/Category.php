@@ -18,4 +18,12 @@ class Category extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function scopeFilter($query, $filters)
+    {
+        $query
+            ->when($filters ?? null, function ($query, $search) {
+                $query->where('name', 'like', '%'.$search.'%');
+            });
+    }
 }

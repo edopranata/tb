@@ -21,12 +21,12 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Edit satuan <strong>{{ $name }}</strong></h3>
+                    <h3 class="card-title">Satuan produk <strong>{{ $name }}</strong></h3>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
                         <label for="exampleInputEmail1">Satuan produk</label>
-                        <input wire:model.defer="name" type="text" class="form-control @error('name') is-invalid @enderror" id="exampleInputEmail1" placeholder="Satuan produk">
+                        <input wire:model.defer="name" type="text" class="form-control @error('name') is-invalid @enderror" placeholder="Satuan produk">
                         @error('name')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                     </div>
                 </div>
