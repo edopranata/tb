@@ -15,6 +15,7 @@ class ProductFactory extends Factory
     {
         return [
             'name'  => $this->faker->words($this->faker->numberBetween(1,3), true),
+            'barcode'   => $this->faker->unique()->isbn10(),
             'description' => $this->faker->words($this->faker->numberBetween(3,10), true),
         ];
     }

@@ -42,10 +42,12 @@
                         <thead>
                         <tr>
                             <th>#</th>
+                            <th class="tw-w-[8rem]">Barcode / Kode</th>
                             <th class="tw-w-[10rem]">Nama Produk</th>
                             <th>Deskripsi / Keterangan</th>
                             <th class="tw-w-[10rem]">Kategori</th>
                             <th class="tw-w-[10rem]">Satuan</th>
+                            <th class="tw-w-[10rem]">Stock</th>
                             <th class="tw-w-[10rem]">Dibuat Oleh</th>
                             <th class="tw-w-[10rem]">Dibuat pada</th>
                             <th>&nbsp;</th>
@@ -56,10 +58,15 @@
                             @foreach($products as $key => $product)
                                 <tr class="tw-cursor-pointer hover:tw-bg-slate-200" wire:click="editId({{$product['id']}})">
                                     <td>{{ $key + 1 }}</td>
+                                    <td>{{ $product['barcode'] }}</td>
                                     <td>{{ $product['name'] }}</td>
                                     <td>{{ $product['description'] }}</td>
                                     <td>{{ $product['category'] }}</td>
                                     <td>{{ $product['unit'] }}</td>
+                                    <td>
+                                        <div>Gudang : {{ $product['stock']['warehouse'] ?? 0 }}</div>
+                                        <div>Toko : {{ $product['stock']['store'] ?? 0 }}</div>
+                                    </td>
                                     <td>{{ $product['created_by'] }}</td>
                                     <td>{{ $product['created_at'] }}</td>
                                     <td class="text-right"><i class="fas fa-chevron-right"></i> &nbsp;</td>

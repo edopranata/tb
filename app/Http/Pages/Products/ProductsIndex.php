@@ -26,8 +26,13 @@ class ProductsIndex extends Component
                 ->through(function ($products) {
                     return [
                         'id' => $products->id,
+                        'barcode' => $products->barcode,
                         'name' => $products->name,
                         'description' => $products->description,
+                        'stock' => [
+                            'warehouse' => $products->warehouse_stock,
+                            'store'     => $products->store_stock
+                            ],
                         'unit' => $products->unit ? $products->unit->name : null,
                         'category' => $products->category ? $products->category->name : null,
                         'created_by' => $products->user ? $products->user->name : null,

@@ -10,7 +10,7 @@
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Home</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('pages.units.index') }}">Satuan Produk</a></li>
-                            <li class="breadcrumb-item active">Edit satuan {{ $name }}</li>
+                            <li class="breadcrumb-item active">Buat satuan baru {{ $name }}</li>
                         </ol>
                     </div>
                 </div>
@@ -21,10 +21,7 @@
         <div class="col-md-4">
             <div class="card rounded-0">
                 <div class="card-header">
-                    <h3 class="card-title">Edit satuan <strong>{{ $name }}</strong></h3>
-                    <div class="card-tools">
-                        <button onclick="confirm('Hapus satuan ini?') || event.stopImmediatePropagation()" wire:click="delete()" type="button" class="btn btn-sm btn-danger btn-flat tw-transition">Hapus Satuan {{ $name }}</button>
-                    </div>
+                    <h3 class="card-title">Buat satuan <strong>{{ $name }}</strong></h3>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
