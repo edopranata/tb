@@ -33,7 +33,7 @@
                 <!-- /.card-body -->
 
                 <div class="card-footer">
-                    <button wire:click="save()" type="button" class="btn btn-primary">Submit</button>
+                    <button wire:click="save()" type="button" class="btn btn-flat btn-primary">Submit</button>
                 </div>
                 </form>
             </div>

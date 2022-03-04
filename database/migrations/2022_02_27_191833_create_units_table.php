@@ -17,6 +17,7 @@ class CreateUnitsTable extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->foreignIdFor(\App\Models\User::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

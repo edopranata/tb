@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Http\Pages\Products;
+
+use App\Models\Product;
+use Livewire\Component;
+use Livewire\WithPagination;
+
+class ProductsIndex extends Component
+{
+    public $search;
+    public $order;
+
+    use WithPagination;
+
+    protected $queryString = ['search', 'order'];
+
+    public function render()
+    {
+        return view('pages.products.products-index', [
+            'products' => Product::query()
+                ->with(['user', 'category', 'unit'])
+                ->filter($this->search)
+                ->paginate(10)
+                ->withQueryString()
+                ->through(function ($products) {
+                    return [
+                        'id' => $products->id,
+                        'name' => $products->name,
+                        'description' => $products->description,
+                        'unit' => $products->unit ? $products->unit->name : null,
+                        'category' => $products->category ? $products->category->name : null,
+                        'created_by' => $products->user ? $products->user->name : null,
+                        'created_at' => $products->created_at,
+                    ];
+                }),
+        ]);
+    }
+
+    public function editId(Product $products)
+    {
+        return redirect()->route('pages.products.edit', $products->id);
+    }
+
+    public function addNew() {
+        return redirect()->route('pages.products.create');
+    }
+}

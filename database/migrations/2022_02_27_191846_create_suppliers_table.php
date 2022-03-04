@@ -20,6 +20,7 @@ class CreateSuppliersTable extends Migration
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
             $table->foreignIdFor(\App\Models\User::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

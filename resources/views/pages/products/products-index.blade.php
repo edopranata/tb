@@ -4,12 +4,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Daftar Kategori Produk</h1>
+                        <h1>Data produk</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Beranda</a></li>
-                            <li class="breadcrumb-item active">Daftar Kategori Produk</li>
+                            <li class="breadcrumb-item active">Data produk</li>
                         </ol>
                     </div>
                 </div>
@@ -17,10 +17,10 @@
         </section>
     </x-slot>
     <div class="row">
-        <div class="col-lg-8">
+        <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Daftar Kategori Produk</h3>
+                    <h3 class="card-title">Data produk</h3>
 
                     <div class="card-tools">
                         <div class="input-group input-group-sm" style="width: 200px;">
@@ -37,25 +37,31 @@
                             {!! session('message') !!}
                         </div>
                     @endif
-                    <button wire:click="addNew()" class="btn btn-flat tw-bg-slate-900 tw-text-slate-300 hover:tw-bg-slate-700 hover:tw-text-slate-100 tw-font-bold mx-2 my-2">Buat kategori baru </button>
-                    <table class="table text-nowrap">
+                    <button wire:click="addNew()" class="btn btn-flat tw-bg-slate-900 tw-text-slate-300 hover:tw-bg-slate-700 hover:tw-text-slate-100 tw-font-bold mx-2 my-2">Tambah produk baru </button>
+                    <table class="table">
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Nama Kategori</th>
-                            <th>Dibuat Oleh</th>
-                            <th>Dibuat pada</th>
+                            <th class="tw-w-[10rem]">Nama Produk</th>
+                            <th>Deskripsi / Keterangan</th>
+                            <th class="tw-w-[10rem]">Kategori</th>
+                            <th class="tw-w-[10rem]">Satuan</th>
+                            <th class="tw-w-[10rem]">Dibuat Oleh</th>
+                            <th class="tw-w-[10rem]">Dibuat pada</th>
                             <th>&nbsp;</th>
                         </tr>
                         </thead>
                         <tbody>
-                        @isset($categories)
-                            @foreach($categories as $key => $category)
-                                <tr class="tw-cursor-pointer hover:tw-bg-slate-200" wire:click="editId({{$category['id']}})">
+                        @isset($products)
+                            @foreach($products as $key => $product)
+                                <tr class="tw-cursor-pointer hover:tw-bg-slate-200" wire:click="editId({{$product['id']}})">
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $category['name'] }}</td>
-                                    <td>{{ $category['created_by'] }}</td>
-                                    <td>{{ $category['created_at'] }}</td>
+                                    <td>{{ $product['name'] }}</td>
+                                    <td>{{ $product['description'] }}</td>
+                                    <td>{{ $product['category'] }}</td>
+                                    <td>{{ $product['unit'] }}</td>
+                                    <td>{{ $product['created_by'] }}</td>
+                                    <td>{{ $product['created_at'] }}</td>
                                     <td class="text-right"><i class="fas fa-chevron-right"></i> &nbsp;</td>
                                 </tr>
                             @endforeach
@@ -64,7 +70,7 @@
                     </table>
                 </div>
                 <div class="card-footer">
-                    {{ $categories->links('vendor.livewire.tailwind') }}
+                    {{ $products->links('vendor.livewire.tailwind') }}
                 </div>
                 <!-- /.card-body -->
             </div>

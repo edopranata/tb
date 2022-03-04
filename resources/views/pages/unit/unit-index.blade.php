@@ -37,7 +37,7 @@
                             {!! session('message') !!}
                         </div>
                     @endif
-                    <button wire:click="addNew()" class="btn tw-bg-slate-900 tw-text-slate-300 hover:tw-bg-slate-700 hover:tw-text-slate-100 tw-font-bold mx-2 my-2">Buat satuan baru </button>
+                    <button wire:click="addNew()" class="btn btn-flat tw-bg-slate-900 tw-text-slate-300 hover:tw-bg-slate-700 hover:tw-text-slate-100 tw-font-bold mx-2 my-2">Buat satuan baru </button>
                         <table class="table text-nowrap">
                             <thead>
                             <tr>

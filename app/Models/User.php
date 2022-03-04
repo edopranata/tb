@@ -56,6 +56,16 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(Category::class);
     }
 
+    public function suppliers()
+    {
+        return $this->hasMany(Supplier::class);
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
     protected $appends = ['user_role'];
 
     public function getUserRoleAttribute()

@@ -45,6 +45,11 @@ Route::middleware(['auth'])->group(function (){
             Route::get('/create', \App\Http\Pages\Suppliers\SuppliersCreate::class)->name('create');
             Route::get('/{supplier}', \App\Http\Pages\Suppliers\SuppliersEdit::class)->name('edit');
         });
+        Route::group(['prefix' => 'products', 'as' => 'products.'], function (){
+            Route::get('/', \App\Http\Pages\Products\ProductsIndex::class)->name('index');
+            Route::get('/create', \App\Http\Pages\Products\ProductsCreate::class)->name('create');
+            Route::get('/{supplier}', \App\Http\Pages\Products\ProductsEdit::class)->name('edit');
+        });
     });
 });
 
