@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProductStocksTable extends Migration
+class CreateProductPricesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,14 @@ class CreateProductStocksTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_stocks', function (Blueprint $table) {
+        Schema::create('product_prices', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\Product::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->foreignIdFor(\App\Models\Supplier::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->integer('first_stock');
-            $table->integer('available_stock');
-            $table->double('buying_price')->nullable();
-            $table->dateTime('expired_at')->nullable();
-            $table->string('description')->nullable();
+            $table->foreignIdFor(\App\Models\Unit::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
+            $table->double('sell_price')->nullable();
+            $table->double('wholesale_price')->nullable();
+            $table->double('customer_price')->nullable();
+            $table->enum('default', ['0', '1'])->default(0);
             $table->timestamps();
         });
     }
@@ -33,6 +32,6 @@ class CreateProductStocksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_stocks');
+        Schema::dropIfExists('product_prices');
     }
 }

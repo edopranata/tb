@@ -37,6 +37,11 @@ class Product extends Model
         return $this->hasMany(ProductStock::class);
     }
 
+    public function prices()
+    {
+        return $this->hasMany(ProductPrice::class);
+    }
+
     public function scopeFilter($query, $filters)
     {
         $query

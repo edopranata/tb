@@ -17,7 +17,7 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('barcode')->unique();
             $table->string('name');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->integer('min_stock')->default(1);
             $table->integer('warehouse_stock')->nullable();
             $table->integer('store_stock')->nullable();

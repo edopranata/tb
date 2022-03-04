@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProductStock extends Model
+class ProductPrice extends Model
 {
     protected $guarded = ['id'];
     use HasFactory;
@@ -15,8 +15,8 @@ class ProductStock extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function supplier()
+    public function unit()
     {
-        return $this->belongsTo(Supplier::class);
+        return $this->belongsTo(Unit::class);
     }
 }
