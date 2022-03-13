@@ -12,24 +12,20 @@ class InventoriesIndex extends Autocomplete
     public $suppliers;
     public $supplier;
 
-    public $supplier_search;
     public $invoice_date;
     public $supplier_id;
     public $supplier_name;
     public $invoice_number;
 
     public $purchase;
-    public $purchase_details;
-
 
     public $products = [];
-
-
 
     protected $listeners = ['valueSelected'];
 
     public function render()
     {
+
         return view('pages.inventories.inventories-index');
     }
 
@@ -40,8 +36,7 @@ class InventoriesIndex extends Autocomplete
         $p_prices = collect($t_details['product']['prices'])->where('id', $this->products[$key]['product_price_id'])->first();
         $p_stock = collect($t_details['product']['stocks'])->last();
         $buying_price = $p_stock ? $p_stock['buying_price'] * $p_prices['quantity'] : 0;
-        $this
-            ->purchase
+        $this->purchase
             ->details()
             ->where('id', $t_details['id'])
             ->update([
@@ -99,9 +94,13 @@ class InventoriesIndex extends Autocomplete
         $this->suppliers = Supplier::query()
             ->get()->toArray();
 
+
         // panggil fungsi loadTemp (Load table transaksi temporari pembeian)
         $this->loadTemp();
-        $this->render();
+
+        $this->selectSupplier($this->purchase ? $this->purchase->supplier_id : null);
+
+
     }
 
     // buat transaksi pembeian (insert ke tabel purchase)
@@ -138,7 +137,6 @@ class InventoriesIndex extends Autocomplete
                 }
             }
         }
-//        dd($this->purchase->toArray());
     }
 
     // fungsi hapus produk dari table temporari
@@ -150,7 +148,19 @@ class InventoriesIndex extends Autocomplete
 
     public function cancelPurchase()
     {
+        $this->purchase->details()->delete();
+        $this->purchase->delete();
+        $this->loadTemp();
+        $this->reset([
+            'invoice_date',
+            'supplier_id',
+            'supplier_name',
+            'invoice_number',
+            'purchase',
+            'products',
+        ]);
 
+        $this->dispatchBrowserEvent('purchaseCancel');
     }
 
     public function saveDraft()
@@ -165,15 +175,15 @@ class InventoriesIndex extends Autocomplete
         $this->selectSupplier($this->supplier_id);
     }
 
-    public function selectSupplier($id)
+    public function selectSupplier($id = null)
     {
         // select supplier
         $supplier = Supplier::query()
             ->where('id', $id)
             ->first();
         $this->supplier = $supplier;
-        $this->supplier_name = $supplier->name;
-        $this->supplier_id = $supplier->id;
+        $this->supplier_name = $supplier ? $supplier->name : null;
+        $this->supplier_id = $supplier ? $supplier->id : null;
     }
 
 

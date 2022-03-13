@@ -75,20 +75,20 @@ class DatabaseSeeder extends Seeder
                     ]);
                 }
 
-//                $stock = $faker->randomElement([100,120,150,130,140,180,160,170,175,185]);
-//
-//                $product->stocks()->create([
-//                    'supplier_id'   => Supplier::query()->inRandomOrder()->first()->id,
-//                    'first_stock'   => $stock,
-//                    'available_stock'   => $stock,
-//                    'buying_price'      => $prices . 900,
-//                    'expired_at'        => now()->addYears($faker->randomDigitNotNull()),
-//                    'description'       => 'STOCK AWAL',
-//                ]);
-//
-//                $product->update([
-//                    'warehouse_stock'   => $stock,
-//                ]);
+                $stock = $faker->randomElement([100,120,150,130,140,180,160,170,175,185]);
+
+                $product->stocks()->create([
+                    'supplier_id'   => Supplier::query()->inRandomOrder()->first()->id,
+                    'first_stock'   => $stock,
+                    'available_stock'   => $stock,
+                    'buying_price'      => $prices . 900,
+                    'expired_at'        => now()->addYears($faker->randomDigitNotNull()),
+                    'description'       => 'STOCK AWAL',
+                ]);
+
+                $product->update([
+                    'warehouse_stock'   => $stock,
+                ]);
             }
     }
 }

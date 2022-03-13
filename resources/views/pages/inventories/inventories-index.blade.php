@@ -55,17 +55,13 @@
                         <div class="col-md-4">
                             <div class="form-group" wire:ignore>
                                 <label>Supplier</label>
-                                @if($purchase)
-                                    <input type="text" class="form-control" disabled value="{{ $purchase->supplier_name }}">
-                                @else
-                                    <select id="supplier-select" class="form-control" @if($purchase) disabled @endif>
-                                        <option value="">Pilih Supplier</option>
-                                        @foreach($suppliers as $supplier)
-                                            <option value="{{ $supplier['id'] }}">{{ $supplier['name'] }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('supplier_id') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
-                                @endif
+                                <select id="supplier-select" class="form-control">
+                                    <option value="">Pilih Supplier</option>
+                                    @foreach($suppliers as $supplier)
+                                        <option value="{{ $supplier['id'] }}" @if($supplier['id'] = $supplier_id) selected @endif>{{ $supplier['name'] }}</option>
+                                    @endforeach
+                                </select>
+                                @error('supplier_id') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -83,7 +79,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             @if($purchase)
-                                <button wire:click="cancelPurchase()" type="button" class="btn btn-primary btn-flat">Batalkan Transaksi</button>
+                                <button wire:click="cancelPurchase()" type="button" class="btn btn-danger btn-flat">Batalkan Transaksi</button>
                                 <button wire:click="saveDraft()" type="button" class="btn btn-warning btn-flat">Simpan sebagai draf kembali ke halaman utama</button>
                             @else
                                 <button wire:click="beginPurchase()" type="button" class="btn btn-dark btn-flat">Add Product</button>
@@ -142,10 +138,10 @@
                                             name: $refs.results.children[highlightedIndex].getAttribute('data-result-name')
                                       })">
                                     <div class="tw-absolute tw-w-full pr-3" x-show="open" x-on:click.away="open = false">
-                                        <ul class="nav nav-pills flex-column tw-bg-slate-100 tw-rounded-b-xl tw-bordered tw-border-indigo-700 tw-text-slate-700" x-ref="results">
+                                        <ul class="nav nav-pills flex-column tw-bg-slate-100 tw-rounded-b-xl tw-bordered tw-border-indigo-700 tw-text-slate-700 tw-z-0" x-ref="results">
                                             @isset($results)
                                             @forelse($results as $index => $result)
-                                                <li class="py-2 px-4"
+                                                <li class="py-2 px-4 tw-z-0"
                                                     wire:key="{{ $index }}"
                                                     x-on:click.stop="$dispatch('value-selected', {
                                                         id: {{ $result->id }},
@@ -172,7 +168,7 @@
                     </div>
                 </div>
                 @if($purchase->details->count())
-                <div class="card">
+                <div class="card tw-z-50">
                     <div class="card-body px-0">
                         <div class="table-responsive">
                             <table class="table table-hover">
@@ -259,6 +255,11 @@
             $("#supplier-select").select2({
                 disabled: true,
             });
+        })
+        window.addEventListener('purchaseCancel', () => {
+            $("#supplier-select").val('').select2({
+                disabled: false,
+            }).trigger('change');
         })
         function inventoryPage() {
             return {
