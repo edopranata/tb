@@ -16,6 +16,11 @@
             </div><!-- /.container-fluid -->
         </section>
     </x-slot>
+    <x-card.action>
+        <x-card.action-link href="{{ route('pages.suppliers.create') }}" :btn="'light'">
+            Buat Supplier Baru
+        </x-card.action-link>
+    </x-card.action>
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
@@ -37,7 +42,6 @@
                             {!! session('message') !!}
                         </div>
                     @endif
-                    <button wire:click="addNew()" class="btn btn-flat tw-bg-slate-900 tw-text-slate-300 hover:tw-bg-slate-700 hover:tw-text-slate-100 tw-font-bold mx-2 my-2">Tambah supplier / pemasok baru </button>
                     <table class="table">
                         <thead>
                         <tr>

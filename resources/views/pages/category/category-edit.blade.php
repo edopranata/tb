@@ -17,14 +17,16 @@
             </div><!-- /.container-fluid -->
         </section>
     </x-slot>
+    <x-card.action>
+        <x-card.action-link href="{{ route('pages.categories.index') }}" :btn="'light'">Kembali Kedaftar Kategori</x-card.action-link>
+        <x-card.action-button onclick="confirm('Hapus Kategori ini?') || event.stopImmediatePropagation()" wire:click="delete()" :btn="'danger'">Hapus Data</x-card.action-button>
+        <x-card.action-button wire:click="update()">Simpan Data</x-card.action-button>
+    </x-card.action>
     <div class="row">
         <div class="col-md-4">
             <div class="card rounded-0">
                 <div class="card-header">
                     <h3 class="card-title">Edit kategori <strong>{{ $name }}</strong></h3>
-                    <div class="card-tools">
-                        <button onclick="confirm('Hapus kategori ini?') || event.stopImmediatePropagation()" wire:click="delete()" type="button" class="btn btn-sm btn-danger btn-flat tw-transition">Hapus kategori {{ $name }}</button>
-                    </div>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
@@ -33,12 +35,6 @@
                         @error('name')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                     </div>
                 </div>
-                <!-- /.card-body -->
-
-                <div class="card-footer">
-                    <button wire:click="update()" type="button" class="btn btn-primary btn-flat">Submit</button>
-                </div>
-                </form>
             </div>
         </div>
     </div>

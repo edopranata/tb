@@ -17,6 +17,7 @@ class CreateProductPricesTable extends Migration
             $table->id();
             $table->foreignIdFor(\App\Models\Product::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->foreignIdFor(\App\Models\Unit::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
+            $table->integer('quantity')->default(1);
             $table->double('sell_price')->nullable();
             $table->double('wholesale_price')->nullable();
             $table->double('customer_price')->nullable();

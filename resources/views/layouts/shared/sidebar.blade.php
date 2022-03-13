@@ -35,17 +35,31 @@
                     </x-slot>
                 </x-sidebar.menu-item>
 
-                <x-sidebar.menu-dropdown :title="$title = 'Master Data'" :active="request()->routeIs('pages.units.*') || request()->routeIs('pages.categories.*') || request()->routeIs('pages.suppliers.*') || request()->routeIs('pages.products.*')">
+                <x-sidebar.menu-dropdown :title="$title = 'Master Data'" :active="request()->routeIs('pages.units.*') || request()->routeIs('pages.categories.*') || request()->routeIs('pages.suppliers.*')">
                     <x-slot name="icon">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <i class="nav-icon fas fa-boxes"></i>
                     </x-slot>
                     <x-sidebar.menu-item :title="$title = 'Satuan Produk'" :href="route('pages.units.index')" :active="request()->routeIs('pages.units.*')"/>
                     <x-sidebar.menu-item :title="$title = 'Kategori Produk'" :href="route('pages.categories.index')" :active="request()->routeIs('pages.categories.*')"/>
                     <x-sidebar.menu-item :title="$title = 'Data Pemasok'" :href="route('pages.suppliers.index')" :active="request()->routeIs('pages.suppliers.*')"/>
-                    <x-sidebar.menu-item :title="$title = 'Data Produk'" :href="route('pages.products.index')" :active="request()->routeIs('pages.products.*')"/>
 
                 </x-sidebar.menu-dropdown>
 
+                <x-sidebar.menu-dropdown :title="$title = 'Manajemen Produk'" :active="request()->routeIs('pages.products.*') || request()->routeIs('pages.prices.*')">
+                    <x-slot name="icon">
+                        <i class="nav-icon fas fa-dolly"></i>
+                    </x-slot>
+                    <x-sidebar.menu-item :title="$title = 'Data Produk'" :href="route('pages.products.index')" :active="request()->routeIs('pages.products.*')"/>
+                    <x-sidebar.menu-item :title="$title = 'Multi Harga'" :href="route('pages.prices.index')" :active="request()->routeIs('pages.prices.*')"/>
+
+                </x-sidebar.menu-dropdown>
+                <x-sidebar.menu-dropdown :title="$title = 'Inventori'" :active="request()->routeIs('pages.inventory.*') || request()->routeIs('pages.inventory.*')">
+                    <x-slot name="icon">
+                        <i class="nav-icon fas fa-dolly-flatbed"></i>
+                    </x-slot>
+                    <x-sidebar.menu-item :title="$title = 'Inventori Produk Masuk'" :href="route('pages.inventories.index')" :active="request()->routeIs('pages.inventories.*')"/>
+
+                </x-sidebar.menu-dropdown>
 {{--                <x-sidebar.menu-dropdown :title="$title = 'Master Data'" :href="#" :active="request()->routeIs('pages.units.*')">--}}
 {{--                    <x-slot name="icon">--}}
 {{--                        <i class="nav-icon fas fa-balance-scale-left"></i>--}}

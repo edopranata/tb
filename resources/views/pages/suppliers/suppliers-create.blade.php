@@ -4,24 +4,28 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Edit Satuan Barang</h1>
+                        <h1>Tambah Supplier Baru</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('pages.units.index') }}">Satuan Produk</a></li>
-                            <li class="breadcrumb-item active">Buat satuan baru {{ $name }}</li>
+                            <li class="breadcrumb-item"><a href="{{ route('pages.suppliers.index') }}">Data Supplier</a></li>
+                            <li class="breadcrumb-item active">Tambah Supplier baru {{ $name }}</li>
                         </ol>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
         </section>
     </x-slot>
+    <x-card.action>
+        <x-card.action-link href="{{ route('pages.suppliers.index') }}" :btn="'light'">Kembali Ke daftar Supplier</x-card.action-link>
+        <x-card.action-button wire:click="save()">Simpan Data</x-card.action-button>
+    </x-card.action>
     <div class="row">
         <div class="col-md-4">
             <div class="card rounded-0">
                 <div class="card-header">
-                    <h3 class="card-title">Buat satuan <strong>{{ $name }}</strong></h3>
+                    <h3 class="card-title">Tambah supplier baru</h3>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
@@ -45,12 +49,6 @@
                         @error('address')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                     </div>
                 </div>
-                <!-- /.card-body -->
-
-                <div class="card-footer">
-                    <button wire:click="save()" type="button" class="btn btn-primary btn-flat">Submit</button>
-                </div>
-                </form>
             </div>
         </div>
     </div>

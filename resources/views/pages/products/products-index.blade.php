@@ -16,7 +16,12 @@
             </div><!-- /.container-fluid -->
         </section>
     </x-slot>
-    <div class="row">
+    <x-card.action>
+        <x-card.action-link href="{{ route('pages.products.create') }}" :btn="'light'">
+            Tambah Produk Baru
+        </x-card.action-link>
+    </x-card.action>
+    <div class="row" x-data="{ 'isDialogOpen': false }">
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
@@ -37,10 +42,10 @@
                             {!! session('message') !!}
                         </div>
                     @endif
-                    <button wire:click="addNew()" class="btn btn-flat tw-bg-slate-900 tw-text-slate-300 hover:tw-bg-slate-700 hover:tw-text-slate-100 tw-font-bold mx-2 my-2">Tambah produk baru </button>
                     <table class="table">
                         <thead>
                         <tr>
+                            <th class="tw-w-[10rem"]>&nbsp;</th>
                             <th>#</th>
                             <th class="tw-w-[8rem]">Barcode / Kode</th>
                             <th class="tw-w-[10rem]">Nama Produk</th>
@@ -50,17 +55,36 @@
                             <th class="tw-w-[10rem]">Stock</th>
                             <th class="tw-w-[10rem]">Dibuat Oleh</th>
                             <th class="tw-w-[10rem]">Dibuat pada</th>
-                            <th>&nbsp;</th>
                         </tr>
                         </thead>
                         <tbody>
                         @isset($products)
                             @foreach($products as $key => $product)
-                                <tr class="tw-cursor-pointer hover:tw-bg-slate-200" wire:click="editId({{$product['id']}})">
+                                <tr class="tw-cursor-pointer hover:tw-bg-slate-200">
+                                    <td class="text-right" x-data="{ 'isHamburgerOpen': false }">
+                                        <div
+                                            title="Open the actions menu"
+                                            class="tw-font-mono tw-text-2xl tw-px-2"
+                                            @click="isHamburgerOpen = true"
+                                            :class="{ 'tw-bg-gray-100': isHamburgerOpen }"
+                                        >
+                                            &ctdot;
+                                        </div>
+
+                                        <ul
+                                            x-show="isHamburgerOpen"
+                                            x-cloak
+                                            @click.away="isHamburgerOpen = false"
+                                            class="tw-absolute tw-list-none pl-0 tw-border tw-bg-white tw-shadow-md tw-text-left tw-mt-0"
+                                        >
+                                            <li class="tw-p-2 hover:tw-bg-gray-200" wire:click="editId({{ $product['id'] }})">✏ Ubah Produk</li>
+                                            <li class="tw-p-2 hover:tw-bg-gray-200" wire:click="toRoute('pages.prices.index')">💸 Multi Harga</li>
+                                        </ul>
+                                    </td>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $product['barcode'] }}</td>
-                                    <td>{{ $product['name'] }}</td>
-                                    <td>{{ $product['description'] }}</td>
+                                    <td><div class="tw-line-clamp-2">{{ $product['name'] }}</div></td>
+                                    <td><div class="tw-line-clamp-2">{{ $product['description'] }}</div></td>
                                     <td>{{ $product['category'] }}</td>
                                     <td>{{ $product['unit'] }}</td>
                                     <td>
@@ -69,7 +93,6 @@
                                     </td>
                                     <td>{{ $product['created_by'] }}</td>
                                     <td>{{ $product['created_at'] }}</td>
-                                    <td class="text-right"><i class="fas fa-chevron-right"></i> &nbsp;</td>
                                 </tr>
                             @endforeach
                         @endisset
@@ -84,3 +107,9 @@
         </div>
     </div>
 </div>
+
+@push('js')
+<script>
+
+</script>
+@endpush

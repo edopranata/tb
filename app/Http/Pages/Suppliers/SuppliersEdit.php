@@ -52,6 +52,6 @@ class SuppliersEdit extends Component
     {
         $this->suppliers->delete();
 
-        return redirect()->route('pages.units.index')->with(['status' => 'warning', 'message' => 'Supplier / pemasok <strong>' . $this->name . '</strong> dihapus']);
+        return redirect()->route('pages.suppliers.index')->with(['status' => 'warning', 'message' => 'Supplier / pemasok <strong>' . $this->name . '</strong> dihapus']);
     }
 }

@@ -24,7 +24,15 @@ module.exports = {
     },
 
     plugins: [
-        require('@tailwindcss/forms'),
-        require('@tailwindcss/typography')
+        require('@tailwindcss/forms')({
+            strategy: 'class',
+            prefix: 'tw-',
+        }),
+        require('@tailwindcss/typography'),
+        require('@tailwindcss/line-clamp'),
+        require("daisyui")
     ],
+    daisyui: {
+        prefix: "tw-",
+    },
 };

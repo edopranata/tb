@@ -12,6 +12,8 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
         <!-- Font Awesome -->
         <link rel="stylesheet" href="{{ asset('dist/plugins/fontawesome-free/css/all.min.css') }}">
+        <!-- Select2 -->
+        <link rel="stylesheet" href="{{ asset('dist/plugins/select2/css/select2.min.css') }}">
         <!-- Theme style -->
         <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
         <!-- Styles -->
@@ -61,6 +63,8 @@
         <script src="{{ asset('dist/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
         <!-- AdminLTE App -->
         <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
+        <!-- Select2 -->
+        <script src="{{ asset('dist/plugins/select2/js/select2.full.min.js') }}"></script>
         <!-- Livewire Script -->
         <livewire:scripts />
         @stack('js')

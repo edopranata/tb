@@ -23,12 +23,18 @@ class SuppliersCreate extends Component
     public function save()
     {
         $this->validate([
-            'name'      => ['required', 'string', 'min:2', 'max:20', 'unique:suppliers,name']
+            'name'          => ['required', 'string', 'min:2', 'max:20', 'unique:suppliers,name'],
+            'description'   => ['nullable', 'string', 'min:2', 'max:255'],
+            'phone'         => ['nullable', 'string', 'min:2', 'max:255'],
+            'address'       => ['nullable', 'string', 'min:2', 'max:100'],
         ]);
 
         DB::transaction(function (){
             Auth::user()->suppliers()->create([
-                'name' => $this->name
+                'name'          => $this->name,
+                'description'   => $this->description,
+                'phone'         => $this->phone,
+                'address'       => $this->address,
             ]);
         });
 

@@ -47,6 +47,11 @@ class ProductsIndex extends Component
         return redirect()->route('pages.products.edit', $products->id);
     }
 
+    public function toRoute($route_name, $params = null)
+    {
+        return redirect()->route($route_name);
+    }
+
     public function addNew() {
         return redirect()->route('pages.products.create');
     }

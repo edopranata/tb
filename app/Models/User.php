@@ -33,6 +33,8 @@ class User extends Authenticatable implements HasMedia
         'remember_token',
     ];
 
+    protected $appends = ['user_role'];
+
     /**
      * The attributes that should be cast.
      *
@@ -66,12 +68,15 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(Product::class);
     }
 
-    protected $appends = ['user_role'];
-
+    public function tempPurchase()
+    {
+        return $this->hasOne(TempPurchase::class);
+    }
     public function getUserRoleAttribute()
     {
         return $this->roles()->first()->name;
     }
+
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumb')

@@ -16,6 +16,11 @@
             </div><!-- /.container-fluid -->
         </section>
     </x-slot>
+    <x-card.action>
+        <x-card.action-link href="{{ route('pages.units.create') }}" :btn="'light'">
+            Buat Satuan Baru
+        </x-card.action-link>
+    </x-card.action>
     <div class="row">
         <div class="col-lg-8">
             <div class="card">
@@ -37,31 +42,30 @@
                             {!! session('message') !!}
                         </div>
                     @endif
-                    <button wire:click="addNew()" class="btn btn-flat tw-bg-slate-900 tw-text-slate-300 hover:tw-bg-slate-700 hover:tw-text-slate-100 tw-font-bold mx-2 my-2">Buat satuan baru </button>
-                        <table class="table text-nowrap">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nama Satuan</th>
-                                <th>Dibuat Oleh</th>
-                                <th>Dibuat pada</th>
-                                <th>&nbsp;</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @isset($units)
-                                @foreach($units as $key => $unit)
-                                    <tr class="tw-cursor-pointer hover:tw-bg-slate-200" wire:click="editId({{$unit['id']}})">
-                                        <td>{{ $key + 1 }}</td>
-                                        <td>{{ $unit['name'] }}</td>
-                                        <td>{{ $unit['created_by'] }}</td>
-                                        <td>{{ $unit['created_at'] }}</td>
-                                        <td class="text-right"><i class="fas fa-chevron-right"></i> &nbsp;</td>
-                                    </tr>
-                                @endforeach
-                            @endisset
-                            </tbody>
-                        </table>
+                    <table class="table text-nowrap">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nama Satuan</th>
+                            <th>Dibuat Oleh</th>
+                            <th>Dibuat pada</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @isset($units)
+                            @foreach($units as $key => $unit)
+                                <tr class="tw-cursor-pointer hover:tw-bg-slate-200" wire:click="editId({{$unit['id']}})">
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $unit['name'] }}</td>
+                                    <td>{{ $unit['created_by'] }}</td>
+                                    <td>{{ $unit['created_at'] }}</td>
+                                    <td class="text-right"><i class="fas fa-chevron-right"></i> &nbsp;</td>
+                                </tr>
+                            @endforeach
+                        @endisset
+                        </tbody>
+                    </table>
                 </div>
                 <div class="card-footer">
                     {{ $units->links('vendor.livewire.tailwind') }}

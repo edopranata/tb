@@ -7,7 +7,9 @@ use App\Models\Product;
 use App\Models\Supplier;
 use App\Models\Unit;
 use App\Models\User;
+use Faker\Factory;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,40 +20,74 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $faker = Factory::create();
+
         $this->call([
             RoleSeeder::class,
             UserSeeder::class,
             UserRoleSeeder::class,
         ]);
 
-        for ($i = 1; $i <= 10; $i++) {
-            Supplier::factory(5)
+            Supplier::factory()->times(10)
                 ->create([
                     'user_id' => User::query()->inRandomOrder()->get()->first()->id
                 ]);
-        }
 
-        for ($i = 1; $i <= 25; $i++) {
-            Unit::factory(2)
+
+
+            Unit::factory()->times(5)
                 ->create([
                     'user_id' => User::query()->inRandomOrder()->get()->first()->id
                 ]);
-        }
 
-        for ($i = 1; $i <= 10; $i++) {
-            Category::factory(2)
+            Category::factory()->times(10)
                 ->create([
                     'user_id' => User::query()->inRandomOrder()->get()->first()->id
                 ]);
-        }
 
-        for ($i = 1; $i <= 100; $i++) {
-            Product::factory(2)
+            $products = Product::factory()->times(100)
                 ->create([
-                    'unit_id' => Unit::query()->inRandomOrder()->get()->first()->id,
-                    'category_id' => Category::query()->inRandomOrder()->get()->first()->id,
                     'user_id' => User::query()->inRandomOrder()->get()->first()->id,
                 ]);
-        }
+
+            foreach ($products as $product){
+                $prices = $faker->randomNumber(3);
+                $product->prices()->create([
+                    'unit_id'   => $product->unit_id,
+                    'quantity'  => 1,
+                    'sell_price'    => $prices . 2900,
+                    'wholesale_price'   => $prices . 2500,
+                    'customer_price'    => $prices . 2100,
+                    'default'   => '1',
+                ]);
+
+                $quantity[1] = $faker->randomElement([5, 10]);
+                $quantity[2] = $faker->randomElement([12,  20]);
+
+                $stock = $faker->randomElement([100,120,150,130,140,180,160,170,175,185]);
+
+                $product->stocks()->create([
+                    'supplier_id'   => Supplier::query()->inRandomOrder()->first()->id,
+                    'first_stock'   => $stock,
+                    'available_stock'   => $stock,
+                    'buying_price'      => $prices . 900,
+                    'expired_at'        => now()->addYears($faker->randomDigitNotNull()),
+                    'description'       => 'STOCK AWAL',
+                ]);
+
+                for ($i=1;$i <= 2; $i++){
+                    $product->prices()->create([
+                        'unit_id' => Unit::query()->whereNotIn('id', [$product->unit_id])->inRandomOrder()->first()->id,
+                        'quantity' => $quantity[$i],
+                        'sell_price'    => ($prices . 2900 * $quantity[$i]) - 3000,
+                        'wholesale_price'   => ($prices . 2500 * $quantity[$i]) - 3000,
+                        'customer_price'    => ($prices . 2100 * $quantity[$i]) - 3000,
+                    ]);
+                }
+
+                $product->update([
+                    'warehouse_stock'   => $stock,
+                ]);
+            }
     }
 }

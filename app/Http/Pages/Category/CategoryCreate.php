@@ -18,10 +18,7 @@ class CategoryCreate extends Component
     public function save()
     {
         $this->validate([
-            'name'          => ['required', 'string', 'min:2', 'max:20', 'unique:category,name,' . $this->category->id],
-            'description'   => ['nullable', 'required', 'string', 'min:2', 'max:255'],
-            'phone'         => ['nullable', 'required', 'string', 'min:2', 'max:255'],
-            'address'       => ['nullable', 'required', 'string', 'min:2', 'max:100'],
+            'name'          => ['required', 'string', 'min:2', 'max:20', 'unique:categories,name'],
         ]);
 
         DB::transaction(function (){

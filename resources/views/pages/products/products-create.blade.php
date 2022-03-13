@@ -17,6 +17,10 @@
             </div><!-- /.container-fluid -->
         </section>
     </x-slot>
+    <x-card.action>
+        <x-card.action-link href="{{ route('pages.products.index') }}" :btn="'light'">Kembali Ke daftar produk</x-card.action-link>
+        <x-card.action-button wire:click="save()">Simpan Data</x-card.action-button>
+    </x-card.action>
     <div class="row">
         @if(session('status'))
             <div class="col-12">
@@ -77,12 +81,6 @@
                         @error('min_stock')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                     </div>
                 </div>
-                <!-- /.card-body -->
-
-                <div class="card-footer">
-                    <button wire:click="save()" type="button" class="btn btn-primary btn-flat">Submit</button>
-                </div>
-                </form>
             </div>
         </div>
         <div class="col-md-6">

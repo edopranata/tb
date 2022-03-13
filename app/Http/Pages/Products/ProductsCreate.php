@@ -50,10 +50,9 @@ class ProductsCreate extends Component
 
     public function save()
     {
-//        dd($this->new_product);
         $this->validate([
             'barcode'       => ['required', 'string', 'min:2', 'max:20', 'unique:products,barcode'],
-            'product_name'          => ['required', 'string', 'min:2', 'max:20'],
+            'product_name'  => ['required', 'string', 'min:2', 'max:255'],
             'description'   => ['nullable', 'string', 'min:2', 'max:255'],
             'min_stock'     => ['required', 'numeric', 'min:1'],
             'unit_id'       => ['required', 'exists:units,id'],
@@ -78,6 +77,11 @@ class ProductsCreate extends Component
                 'min_stock'     => $this->min_stock,
             ]);
             if($this->new_product === false){
+
+                $product->update([
+                    'warehouse_stock'   => $this->available_stock,
+                ]);
+
                 $product->stocks()->create([
                     'first_stock'       => $this->first_stock,
                     'available_stock'   => $this->available_stock,

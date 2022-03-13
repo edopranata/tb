@@ -4,7 +4,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Edit Satuan Barang</h1>
+                        <h1>Edit Supplier / Pemasok</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -17,14 +17,16 @@
             </div><!-- /.container-fluid -->
         </section>
     </x-slot>
+    <x-card.action>
+        <x-card.action-link href="{{ route('pages.suppliers.index') }}" :btn="'light'">Kembali Kedaftar Supplier</x-card.action-link>
+        <x-card.action-button onclick="confirm('Hapus supplier ini?') || event.stopImmediatePropagation()" wire:click="delete()" :btn="'danger'">Hapus Data</x-card.action-button>
+        <x-card.action-button wire:click="update()">Simpan Data</x-card.action-button>
+    </x-card.action>
     <div class="row">
         <div class="col-md-4">
             <div class="card rounded-0">
                 <div class="card-header">
                     <h3 class="card-title">Ubah data supplier / pemasok <strong>{{ $name }}</strong></h3>
-                    <div class="card-tools">
-                        <button onclick="confirm('Hapus data pemasok ini?') || event.stopImmediatePropagation()" wire:click="delete()" type="button" class="btn btn-sm btn-danger btn-flat tw-transition">Hapus Data pemasok {{ $name }}</button>
-                    </div>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
@@ -48,12 +50,6 @@
                         @error('address')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                     </div>
                 </div>
-                <!-- /.card-body -->
-
-                <div class="card-footer">
-                    <button wire:click="update()" type="button" class="btn btn-primary btn-flat">Submit</button>
-                </div>
-                </form>
             </div>
         </div>
     </div>
