@@ -39,7 +39,7 @@ class InventoriesIndex extends Autocomplete
         $t_details = collect($this->products[$key]);
         $p_prices = collect($t_details['product']['prices'])->where('id', $this->products[$key]['product_price_id'])->first();
         $p_stock = collect($t_details['product']['stocks'])->last();
-        $buying_price = $p_stock['buying_price'] * $p_prices['quantity'];
+        $buying_price = $p_stock ? $p_stock['buying_price'] * $p_prices['quantity'] : 0;
         $this
             ->purchase
             ->details()

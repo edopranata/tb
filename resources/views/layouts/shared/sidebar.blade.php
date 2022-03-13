@@ -53,7 +53,7 @@
                     <x-sidebar.menu-item :title="$title = 'Multi Harga'" :href="route('pages.prices.index')" :active="request()->routeIs('pages.prices.*')"/>
 
                 </x-sidebar.menu-dropdown>
-                <x-sidebar.menu-dropdown :title="$title = 'Inventori'" :active="request()->routeIs('pages.inventory.*') || request()->routeIs('pages.inventory.*')">
+                <x-sidebar.menu-dropdown :title="$title = 'Inventori'" :active="request()->routeIs('pages.inventories.*') || request()->routeIs('pages.inventories.*')">
                     <x-slot name="icon">
                         <i class="nav-icon fas fa-dolly-flatbed"></i>
                     </x-slot>
