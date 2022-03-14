@@ -100,6 +100,8 @@ class InventoriesIndex extends Autocomplete
 
         $this->selectSupplier($this->purchase ? $this->purchase->supplier_id : null);
 
+        $this->invoice_date = $this->purchase ? $this->purchase->invoice_date : null;
+        $this->invoice_number = $this->purchase ? $this->purchase->invoice_number : null;
 
     }
 

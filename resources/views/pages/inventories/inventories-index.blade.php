@@ -1,4 +1,4 @@
-<div>
+<div x-data="inventoryPage()">
     <x-slot name="breadcrumb">
         <section class="content-header">
             <div class="container-fluid">
@@ -19,7 +19,7 @@
     <x-card.action>
         <x-card.action-button wire:click="save()">Simpan Data</x-card.action-button>
     </x-card.action>
-    <div class="row" x-data="inventoryPage()"
+    <div class="row"
          x-on:keydown.window.slash.prevent="searchProducts()"
          x-on:keydown.window.ctrl.k.prevent="searchProducts()" >
         <div class="col-lg-12">
@@ -31,31 +31,27 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label>Tanggal Invoice (YYYY-MM-DD)</label>
-                                @if($purchase)
-                                    <input type="text" class="form-control" disabled value="{{ $purchase->invoice_date->format('Y-m-d') }}">
-                                @else
+                                <label>Tanggal Invoice</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <button wire:click="setToday()" class="input-group-text"><i
+                                            <button wire:click="setToday()" class="input-group-text" @if($purchase) disabled @endif><i
                                                     class="fas fa-clock mr-2"></i> Hari ini
                                             </button>
                                         </div>
                                         <input wire:model.defer="invoice_date" type="date"
-                                               class="form-control">
+                                               class="form-control" @if($purchase) disabled @endif>
                                         <div class="input-group-append">
-                                            <button wire:click="clearToday()" class="input-group-text"><i
+                                            <button wire:click="clearToday()" class="input-group-text" @if($purchase) disabled @endif><i
                                                     class="fas fa-times"></i></button>
                                         </div>
                                     </div>
                                     @error('invoice_date') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
-                                @endif
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group" wire:ignore>
                                 <label>Supplier</label>
-                                <select id="supplier-select" class="form-control">
+                                <select id="supplier-select" class="form-control" @if($purchase) disabled @endif>
                                     <option value="">Pilih Supplier</option>
                                     @foreach($suppliers as $supplier)
                                         <option value="{{ $supplier['id'] }}" @if($supplier['id'] = $supplier_id) selected @endif>{{ $supplier['name'] }}</option>
@@ -67,12 +63,8 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>No Invoice</label>
-                                @if($purchase)
-                                    <input type="text" class="form-control" disabled value="{{ $purchase->invoice_number }}">
-                                @else
-                                    <input wire:model.defer="invoice_number" type="text" class="form-control">
+                                    <input wire:model.defer="invoice_number" type="text" class="form-control" placeholder="No Invoice / Nota" @if($purchase) disabled @endif>
                                     @error('invoice_number') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
-                                @endif
                             </div>
                         </div>
                     </div>
@@ -89,13 +81,15 @@
                 </div>
             </div>
         </div>
-        @if($purchase)
+    </div>
+    @if($purchase)
+        <div class="row">
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
                         <div class="col-md-12">
                             <div class="form-group"
-                                x-data="
+                                 x-data="
                                 {
                                     open: @entangle('showDropdown'),
                                     search: @entangle('search'),
@@ -137,28 +131,28 @@
                                             id: $refs.results.children[highlightedIndex].getAttribute('data-result-id'),
                                             name: $refs.results.children[highlightedIndex].getAttribute('data-result-name')
                                       })">
-                                    <div class="tw-absolute tw-w-full pr-3" x-show="open" x-on:click.away="open = false">
-                                        <ul class="nav nav-pills flex-column tw-bg-slate-100 tw-rounded-b-xl tw-bordered tw-border-indigo-700 tw-text-slate-700 tw-z-0" x-ref="results">
+                                    <div class="tw-absolute tw-w-full pr-5" x-show="open" x-on:click.away="open = false">
+                                        <ul class="dropdown-menu show tw-w-full mr-3" x-ref="results">
                                             @isset($results)
-                                            @forelse($results as $index => $result)
-                                                <li class="py-2 px-4 tw-z-0"
-                                                    wire:key="{{ $index }}"
-                                                    x-on:click.stop="$dispatch('value-selected', {
+                                                @forelse($results as $index => $result)
+                                                    <li class="dropdown-item"
+                                                        wire:key="{{ $index }}"
+                                                        x-on:click.stop="$dispatch('value-selected', {
                                                         id: {{ $result->id }},
                                                         name: '{{ $result->name }}'
                                                     })"
-                                                    :class="{
+                                                        :class="{
                                                         'tw-bg-slate-400': {{ $index }} === highlightedIndex
                                                     }"
-                                                    data-result-id="{{ $result->id }}"
-                                                    data-result-name="{{ $result->name }}">
+                                                        data-result-id="{{ $result->id }}"
+                                                        data-result-name="{{ $result->name }}">
                                                     <span>
                                                       {{ $result->barcode . ' - ' . $result->name }}
                                                     </span>
-                                                </li>
-                                            @empty
-                                                <li class="py-2 px-4 tw-bg-slate-400">Produk tidak ditemukan</li>
-                                            @endforelse
+                                                    </li>
+                                                @empty
+                                                    <li class="dropdown-item">Produk tidak ditemukan</li>
+                                                @endforelse
                                             @endisset
                                         </ul>
                                     </div>
@@ -167,86 +161,106 @@
                         </div>
                     </div>
                 </div>
-                @if($purchase->details->count())
-                <div class="card tw-z-50">
-                    <div class="card-body px-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                <tr>
-                                    <th style="width: 10px">#</th>
-                                    <th>Nama Produk</th>
-                                    <th style="width: 300px;">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                Jumlah Beli
+            </div>
+        </div>
+        @if($purchase->details->count())
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card tw-z-50">
+                        <div class="card-body px-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th style="min-width: 10px">#</th>
+                                        <th style="min-width: 300px;">Nama Produk</th>
+                                        <th style="min-width: 300px;">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    Jumlah Beli
+                                                </div>
+                                                <div class="col-md-6">
+                                                    Satuan
+                                                </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                Satuan
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th style="width: 150px;">Total</th>
-                                    <th style="width: 300px;">Harga Modal</th>
-                                    <th style="width: 300px;">Total Harga Modal</th>
-                                    <th style="width: 130px">Label</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($purchase->details as $key => $item)
-                                    <tr class="tw-cursor-pointer">
-                                        <td>{{ $key+1 }}</td>
-                                        <td>{{ $item->product_name }}</td>
-                                        <td>
-                                            <div class="form-row">
-                                                @if($item->product->prices->count())
-                                                    <div class="form-group col-md-6">
-                                                        <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.id" class="form-control mb-2 mr-sm-2" type="hidden" min="1"/>
-                                                        <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.quantity" class="form-control mb-2 mr-sm-2" type="number" min="1"/>
-                                                    </div>
-                                                    <div class="form-group col-md-6">
-                                                        <select wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.product_price_id" class="form-control mb-2 mr-sm-2">
-                                                            @foreach($item->product->prices as $product_item)
-                                                                <option value="{{ $product_item->id }}">
-                                                                    {{ $product_item->unit->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group col-md-12">
-                                                <input wire:model.defer="products.{{ $key }}.product_price_quantity" class="form-control mb-2 mr-sm-2" type="text" readonly/>
-                                            </div>
-
-                                        </td>
-                                        <td>
-                                            <div class="form-group col-md-12">
-                                                <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.buying_price" class="form-control mb-2 mr-sm-2" type="text" min="1"/>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group col-md-12">
-                                                <input wire:model.defer="products.{{ $key }}.total" class="form-control mb-2 mr-sm-2" type="text" readonly/>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <button wire:click="removeItem({{ $item->id }})" class="btn btn-danger"><i class="fas fa-trash"></i> Hapus</button>
-                                        </td>
-
+                                        </th>
+                                        <th style="min-width: 150px;">Total</th>
+                                        <th style="min-width: 300px;">Harga Modal</th>
+                                        <th style="min-width: 300px;">Total Harga Modal</th>
+                                        <th style="min-width: 130px">Label</th>
                                     </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($purchase->details as $key => $item)
+                                        <tr class="tw-cursor-pointer">
+                                            <td>{{ $key+1 }}</td>
+                                            <td>{{ $item->product_name }}</td>
+                                            <td>
+                                                <div class="form-row">
+                                                    @if($item->product->prices->count())
+                                                        <div class="form-group col-md-6">
+                                                            <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.id" class="form-control mb-2 mr-sm-2" type="hidden" min="1"/>
+                                                            <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.quantity" class="form-control mb-2 mr-sm-2" type="number" min="1"/>
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <select wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.product_price_id" class="form-control mb-2 mr-sm-2">
+                                                                @foreach($item->product->prices as $product_item)
+                                                                    <option value="{{ $product_item->id }}">
+                                                                        {{ $product_item->unit->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group col-md-12">
+                                                    <input wire:model.defer="products.{{ $key }}.product_price_quantity" class="form-control mb-2 mr-sm-2" type="text" readonly/>
+                                                </div>
+
+                                            </td>
+                                            <td>
+                                                <div class="form-group col-md-12">
+                                                    <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.buying_price" class="form-control mb-2 mr-sm-2 text-right" type="text" min="1"/>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group col-md-12">
+                                                    <input wire:model.defer="products.{{ $key }}.total" class="form-control mb-2 mr-sm-2 text-right" type="text" readonly/>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button wire:click="removeItem({{ $item->id }})" class="btn btn-danger"><i class="fas fa-trash"></i> Hapus</button>
+                                            </td>
+
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <th colspan="4" class="text-right">Total</th>
+                                        <th>
+                                            <div class="form-group col-md-12">
+                                                <input value="{{ $purchase->details->sum('buying_price') }}" class="form-control mb-2 mr-sm-2 text-right" type="text" disabled/>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="form-group col-md-12">
+                                                <input value="{{ $purchase->details->sum('total') }}" class="form-control mb-2 mr-sm-2 text-right" type="text" disabled/>
+                                            </div>
+                                        </th>
+                                        <th>Label</th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-                @endif
-        </div>
+            </div>
         @endif
-    </div>
+    @endif
 </div>
 
 @push('js')
