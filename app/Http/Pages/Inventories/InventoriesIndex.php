@@ -38,24 +38,29 @@ class InventoriesIndex extends Autocomplete
          * 2. Insert Into Details Purchase select from tempPurchaseDetails
          * 3. Insert Into ProductStock every Purchase Details
          * 4. Increment Warehouse stock in product table
-         * 5. Delete tempPurchase and TempPurchaseDetails
+         * 5. Insert into PurchaseHistory
+         * 6. Delete tempPurchase and TempPurchaseDetails
          */
 
 //        $this->validate([
 //            ''
 //        ]);
-        DB::transaction();
+//        dd($this->purchase->toArray());
+        DB::beginTransaction();
         try {
             // Insert into Purchase table select from tempPurchase
-            $purchase_transaction = auth()->user()->purchases()
+            $purchase_transaction = Purchase::query()
                 ->create([
+                    'user_id'           => $this->purchase->user_id,
                     'supplier_id'       => $this->purchase->supplier_id,
                     'supplier_name'     => $this->purchase->supplier_name,
                     'invoice_number'    => $this->purchase->invoice_number,
                     'invoice_date'      => $this->purchase->invoice_date,
-                    'status'            => 'LUNAS',
+                    'status'            => 'BELUM LUNAS',
                 ]);
+//            dd($this->purchase->details);
             foreach ($this->purchase->details as $detail) {
+//                dd($detail->toArray());
                 // Insert Into Details Purchase select from tempPurchaseDetails
                 $purchase_transaction->details()->create([
                     'product_id'                => $detail->product_id,
@@ -66,30 +71,47 @@ class InventoriesIndex extends Autocomplete
                     'buying_price'              => $detail->buying_price,
                     'total'                     => $detail->total,
                 ]);
+
                 $purchase_transaction->with('price');
                 // Insert Into ProductStock every Purchase Details
                 $detail->product->stocks()->create([
                     'supplier_id'       => $this->purchase->supplier_id,
-                    'first_stock'       => $detail->product_price_quantity * $purchase_transaction->price->quantity,
-                    'available_stock'   => $detail->product_price_quantity * $purchase_transaction->price->quantity,
+                    'first_stock'       => $detail->product_price_quantity * $detail->price->quantity,
+                    'available_stock'   => $detail->product_price_quantity * $detail->price->quantity,
                     'buying_price'      => $detail->total
 
                 ]);
 
                 // Increment Warehouse stock in product table
-                $detail->product->increment('warehouse_stock', $detail->product_price_quantity * $purchase_transaction->price->quantity);
+                $detail->product->increment('warehouse_stock', $detail->product_price_quantity * $detail->price->quantity);
 
-                // Delete tempPurchase and TempPurchaseDetails
-                //
-
-                DB::commit();;
             }
+
+            // Insert into purchase hitory
+//            dd($this->purchase->toArry());
+            $purchase_transaction->histories()->create([
+                'pay_date'      => $this->purchase->invoice_date,           // Tanggal pembayaran
+                'bill'          => $this->purchase->details->sum('total'),  // total tagihan
+                'payment'       => 0,                                       // total pembayaran
+                'fund'          => $this->purchase->details->sum('total')   // sisa pembayaran
+            ]);
+            // Delete tempPurchase and TempPurchaseDetails
+            //
+
+            $purchase_transaction->details()->delete();
+            $purchase_transaction->delete();
+
+            DB::commit();
 
 
         }catch (\Exception $exception){
             DB::rollBack();
             return $exception->getMessage();
         }
+
+        $this->cancelPurchase();
+
+
     }
 
     public function updateProduct($key)
