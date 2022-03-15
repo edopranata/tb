@@ -7,7 +7,6 @@ use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Supplier;
 use App\Models\TempPurchaseDetail;
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class InventoriesIndex extends Autocomplete
@@ -45,7 +44,6 @@ class InventoriesIndex extends Autocomplete
 //        $this->validate([
 //            ''
 //        ]);
-//        dd($this->purchase->toArray());
         DB::beginTransaction();
         try {
             // Insert into Purchase table select from tempPurchase
@@ -58,9 +56,9 @@ class InventoriesIndex extends Autocomplete
                     'invoice_date'      => $this->purchase->invoice_date,
                     'status'            => 'BELUM LUNAS',
                 ]);
-//            dd($this->purchase->details);
+
+            // loop for details transaction item
             foreach ($this->purchase->details as $detail) {
-//                dd($detail->toArray());
                 // Insert Into Details Purchase select from tempPurchaseDetails
                 $purchase_transaction->details()->create([
                     'product_id'                => $detail->product_id,
@@ -68,55 +66,59 @@ class InventoriesIndex extends Autocomplete
                     'product_name'              => $detail->product_name,
                     'quantity'                  => $detail->quantity,
                     'product_price_quantity'    => $detail->product_price_quantity,
-                    'buying_price'              => $detail->buying_price,
+                    'buying_price'              => $detail->buying_price / $detail->product_price_quantity,
                     'total'                     => $detail->total,
                 ]);
 
+                // load price load price relations
                 $purchase_transaction->with('price');
-                // Insert Into ProductStock every Purchase Details
-                $detail->product->stocks()->create([
-                    'supplier_id'       => $this->purchase->supplier_id,
-                    'first_stock'       => $detail->product_price_quantity * $detail->price->quantity,
-                    'available_stock'   => $detail->product_price_quantity * $detail->price->quantity,
-                    'buying_price'      => $detail->total
 
+                // Insert Into ProductStock every Purchase Details
+                $product = Product::query()
+                    ->where('id', $detail->product_id)
+                    ->first();
+
+                $product->stocks()->create([
+                    'purchase_id'       => $purchase_transaction->id,
+                    'supplier_id'       => $this->purchase->supplier_id,
+                    'first_stock'       => $detail->product_price_quantity,
+                    'available_stock'   => $detail->product_price_quantity,
+                    'buying_price'      => $detail->total,
+                    'description'       => 'PENAMBAHAN'
                 ]);
 
-                // Increment Warehouse stock in product table
-                $detail->product->increment('warehouse_stock', $detail->product_price_quantity * $detail->price->quantity);
+                // increment warehouse stock in product table
+                $product->increment('warehouse_stock', $detail->product_price_quantity);
 
             }
 
-            // Insert into purchase hitory
-//            dd($this->purchase->toArry());
+            // Insert into purchase history
             $purchase_transaction->histories()->create([
                 'pay_date'      => $this->purchase->invoice_date,           // Tanggal pembayaran
                 'bill'          => $this->purchase->details->sum('total'),  // total tagihan
                 'payment'       => 0,                                       // total pembayaran
                 'fund'          => $this->purchase->details->sum('total')   // sisa pembayaran
             ]);
+
             // Delete tempPurchase and TempPurchaseDetails
-            //
+            $this->purchase->details()->delete();
+            $this->purchase->delete();
 
-            $purchase_transaction->details()->delete();
-            $purchase_transaction->delete();
-
+            // Commit transaction
             DB::commit();
 
-
         }catch (\Exception $exception){
+            // Rollback DB transaction if it failed
             DB::rollBack();
+
             return $exception->getMessage();
         }
-
-        $this->cancelPurchase();
-
-
+        // reset pages
+        $this->resetPage();
     }
 
     public function updateProduct($key)
     {
-
         $t_details = collect($this->products[$key]);
         $p_prices = collect($t_details['product']['prices'])->where('id', $this->products[$key]['product_price_id'])->first();
         $p_stock = collect($t_details['product']['stocks'])->last();
@@ -131,7 +133,6 @@ class InventoriesIndex extends Autocomplete
                 'buying_price'              => $buying_price,
                 'total'                     => $buying_price * $this->products[$key]['quantity'],
             ]);
-
         $this->loadTemp();
     }
 
@@ -237,6 +238,11 @@ class InventoriesIndex extends Autocomplete
     {
         $this->purchase->details()->delete();
         $this->purchase->delete();
+        $this->resetPage();
+    }
+
+    public function resetPage()
+    {
         $this->loadTemp();
         $this->reset([
             'invoice_date',
