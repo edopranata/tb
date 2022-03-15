@@ -63,8 +63,8 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>No Invoice</label>
-                                    <input wire:model.defer="invoice_number" type="text" class="form-control" placeholder="No Invoice / Nota" @if($purchase) disabled @endif>
-                                    @error('invoice_number') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
+                                <input wire:model.defer="invoice_number" type="text" class="form-control" placeholder="No Invoice / Nota" @if($purchase) disabled @endif>
+                                @error('invoice_number') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                             </div>
                         </div>
                     </div>
@@ -157,6 +157,7 @@
                                         </ul>
                                     </div>
                                 </div>
+                                @error('products') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                             </div>
                         </div>
                     </div>

@@ -41,9 +41,10 @@ class InventoriesIndex extends Autocomplete
          * 6. Delete tempPurchase and TempPurchaseDetails
          */
 
-//        $this->validate([
-//            ''
-//        ]);
+        $this->validate([
+            'products' => ['required', 'array', 'min:1', 'max:4000000000'],
+            'products.*' => ['required', 'string', 'distinct'],
+        ]);
         DB::beginTransaction();
         try {
             // Insert into Purchase table select from tempPurchase
