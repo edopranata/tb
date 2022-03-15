@@ -8,6 +8,7 @@ use App\Models\Purchase;
 use App\Models\Supplier;
 use App\Models\TempPurchaseDetail;
 use App\Models\User;
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\Facades\DB;
 
 class InventoriesIndex extends Autocomplete
@@ -21,6 +22,10 @@ class InventoriesIndex extends Autocomplete
     public $invoice_number;
 
     public $purchase;
+
+    public $bill;
+    public $payment;
+    public $fund;
 
     public $products = [];
 
@@ -41,11 +46,13 @@ class InventoriesIndex extends Autocomplete
          * 5. Insert into PurchaseHistory
          * 6. Delete tempPurchase and TempPurchaseDetails
          */
+        $this->validate([
+            'payment'                   => ['nullable', 'numeric', 'lte:bill'],
+            'products'                  => ['required', 'array', 'min:1', 'max:4000000000'],
+            'products.*.quantity'       => ['required', 'numeric', 'min:1', 'max:4000000000'],
+            'products.*.buying_price'   => ['required', 'numeric', 'min:1', 'max:4000000000'],
+        ]);
 
-//        $this->validate([
-//            ''
-//        ]);
-//        dd($this->purchase->toArray());
         DB::beginTransaction();
         try {
             // Insert into Purchase table select from tempPurchase
@@ -56,11 +63,10 @@ class InventoriesIndex extends Autocomplete
                     'supplier_name'     => $this->purchase->supplier_name,
                     'invoice_number'    => $this->purchase->invoice_number,
                     'invoice_date'      => $this->purchase->invoice_date,
-                    'status'            => 'BELUM LUNAS',
+                    'status'            => $this->fund ? 'BELUM LUNAS' : "LUNAS",
                 ]);
 //            dd($this->purchase->details);
             foreach ($this->purchase->details as $detail) {
-//                dd($detail->toArray());
                 // Insert Into Details Purchase select from tempPurchaseDetails
                 $purchase_transaction->details()->create([
                     'product_id'                => $detail->product_id,
@@ -84,17 +90,16 @@ class InventoriesIndex extends Autocomplete
                 ]);
 
                 // Increment Warehouse stock in product table
-                $detail->product->increment('warehouse_stock', $detail->product_price_quantity * $detail->price->quantity);
+                $detail->product->increment('warehouse_stock', $detail->product_price_quantity);
 
             }
 
             // Insert into purchase hitory
-//            dd($this->purchase->toArry());
             $purchase_transaction->histories()->create([
                 'pay_date'      => $this->purchase->invoice_date,           // Tanggal pembayaran
-                'bill'          => $this->purchase->details->sum('total'),  // total tagihan
-                'payment'       => 0,                                       // total pembayaran
-                'fund'          => $this->purchase->details->sum('total')   // sisa pembayaran
+                'bill'          => $this->bill,                             // total tagihan
+                'payment'       => $this->payment,                          // total pembayaran
+                'fund'          => $this->fund                              // sisa pembayaran
             ]);
             // Delete tempPurchase and TempPurchaseDetails
             //
@@ -223,7 +228,12 @@ class InventoriesIndex extends Autocomplete
                     array_push($this->products, $detail->toArray());
                 }
             }
+//            dd($this->products);
+            $this->bill = $this->purchase->details->count() ? $this->purchase->details->sum('total') : 0;
+            $this->payment = $this->payment ?: 0;
+            $this->fund = $this->bill - $this->payment;
         }
+
     }
 
     // fungsi hapus produk dari table temporari

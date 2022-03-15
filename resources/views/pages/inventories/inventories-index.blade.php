@@ -87,9 +87,33 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <div class="col-md-12">
-                            <div class="form-group"
-                                 x-data="
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Total Pembayaran</label>
+                                    <input wire:model.defer="bill" type="text" class="form-control" placeholder="Total Pembayaran" disabled>
+                                    @error('bill') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Jumlah Pembayaran</label>
+                                    <input wire:change="loadTemp()" wire:model.defer="payment" type="text" class="form-control" placeholder="Jumlah Pembayaran">
+                                    @error('payment') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Sisa Tagihan</label>
+                                    <input wire:model.defer="fund" type="text" class="form-control" placeholder="Sisa Tagihan" disabled>
+                                    @error('fund') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group"
+                                     x-data="
                                 {
                                     open: @entangle('showDropdown'),
                                     search: @entangle('search'),
@@ -120,46 +144,48 @@
                                         this.highlightedIndex = 0;
                                         },
                                     }"
-                            >
-                                <div x-on:value-selected="updateSelected($event.detail.id, $event.detail.name)">
-                                    <label>Cari Produk (Barcode / Nama Produk)</label>
-                                    <input x-ref="query" class="form-control-lg form-control rounded-0"
-                                           wire:model.debounce.600ms="search"
-                                           x-on:keydown.arrow-down.stop.prevent="highlightNext()"
-                                           x-on:keydown.arrow-up.stop.prevent="highlightPrevious()"
-                                           x-on:keydown.enter.stop.prevent="$dispatch('value-selected', {
+                                >
+                                    <div x-on:value-selected="updateSelected($event.detail.id, $event.detail.name)">
+                                        <label>Cari Produk (Barcode / Nama Produk)</label>
+                                        <input x-ref="query" class="form-control-lg form-control rounded-0"
+                                               wire:model.debounce.600ms="search"
+                                               x-on:keydown.arrow-down.stop.prevent="highlightNext()"
+                                               x-on:keydown.arrow-up.stop.prevent="highlightPrevious()"
+                                               x-on:keydown.enter.stop.prevent="$dispatch('value-selected', {
                                             id: $refs.results.children[highlightedIndex].getAttribute('data-result-id'),
                                             name: $refs.results.children[highlightedIndex].getAttribute('data-result-name')
                                       })">
-                                    <div class="tw-absolute tw-w-full pr-5" x-show="open" x-on:click.away="open = false">
-                                        <ul class="dropdown-menu show tw-w-full mr-3" x-ref="results">
-                                            @isset($results)
-                                                @forelse($results as $index => $result)
-                                                    <li class="dropdown-item"
-                                                        wire:key="{{ $index }}"
-                                                        x-on:click.stop="$dispatch('value-selected', {
+                                        <div class="tw-absolute tw-w-full pr-5" x-show="open" x-on:click.away="open = false">
+                                            <ul class="dropdown-menu show tw-w-full mr-3" x-ref="results">
+                                                @isset($results)
+                                                    @forelse($results as $index => $result)
+                                                        <li class="dropdown-item"
+                                                            wire:key="{{ $index }}"
+                                                            x-on:click.stop="$dispatch('value-selected', {
                                                         id: {{ $result->id }},
                                                         name: '{{ $result->name }}'
                                                     })"
-                                                        :class="{
+                                                            :class="{
                                                         'tw-bg-slate-400': {{ $index }} === highlightedIndex
                                                     }"
-                                                        data-result-id="{{ $result->id }}"
-                                                        data-result-name="{{ $result->name }}">
+                                                            data-result-id="{{ $result->id }}"
+                                                            data-result-name="{{ $result->name }}">
                                                     <span>
                                                       {{ $result->barcode . ' - ' . $result->name }}
                                                     </span>
-                                                    </li>
-                                                @empty
-                                                    <li class="dropdown-item">Produk tidak ditemukan</li>
-                                                @endforelse
-                                            @endisset
-                                        </ul>
+                                                        </li>
+                                                    @empty
+                                                        <li class="dropdown-item">Produk tidak ditemukan</li>
+                                                    @endforelse
+                                                @endisset
+                                            </ul>
+                                        </div>
                                     </div>
+                                    @error('products') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                 </div>
-                                @error('products') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -202,6 +228,7 @@
                                                         <div class="form-group col-md-6">
                                                             <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.id" class="form-control mb-2 mr-sm-2" type="hidden" min="1"/>
                                                             <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.quantity" class="form-control mb-2 mr-sm-2" type="number" min="1"/>
+                                                            @error('products.' . $key . '.quantity') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <select wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.product_price_id" class="form-control mb-2 mr-sm-2">
@@ -224,6 +251,7 @@
                                             <td>
                                                 <div class="form-group col-md-12">
                                                     <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.buying_price" class="form-control mb-2 mr-sm-2 text-right" type="text" min="1"/>
+                                                    @error('products.' . $key . '.buying_price') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                                 </div>
                                             </td>
                                             <td>
@@ -288,11 +316,9 @@
                 },
                 init: function () {
 
-
                     $('#supplier-select').select2();
                     $('#supplier-select').on('change', function (e) {
-                        @this.set('supplier_id', $('#supplier-select').select2("val"))
-                    console.log($('#supplier-select').select2("val"))
+                        @this.set('supplier_id', $('#supplier-select').select2("val"));
                     });
                 }
             }
