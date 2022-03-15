@@ -46,7 +46,8 @@ class Product extends Model
     {
         $query
             ->when($filters ?? null, function ($query, $search) {
-                $query->where('name', 'like', '%'.$search.'%');
+                $query->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('barcode', 'like', '%'.$search.'%');
             });
     }
 }

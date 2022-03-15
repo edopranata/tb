@@ -76,9 +76,10 @@ class InventoriesIndex extends Autocomplete
                 // Insert Into ProductStock every Purchase Details
                 $detail->product->stocks()->create([
                     'supplier_id'       => $this->purchase->supplier_id,
-                    'first_stock'       => $detail->product_price_quantity * $detail->price->quantity,
-                    'available_stock'   => $detail->product_price_quantity * $detail->price->quantity,
-                    'buying_price'      => $detail->total
+                    'first_stock'       => $detail->price->quantity,
+                    'available_stock'   => $detail->price->quantity,
+                    'buying_price'      => $detail->total / $detail->product_price_quantity,
+                    'descrption'        => 'PENAMBAHAN',
 
                 ]);
 
@@ -98,8 +99,8 @@ class InventoriesIndex extends Autocomplete
             // Delete tempPurchase and TempPurchaseDetails
             //
 
-            $purchase_transaction->details()->delete();
-            $purchase_transaction->delete();
+            $this->purchase->details()->delete();
+            $this->purchase->delete();
 
             DB::commit();
 
@@ -116,11 +117,10 @@ class InventoriesIndex extends Autocomplete
 
     public function updateProduct($key)
     {
-
         $t_details = collect($this->products[$key]);
         $p_prices = collect($t_details['product']['prices'])->where('id', $this->products[$key]['product_price_id'])->first();
-        $p_stock = collect($t_details['product']['stocks'])->last();
-        $buying_price = $p_stock ? $p_stock['buying_price'] * $p_prices['quantity'] : 0;
+//        $p_stock = collect($t_details['product']['stocks'])->last();
+        $buying_price = $t_details['buying_price']; //$p_stock ? $p_stock['buying_price'] * $p_prices['quantity'] : 0;
         $this->purchase
             ->details()
             ->where('id', $t_details['id'])
