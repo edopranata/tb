@@ -56,7 +56,9 @@ Route::middleware(['auth'])->group(function (){
         });
         Route::group(['prefix' => 'inventories', 'as' => 'inventories.'], function (){
             Route::get('/', \App\Http\Pages\Inventories\InventoriesIndex::class)->name('index');
-            Route::get('/', \App\Http\Pages\Inventories\InventoriesIndex::class)->name('index');
+        });
+        Route::group(['prefix' => 'stock', 'as' => 'stock.'], function (){
+            Route::get('transfer', \App\Http\Pages\Inventories\InventoriesTransfer::class)->name('transfer');
         });
     });
 });

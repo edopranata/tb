@@ -53,11 +53,12 @@
                     <x-sidebar.menu-item :title="$title = 'Multi Harga'" :href="route('pages.prices.index')" :active="request()->routeIs('pages.prices.*')"/>
 
                 </x-sidebar.menu-dropdown>
-                <x-sidebar.menu-dropdown :title="$title = 'Inventori'" :active="request()->routeIs('pages.inventories.*') || request()->routeIs('pages.inventories.*')">
+                <x-sidebar.menu-dropdown :title="$title = 'Inventori'" :active="request()->routeIs('pages.inventories.*') || request()->routeIs('pages.stock.*')">
                     <x-slot name="icon">
                         <i class="nav-icon fas fa-dolly-flatbed"></i>
                     </x-slot>
                     <x-sidebar.menu-item :title="$title = 'Inventori Produk Masuk'" :href="route('pages.inventories.index')" :active="request()->routeIs('pages.inventories.*')"/>
+                    <x-sidebar.menu-item :title="$title = 'Tambah Stock Toko'" :href="route('pages.stock.transfer')" :active="request()->routeIs('pages.stock.*')"/>
 
                 </x-sidebar.menu-dropdown>
 {{--                <x-sidebar.menu-dropdown :title="$title = 'Master Data'" :href="#" :active="request()->routeIs('pages.units.*')">--}}
