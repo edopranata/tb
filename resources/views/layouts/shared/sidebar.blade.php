@@ -67,8 +67,8 @@
                     </x-slot>
                     <x-sidebar.menu-item :title="$title = 'Inventori Produk Masuk'" :href="route('pages.inventories.index')" :active="request()->routeIs('pages.inventories.*')"/>
                     <x-sidebar.menu-item :title="$title = 'Transfer Stok'" :href="route('pages.stock.index')" :active="request()->routeIs('pages.stock.index')"/>
-                    <x-sidebar.menu-item :title="$title = 'Transfer Gudang ke Toko'" :href="route('pages.stock.transfer.create', 'store')" :active="request()->is('pages/stock/transfer/store/*')"/>
-                    <x-sidebar.menu-item :title="$title = 'Transfer Toko ke Gudang'" :href="route('pages.stock.transfer.create', 'warehouse')" :active="request()->is('pages/stock/transfer/warehouse/*')"/>
+                    <x-sidebar.menu-item :title="$title = 'Transfer Gudang ke Toko'" :href="route('pages.stock.transfer.store')" :active="request()->routeIs('pages.stock.transfer.store')"/>
+                    <x-sidebar.menu-item :title="$title = 'Transfer Toko ke Gudang'" :href="route('pages.stock.transfer.warehouse')" :active="request()->routeIs('pages.stock.transfer.warehouse')"/>
 
                 </x-sidebar.menu-dropdown>
 {{--                <x-sidebar.menu-dropdown :title="$title = 'Master Data'" :href="#" :active="request()->routeIs('pages.units.*')">--}}

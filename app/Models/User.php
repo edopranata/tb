@@ -77,6 +77,11 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasMany(Purchase::class);
     }
+
+    public function tempTransfer()
+    {
+        return $this->hasOne(TempProductTransfer::class);
+    }
     public function getUserRoleAttribute()
     {
         return $this->roles()->first()->name;

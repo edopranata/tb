@@ -307,7 +307,7 @@
         function inventoryPage() {
             return {
 
-                pruchases: @entangle('purchase'),
+                purchases: @entangle('purchase'),
                 selectedItem:'',
                 searchProducts() {
                     setTimeout(() => {

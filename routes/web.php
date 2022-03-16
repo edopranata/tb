@@ -75,7 +75,8 @@ Route::middleware(['auth'])->group(function (){
         Route::group(['prefix' => 'stock', 'as' => 'stock.'], function (){
             Route::get('/', \App\Http\Pages\Inventories\InventoriesTransfer::class)->name('index');
             Route::group(['prefix' => 'transfer', 'as' => 'transfer.'], function (){
-                Route::get('{transfer}/create', \App\Http\Pages\Inventories\InventoriesTransferCreate::class)->name('create');
+                Route::get('store/create', \App\Http\Pages\Inventories\InventoriesTransferCreate::class)->name('store');
+                Route::get('warehouse/create', \App\Http\Pages\Inventories\InventoriesTransferCreate::class)->name('warehouse');
             });
         });
     });

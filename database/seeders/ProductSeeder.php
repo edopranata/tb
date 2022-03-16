@@ -20,7 +20,7 @@ class ProductSeeder extends Seeder
     {
         $faker = Factory::create();
 
-        $products = Product::factory()->times(2)
+        $products = Product::factory()->times(200)
             ->create([
                 'user_id' => User::query()->inRandomOrder()->get()->first()->id,
             ]);
