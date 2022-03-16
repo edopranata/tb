@@ -15,6 +15,8 @@ class CreateProductTransfersTable extends Migration
     {
         Schema::create('product_transfers', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(\App\Models\User::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
+            $table->dateTime('transfer_date');
             $table->timestamps();
         });
     }
