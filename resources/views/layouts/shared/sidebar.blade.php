@@ -23,18 +23,23 @@
             <ul class="nav nav-pills nav-sidebar flex-column nav-flat" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
-{{--                <x-sidebar.menu-item :href="route('dashboard.index')" :active="request()->routeIs('dashboard.index')">--}}
-{{--                    <x-slot name="icon">--}}
-{{--                        <i class="nav-icon fas fa-tachometer-alt"></i>--}}
-{{--                    </x-slot>--}}
-{{--                    Dashboard--}}
-{{--                </x-sidebar.menu-item>--}}
                 <x-sidebar.menu-item :title="$title = 'Dashboard'" :href="route('dashboard.index')" :active="request()->routeIs('dashboard.index')">
                     <x-slot name="icon">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                     </x-slot>
                 </x-sidebar.menu-item>
+                <!-- Management Users Roles and Permissions-->
+                <x-sidebar.menu-dropdown :title="$title = 'App Management'" :active="request()->routeIs('pages.management.*')">
+                    <x-slot name="icon">
+                        <i class="nav-icon fas fa-cog"></i>
+                    </x-slot>
+                    <x-sidebar.menu-item :title="$title = 'Permission List'" :href="route('pages.management.permissions.index')" :active="request()->routeIs('pages.management.permissions.*')"/>
+                    <x-sidebar.menu-item :title="$title = 'Role List'" :href="route('pages.management.roles.index')" :active="request()->routeIs('pages.management.roles.*')"/>
+                    <x-sidebar.menu-item :title="$title = 'User List'" :href="route('pages.management.users.index')" :active="request()->routeIs('pages.management.users.*')"/>
 
+                </x-sidebar.menu-dropdown>
+
+                <!-- Master Data Categories, Suppliers, Products Unit -->
                 <x-sidebar.menu-dropdown :title="$title = 'Master Data'" :active="request()->routeIs('pages.units.*') || request()->routeIs('pages.categories.*') || request()->routeIs('pages.suppliers.*')">
                     <x-slot name="icon">
                         <i class="nav-icon fas fa-boxes"></i>
@@ -45,6 +50,7 @@
 
                 </x-sidebar.menu-dropdown>
 
+                <!-- Management Product Add new product, set multi prices -->
                 <x-sidebar.menu-dropdown :title="$title = 'Manajemen Produk'" :active="request()->routeIs('pages.products.*') || request()->routeIs('pages.prices.*')">
                     <x-slot name="icon">
                         <i class="nav-icon fas fa-dolly"></i>
@@ -53,12 +59,16 @@
                     <x-sidebar.menu-item :title="$title = 'Multi Harga'" :href="route('pages.prices.index')" :active="request()->routeIs('pages.prices.*')"/>
 
                 </x-sidebar.menu-dropdown>
+
+                <!-- Product Inventory and product transfer (warehouse stock to store) -->
                 <x-sidebar.menu-dropdown :title="$title = 'Inventori'" :active="request()->routeIs('pages.inventories.*') || request()->routeIs('pages.stock.*')">
                     <x-slot name="icon">
                         <i class="nav-icon fas fa-dolly-flatbed"></i>
                     </x-slot>
                     <x-sidebar.menu-item :title="$title = 'Inventori Produk Masuk'" :href="route('pages.inventories.index')" :active="request()->routeIs('pages.inventories.*')"/>
-                    <x-sidebar.menu-item :title="$title = 'Tambah Stock Toko'" :href="route('pages.stock.transfer')" :active="request()->routeIs('pages.stock.*')"/>
+                    <x-sidebar.menu-item :title="$title = 'Transfer Stok'" :href="route('pages.stock.index')" :active="request()->routeIs('pages.stock.index')"/>
+                    <x-sidebar.menu-item :title="$title = 'Transfer Gudang ke Toko'" :href="route('pages.stock.transfer.create', 'store')" :active="request()->is('pages/stock/transfer/store/*')"/>
+                    <x-sidebar.menu-item :title="$title = 'Transfer Toko ke Gudang'" :href="route('pages.stock.transfer.create', 'warehouse')" :active="request()->is('pages/stock/transfer/warehouse/*')"/>
 
                 </x-sidebar.menu-dropdown>
 {{--                <x-sidebar.menu-dropdown :title="$title = 'Master Data'" :href="#" :active="request()->routeIs('pages.units.*')">--}}

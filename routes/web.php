@@ -30,6 +30,21 @@ Route::middleware(['auth'])->group(function (){
     });
 
     Route::group(['prefix' => 'pages', 'as' => 'pages.'], function (){
+        Route::group(['prefix' => 'management', 'as' => 'management.'], function (){
+            Route::group(['prefix' => 'users', 'as' => 'users.'], function (){
+                Route::get('/', \App\Http\Pages\Management\User\ManagementUserIndex::class)->name('index');
+                Route::get('/create', \App\Http\Pages\Management\User\ManagementUserCreate::class)->name('create');
+            });
+            Route::group(['prefix' => 'permissions', 'as' => 'permissions.'], function (){
+                Route::get('/', \App\Http\Pages\Management\Permission\ManagementPermissionIndex::class)->name('index');
+                Route::get('/create', \App\Http\Pages\Management\Permission\ManagementPermissionCreate::class)->name('create');
+            });
+            Route::group(['prefix' => 'roles', 'as' => 'roles.'], function (){
+                Route::get('/', \App\Http\Pages\Management\Role\ManagementRoleIndex::class)->name('index');
+                Route::get('/create', \App\Http\Pages\Management\Role\ManagementRoleCreate::class)->name('create');
+            });
+        });
+
         Route::group(['prefix' => 'units', 'as' => 'units.'], function (){
             Route::get('/', \App\Http\Pages\Unit\UnitIndex::class)->name('index');
             Route::get('/create', \App\Http\Pages\Unit\UnitCreate::class)->name('create');
@@ -58,7 +73,10 @@ Route::middleware(['auth'])->group(function (){
             Route::get('/', \App\Http\Pages\Inventories\InventoriesIndex::class)->name('index');
         });
         Route::group(['prefix' => 'stock', 'as' => 'stock.'], function (){
-            Route::get('transfer', \App\Http\Pages\Inventories\InventoriesTransfer::class)->name('transfer');
+            Route::get('/', \App\Http\Pages\Inventories\InventoriesTransfer::class)->name('index');
+            Route::group(['prefix' => 'transfer', 'as' => 'transfer.'], function (){
+                Route::get('{transfer}/create', \App\Http\Pages\Inventories\InventoriesTransferCreate::class)->name('create');
+            });
         });
     });
 });

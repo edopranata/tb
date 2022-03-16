@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProductTransfersTable extends Migration
+class CreateTempProductTransfersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateProductTransfersTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_transfers', function (Blueprint $table) {
+        Schema::create('temp_product_transfers', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\User::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->dateTime('transfer_date');
@@ -30,6 +30,6 @@ class CreateProductTransfersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_transfers');
+        Schema::dropIfExists('temp_product_transfers');
     }
 }
