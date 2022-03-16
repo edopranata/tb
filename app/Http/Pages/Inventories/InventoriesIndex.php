@@ -90,11 +90,14 @@ class InventoriesIndex extends Autocomplete
                 ]);
 
                 // Increment Warehouse stock in product table
-                $detail->product->increment('warehouse_stock', $detail->product_price_quantity);
+                // get store stock before increment warehouse stock
+                $store_stock = $detail->product->store_stock;
+                // increment warehouse stock reduce store stock
 
+                $detail->product->increment('warehouse_stock', $detail->product_price_quantity - $store_stock ?: 0);
             }
 
-            // Insert into purchase hitory
+            // Insert into purchase history
             $purchase_transaction->histories()->create([
                 'pay_date'      => $this->purchase->invoice_date,           // Tanggal pembayaran
                 'bill'          => $this->bill,                             // total tagihan
