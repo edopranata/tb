@@ -195,7 +195,7 @@
                                             </div>
                                         </td>
                                         <td class="tw-items-center">
-                                            <strong>{{ $products[$key]['product_price_quantity'] ?: 0  }}</strong> <span class="text-muted">{{ $products[$key]['product']['unit']['name'] }}</span>
+                                            <strong>{{ $products[$key]['product_price_quantity'] ?: 0  }}</strong> <span class="text-muted">{{ $item->price->unit->name }}</span>
 {{--                                            <div class="input-group mb-3">--}}
 {{--                                                <input wire:model.defer="products.{{ $key }}.product_price_quantity" type="text" class="form-control" readonly>--}}
 {{--                                                <div class="input-group-append">--}}
@@ -204,7 +204,25 @@
 {{--                                            </div>--}}
                                         </td>
                                         <td class="tw-items-center">
-                                            <strong>{{ $products[$key]['product']['store_stock'] ?: 0  }}</strong> <span class="text-muted">{{ $products[$key]['product']['unit']['name'] }}</span>
+                                            <div class="tw-text-green-900"><strong>{{ $products[$key]['product']['store_stock'] ?: 0  }}</strong> <span class="tw-text-sm">{{ $products[$key]['product']['unit']['name'] }}</span></div>
+                                            @php
+                                                $current_stock = $products[$key]['product']['store_stock'] ?: 0;
+                                                $prices = collect($products[$key]['product']['prices'])->sortByDesc('quantity');
+                                            @endphp
+
+
+                                            @foreach($prices as $price)
+                                                @php
+
+                                                    $stock = $current_stock / $price['quantity'];
+                                                @endphp
+                                                <div><strong>{{ (int) $stock }}</strong> <span class="text-muted">{{ $price['unit']['name'] }}</span></div>
+                                                @php
+                                                    $current_stock = $current_stock - ( (int) $stock * $price['quantity'])
+                                                @endphp
+
+                                            @endforeach
+
 {{--                                            <div class="input-group mb-3">--}}
 {{--                                                <input wire:model.defer="products.{{ $key }}.product.store_stock" type="text" class="form-control" readonly>--}}
 {{--                                                <div class="input-group-append">--}}
@@ -213,8 +231,23 @@
 {{--                                            </div>--}}
                                         </td>
                                         <td class="tw-items-center">
-                                            <strong>{{ $products[$key]['product']['warehouse_stock'] ?: 0 }}</strong> <span class="text-muted">{{ $products[$key]['product']['unit']['name'] }}</span>
+                                            <div class="tw-text-green-900"><strong>{{ $products[$key]['product']['warehouse_stock'] ?: 0 }}</strong> <span class="tw-text-sm">{{ $products[$key]['product']['unit']['name'] }}</span></div>
+                                            @php
+                                            $current_stock = $products[$key]['product']['warehouse_stock'] ?: 0;
+                                            $prices = collect($products[$key]['product']['prices'])->sortByDesc('quantity');
+                                            @endphp
 
+
+                                            @foreach($prices as $price)
+                                                @php
+                                                    $stock = $current_stock / $price['quantity'];
+                                                @endphp
+                                                    <div><strong>{{ (int) $stock }}</strong> <span class="text-muted">{{ $price['unit']['name'] }}</span></div>
+                                                @php
+                                                    $current_stock = $current_stock - ( (int) $stock * $price['quantity'])
+                                                @endphp
+
+                                            @endforeach
                                             {{--                                            <div class="input-group mb-3">--}}
 {{--                                                <input wire:model.defer="products.{{ $key }}.product.warehouse_stock" type="text" class="form-control" readonly>--}}
 {{--                                                <div class="input-group-append">--}}
@@ -223,7 +256,25 @@
 {{--                                            </div>--}}
                                         </td>
                                         <td class="tw-items-center">
-                                            <strong>{{ $products[$key]['product']['store_stock'] + $products[$key]['product_price_quantity'] }}</strong> <span class="text-muted">{{ $products[$key]['product']['unit']['name'] }}</span>
+                                            <div class="tw-text-green-900"><strong>{{ $products[$key]['product']['store_stock'] + $products[$key]['product_price_quantity'] }}</strong> <span class="tw-text-sm">{{ $products[$key]['product']['unit']['name'] }}</span></div>
+                                            @php
+                                                $current_stock = $products[$key]['product']['store_stock'] + $products[$key]['product_price_quantity'];
+                                                $prices = collect($products[$key]['product']['prices'])->sortByDesc('quantity');
+                                            @endphp
+
+
+                                            @foreach($prices as $price)
+                                                @php
+
+                                                    $stock = $current_stock / $price['quantity'];
+                                                @endphp
+                                                <div><strong>{{ (int) $stock }}</strong> <span class="text-muted">{{ $price['unit']['name'] }}</span></div>
+                                                @php
+                                                    $current_stock = $current_stock - ( (int) $stock * $price['quantity'])
+                                                @endphp
+
+                                            @endforeach
+
 
 {{--                                            <div class="input-group mb-3">--}}
 {{--                                                <input wire:model.defer="products.{{ $key }}.product.store_stock" type="text" class="form-control" readonly>--}}
@@ -233,8 +284,24 @@
 {{--                                            </div>--}}
                                         </td>
                                         <td class="tw-items-center">
-                                            <strong>{{ $products[$key]['product']['warehouse_stock'] - $products[$key]['product_price_quantity'] }}</strong> <span class="text-muted">{{ $products[$key]['product']['unit']['name'] }}</span>
+                                            <div class="tw-text-green-900"><strong>{{ $products[$key]['product']['warehouse_stock'] - $products[$key]['product_price_quantity'] }}</strong> <span class="tw-text-sm">{{ $products[$key]['product']['unit']['name'] }}</span></div>
+                                            @php
+                                                $current_stock = $products[$key]['product']['warehouse_stock'] - $products[$key]['product_price_quantity'];
+                                                $prices = collect($products[$key]['product']['prices'])->sortByDesc('quantity');
+                                            @endphp
 
+
+                                            @foreach($prices as $price)
+                                                @php
+
+                                                    $stock = $current_stock / $price['quantity'];
+                                                @endphp
+                                                <div><strong>{{ (int) $stock }}</strong> <span class="text-muted">{{ $price['unit']['name'] }}</span></div>
+                                                @php
+                                                    $current_stock = $current_stock - ( (int) $stock * $price['quantity'])
+                                                @endphp
+
+                                            @endforeach
 {{--                                            <div class="input-group mb-3">--}}
 {{--                                                <input wire:model.defer="products.{{ $key }}.product.warehouse_stock" type="text" class="form-control" readonly>--}}
 {{--                                                <div class="input-group-append">--}}

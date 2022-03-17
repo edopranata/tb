@@ -310,17 +310,21 @@
     --tw-text-opacity: 1 !important;
     color: rgb(100 116 139 / var(--tw-text-opacity)) !important
 }
+.tw-text-green-900 {
+    --tw-text-opacity: 1 !important;
+    color: rgb(20 83 45 / var(--tw-text-opacity)) !important
+}
 .tw-text-green-600 {
     --tw-text-opacity: 1 !important;
     color: rgb(22 163 74 / var(--tw-text-opacity)) !important
 }
-.tw-text-slate-700 {
-    --tw-text-opacity: 1 !important;
-    color: rgb(51 65 85 / var(--tw-text-opacity)) !important
-}
 .tw-text-red-600 {
     --tw-text-opacity: 1 !important;
     color: rgb(220 38 38 / var(--tw-text-opacity)) !important
+}
+.tw-text-slate-700 {
+    --tw-text-opacity: 1 !important;
+    color: rgb(51 65 85 / var(--tw-text-opacity)) !important
 }
 .tw-shadow-sm {
     --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;

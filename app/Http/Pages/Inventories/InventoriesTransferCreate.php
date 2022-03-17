@@ -81,9 +81,12 @@ class InventoriesTransferCreate extends Autocomplete
                 foreach ($this->transfer->details as $detail) {
                     array_push($this->products, $detail->toArray());
                 }
+//                $this->products = collect($this->products);
             }
             $this->transfer_date = $this->transfer['transfer_date']->format('Y-m-d');
         }
+
+//        dd($this->products);
     }
 
     public function beginTransfer()
