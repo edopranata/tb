@@ -15,4 +15,9 @@ class ProductTransferDetail extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function price()
+    {
+        return $this->belongsTo(ProductPrice::class, 'product_price_id', 'id');
+    }
 }

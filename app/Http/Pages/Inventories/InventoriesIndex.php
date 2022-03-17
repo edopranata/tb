@@ -68,6 +68,7 @@ class InventoriesIndex extends Autocomplete
 //            dd($this->purchase->details);
             foreach ($this->purchase->details as $detail) {
                 // Insert Into Details Purchase select from tempPurchaseDetails
+
                 $purchase_transaction->details()->create([
                     'product_id'                => $detail->product_id,
                     'product_price_id'          => $detail->product_price_id,
@@ -82,19 +83,22 @@ class InventoriesIndex extends Autocomplete
                 // Insert Into ProductStock every Purchase Details
                 $detail->product->stocks()->create([
                     'supplier_id'       => $this->purchase->supplier_id,
-                    'first_stock'       => $detail->price->quantity,
-                    'available_stock'   => $detail->price->quantity,
+                    'first_stock'       => $detail->product_price_quantity,
+                    'available_stock'   => $detail->product_price_quantity,
                     'buying_price'      => $detail->total / $detail->product_price_quantity,
-                    'descrption'        => 'PENAMBAHAN',
+                    'description'       => 'PENAMBAHAN',
 
                 ]);
-
+//                Debugbar::info('Create Stock');
                 // Increment Warehouse stock in product table
                 // get store stock before increment warehouse stock
                 $store_stock = $detail->product->store_stock;
+
+//                DB::rollBack();
+//                dd('Stck ' .$detail->product_price_quantity);
                 // increment warehouse stock reduce store stock
 
-                $detail->product->increment('warehouse_stock', $detail->product_price_quantity - $store_stock ?: 0);
+                $detail->product()->increment('warehouse_stock', $detail->product_price_quantity);
             }
 
             // Insert into purchase history
@@ -127,8 +131,8 @@ class InventoriesIndex extends Autocomplete
     {
         $t_details = collect($this->products[$key]);
         $p_prices = collect($t_details['product']['prices'])->where('id', $this->products[$key]['product_price_id'])->first();
-//        $p_stock = collect($t_details['product']['stocks'])->last();
-        $buying_price = $t_details['buying_price']; //$p_stock ? $p_stock['buying_price'] * $p_prices['quantity'] : 0;
+        $p_stock = collect($t_details['product']['stocks'])->last();
+        $buying_price = $p_stock['buying_price'] * $p_prices['quantity']; //$p_stock ? $p_stock['buying_price'] * $p_prices['quantity'] : 0;
         $this->purchase
             ->details()
             ->where('id', $t_details['id'])

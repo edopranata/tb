@@ -80,6 +80,7 @@ class ProductsCreate extends Component
 
                 $product->update([
                     'warehouse_stock'   => $this->available_stock,
+                    'store_stock'       => 0,
                 ]);
 
                 $product->stocks()->create([

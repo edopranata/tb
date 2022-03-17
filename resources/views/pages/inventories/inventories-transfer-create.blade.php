@@ -9,8 +9,8 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('pages.units.index') }}">Satuan Produk</a></li>
-                            <li class="breadcrumb-item active">Buat satuan produk</li>
+                            <li class="breadcrumb-item"><a href="{{ route('pages.stock.index') }}">Stok Transfer</a></li>
+                            <li class="breadcrumb-item active">Transfer stock {{ ($transfer_to === "store") ? "Toko ke " : "Gudang ke " }} {{ ($transfer_to === "store") ? "Gudang" : "Toko" }}</li>
                         </ol>
                     </div>
                 </div>
@@ -18,9 +18,15 @@
         </section>
     </x-slot>
     <x-card.action>
-        <x-card.action-link href="{{ route('pages.units.index') }}" :btn="'light'">Kembali Kedaftar Satuan</x-card.action-link>
-        <x-card.action-button wire:click="save()">Simpan Data</x-card.action-button>
+        <x-card.action-link href="{{ route('pages.stock.index') }}" :btn="'light'">Kembali daftar transfer stock</x-card.action-link>
+        @if($transfer)<x-card.action-button wire:click="save()" :disabled="$errors->any()">Simpan Data</x-card.action-button>@endif
     </x-card.action>
+    @php
+        $storage_store = [
+            'Store'     => 'Toko',
+            'Warehouse' => 'Gudang'
+        ];
+    @endphp
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -49,8 +55,8 @@
                     <div class="row">
                         <div class="col-md-12">
                             @if($transfer)
-                                <button  type="button" class="btn btn-danger btn-flat">Batalkan Transaksi</button>
-                                <button  type="button" class="btn btn-warning btn-flat">Simpan sebagai draf kembali ke halaman utama</button>
+                                <button wire:click="cancelTransfer()" type="button" class="btn btn-danger btn-flat">Batalkan Transaksi</button>
+                                <a href="{{ route('dashboard.index') }}" class="btn btn-warning btn-flat">Simpan sebagai draft kembali ke halaman utama</a>
                             @else
                                 <button wire:click="beginTransfer()" class="btn btn-flat btn-dark">Add Product</button>
                             @endif
@@ -99,7 +105,7 @@
                                         },
                                     }"
                         >
-                            <div x-on:value-selected="updateSelected($event.detail.id, $event.detail.name)">
+                            <div x-on:value-selected="updateSelected($event.detail.id, $event.detail.name)" class="tw-w-full">
                                 <label>Cari Produk (Barcode / Nama Produk)</label>
                                 <input x-ref="query" class="form-control-lg form-control rounded-0"
                                        wire:model.debounce.600ms="search"
@@ -109,11 +115,11 @@
                                             id: $refs.results.children[highlightedIndex].getAttribute('data-result-id'),
                                             name: $refs.results.children[highlightedIndex].getAttribute('data-result-name')
                                       })">
-                                <div class="tw-absolute tw-w-full pr-5" x-show="open" x-on:click.away="open = false">
-                                    <ul class="dropdown-menu show tw-w-full mr-3" x-ref="results">
+                                <div class="tw-absolute tw-w-full tw-pr-10" x-show="open" x-on:click.away="open = false">
+                                    <ul class="tw-relative dropdown-menu show tw-w-full" x-ref="results">
                                         @isset($results)
                                             @forelse($results as $index => $result)
-                                                <li class="dropdown-item"
+                                                <li class="dropdown-item tw-cursor-pointer hover:tw-bg-slate-300"
                                                     wire:key="{{ $index }}"
                                                     x-on:click.stop="$dispatch('value-selected', {
                                                         id: {{ $result->id }},
@@ -129,7 +135,7 @@
                                                     </span>
                                                 </li>
                                             @empty
-                                                <li class="dropdown-item">Produk tidak ditemukan</li>
+                                                <li class="dropdown-item tw-cursor-pointer hover:tw-bg-slate-300">Produk tidak ditemukan</li>
                                             @endforelse
                                         @endisset
                                     </ul>
@@ -139,12 +145,21 @@
                         </div>
                     </div>
                 </div>
+
+                @if (session()->has('error'))
+                    <div class="card-footer alert-danger">
+                        {{session('error')}}
+                    </div>
+                @endif
             </div>
         </div>
         @if($transfer->details->count())
             <div class="row">
                 <div class="col-lg-12">
                 <div class="card tw-z-50">
+                    <div class="card-header alert-default-info">
+                        <h5>Transfer stok dari {{  \Illuminate\Support\Str::ucfirst($storage_store[$transfer_from]) }} ke {{  \Illuminate\Support\Str::ucfirst($storage_store[$transfer_to]) }}</h5>
+                    </div>
                     <div class="card-body px-0">
                         <div class="table-responsive">
                             <table class="table table-hover">
@@ -165,8 +180,9 @@
                                     <th style="min-width: 150px;">Total Transfer</th>
                                     <th style="min-width: 180px;">Stok Toko</th>
                                     <th style="min-width: 180px;">Stok Gudang</th>
-                                    <th style="min-width: 180px">Total Toko</th>
-                                    <th style="min-width: 180px">Total Gudang</th>
+                                    <th style="min-width: 180px">Total {{ \Illuminate\Support\Str::ucfirst($storage_store[$transfer_to])  }}</th>
+                                    <th style="min-width: 180px">Total {{ \Illuminate\Support\Str::ucfirst($storage_store[$transfer_from])  }}</th>
+                                    <th style="min-width: 100px">Aksi</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -180,7 +196,8 @@
                                                     <div class="form-group col-md-6">
                                                         <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.id" class="form-control mb-2 mr-sm-2" type="hidden" min="1"/>
                                                         <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.quantity" class="form-control mb-2 mr-sm-2" type="number" min="1"/>
-                                                        @error('products.' . $key . '.quantity') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
+                                                        @error('products.' . $key . '.quantity') <div class="text-sm text-muted text-red">{{ $message }}</div><hr> @enderror
+                                                        @error('products.' . $key . '.product_price_quantity') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                                     </div>
                                                     <div class="form-group col-md-6">
                                                         <select wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.product_price_id" class="form-control mb-2 mr-sm-2">
@@ -195,7 +212,7 @@
                                             </div>
                                         </td>
                                         <td class="tw-items-center">
-                                            <strong>{{ $products[$key]['product_price_quantity'] ?: 0  }}</strong> <span class="text-muted">{{ $item->price->unit->name }}</span>
+                                            <strong>{{ $products[$key]['product_price_quantity'] ?: 0  }}</strong> <span class="text-muted">{{ $products[$key]['product']['unit']['name'] }}</span>
 {{--                                            <div class="input-group mb-3">--}}
 {{--                                                <input wire:model.defer="products.{{ $key }}.product_price_quantity" type="text" class="form-control" readonly>--}}
 {{--                                                <div class="input-group-append">--}}
@@ -205,6 +222,7 @@
                                         </td>
                                         <td class="tw-items-center">
                                             <div class="tw-text-green-900"><strong>{{ $products[$key]['product']['store_stock'] ?: 0  }}</strong> <span class="tw-text-sm">{{ $products[$key]['product']['unit']['name'] }}</span></div>
+                                            <hr>
                                             @php
                                                 $current_stock = $products[$key]['product']['store_stock'] ?: 0;
                                                 $prices = collect($products[$key]['product']['prices'])->sortByDesc('quantity');
@@ -232,6 +250,7 @@
                                         </td>
                                         <td class="tw-items-center">
                                             <div class="tw-text-green-900"><strong>{{ $products[$key]['product']['warehouse_stock'] ?: 0 }}</strong> <span class="tw-text-sm">{{ $products[$key]['product']['unit']['name'] }}</span></div>
+                                            <hr>
                                             @php
                                             $current_stock = $products[$key]['product']['warehouse_stock'] ?: 0;
                                             $prices = collect($products[$key]['product']['prices'])->sortByDesc('quantity');
@@ -256,9 +275,10 @@
 {{--                                            </div>--}}
                                         </td>
                                         <td class="tw-items-center">
-                                            <div class="tw-text-green-900"><strong>{{ $products[$key]['product']['store_stock'] + $products[$key]['product_price_quantity'] }}</strong> <span class="tw-text-sm">{{ $products[$key]['product']['unit']['name'] }}</span></div>
+                                            <div class="tw-text-green-900"><strong>{{ $products[$key]['product'][\Illuminate\Support\Str::lower($transfer_to) . '_stock'] + $products[$key]['product_price_quantity'] }}</strong> <span class="tw-text-sm">{{ $products[$key]['product']['unit']['name'] }}</span></div>
+                                            <hr>
                                             @php
-                                                $current_stock = $products[$key]['product']['store_stock'] + $products[$key]['product_price_quantity'];
+                                                $current_stock = $products[$key]['product'][\Illuminate\Support\Str::lower($transfer_to) . '_stock'] + $products[$key]['product_price_quantity'];
                                                 $prices = collect($products[$key]['product']['prices'])->sortByDesc('quantity');
                                             @endphp
 
@@ -284,9 +304,10 @@
 {{--                                            </div>--}}
                                         </td>
                                         <td class="tw-items-center">
-                                            <div class="tw-text-green-900"><strong>{{ $products[$key]['product']['warehouse_stock'] - $products[$key]['product_price_quantity'] }}</strong> <span class="tw-text-sm">{{ $products[$key]['product']['unit']['name'] }}</span></div>
+                                            <div class="tw-text-green-900"><strong>{{ $products[$key]['product'][\Illuminate\Support\Str::lower($transfer_from) . '_stock'] - $products[$key]['product_price_quantity'] }}</strong> <span class="tw-text-sm">{{ $products[$key]['product']['unit']['name'] }}</span></div>
+                                            <hr>
                                             @php
-                                                $current_stock = $products[$key]['product']['warehouse_stock'] - $products[$key]['product_price_quantity'];
+                                                $current_stock = $products[$key]['product'][\Illuminate\Support\Str::lower($transfer_from) . '_stock'] - $products[$key]['product_price_quantity'];
                                                 $prices = collect($products[$key]['product']['prices'])->sortByDesc('quantity');
                                             @endphp
 
@@ -309,6 +330,7 @@
 {{--                                                </div>--}}
 {{--                                            </div>--}}
                                         </td>
+                                        <td><button wire:click="removeItem({{ $item->id }})" class="btn btn-flat btn-sm btn-danger" type="button"><i class="fas fa-trash"></i> Hapus </button> </td>
                                     </tr>
                                 @endforeach
                                 </tbody>

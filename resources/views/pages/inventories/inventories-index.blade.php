@@ -159,7 +159,7 @@
                                             <ul class="dropdown-menu show tw-w-full mr-3" x-ref="results">
                                                 @isset($results)
                                                     @forelse($results as $index => $result)
-                                                        <li class="dropdown-item"
+                                                        <li class="dropdown-item hover:tw-bg-slate-300 tw-cursor-pointer"
                                                             wire:key="{{ $index }}"
                                                             x-on:click.stop="$dispatch('value-selected', {
                                                         id: {{ $result->id }},
@@ -175,7 +175,7 @@
                                                     </span>
                                                         </li>
                                                     @empty
-                                                        <li class="dropdown-item">Produk tidak ditemukan</li>
+                                                        <li class="dropdown-item hover:tw-bg-slate-300 tw-cursor-pointer">Produk tidak ditemukan</li>
                                                     @endforelse
                                                 @endisset
                                             </ul>

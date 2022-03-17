@@ -17,7 +17,10 @@ class CreateProductTransferDetailsTable extends Migration
             $table->id();
             $table->foreignIdFor(\App\Models\ProductTransfer::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->foreignIdFor(\App\Models\Product::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignIdFor(\App\Models\ProductPrice::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
+            $table->string('product_name');
             $table->integer('quantity');
+            $table->integer('product_price_quantity'); // Total Unit Quantity * Quantity
             $table->timestamps();
         });
     }
