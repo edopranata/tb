@@ -17,7 +17,7 @@
         </section>
     </x-slot>
     <x-card.action>
-        <x-card.action-button type="button" :btn="'light'">
+        <x-card.action-button onclick="window.print()" type="button" :btn="'light'">
             Print
         </x-card.action-button>
     </x-card.action>

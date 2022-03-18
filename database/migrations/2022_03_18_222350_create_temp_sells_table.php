@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSellsTable extends Migration
+class CreateTempSellsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateSellsTable extends Migration
      */
     public function up()
     {
-        Schema::create('sells', function (Blueprint $table) {
+        Schema::create('temp_sells', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\Customer::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->foreignIdFor(\App\Models\User::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
@@ -36,6 +36,6 @@ class CreateSellsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sells');
+        Schema::dropIfExists('temp_sells');
     }
 }

@@ -89,7 +89,7 @@ Route::middleware(['auth'])->group(function (){
                 Route::get('/', App\Http\Pages\Reporting\ReportTransfer::class)->name('index');
                 Route::get('/{transfer}', App\Http\Pages\Reporting\ReportTransferView::class)->name('view');
             });
-            Route::group(['prefix' => 'purchase', 'as' => 'purchase.'], function (){
+            Route::group(['prefix' => 'inventory', 'as' => 'inventory.'], function (){
                 Route::get('/', App\Http\Pages\Reporting\ReportPurchase::class)->name('index');
                 Route::get('/{purchase}', App\Http\Pages\Reporting\ReportPurchaseView::class)->name('view');
             });

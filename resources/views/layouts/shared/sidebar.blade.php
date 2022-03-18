@@ -61,6 +61,7 @@
 
                 </x-sidebar.menu-dropdown>
 
+                <li class="nav-header">TRANSAKSI</li>
                 <!-- Product Inventory and product transfer (warehouse stock to store) -->
                 <x-sidebar.menu-dropdown :title="$title = 'Inventori'" :active="request()->routeIs('pages.inventories.*') || request()->routeIs('pages.stock.*')">
                     <x-slot name="icon">
@@ -72,34 +73,43 @@
                     <x-sidebar.menu-item :title="$title = 'Transfer Toko ke Gudang'" :href="route('pages.stock.transfer.warehouse')" :active="request()->routeIs('pages.stock.transfer.warehouse')"/>
 
                 </x-sidebar.menu-dropdown>
-
-                <li class="nav-header">LAPORAN</li>
-                <x-sidebar.menu-dropdown :title="$title = 'Laporan Stock'" :active="request()->routeIs('pages.inventories.*') || request()->routeIs('pages.stock.*')">
+                <!-- Transaksi Penjualan -->
+                <x-sidebar.menu-dropdown :title="$title = 'Transaksi'" :active="request()->routeIs('pages.transaction.*')">
                     <x-slot name="icon">
-                        <i class="nav-icon fas fa-archive"></i>
+                        <i class="nav-icon fas fa-money-bill"></i>
                     </x-slot>
-                    <x-sidebar.menu-item :title="$title = 'Inventori Produk Masuk'" :href="route('pages.inventories.index')" :active="request()->routeIs('pages.inventories.*')"/>
+                    <x-sidebar.menu-item :title="$title = 'Transaksi Penjualan'" :href="route('pages.transaction.index')" :active="request()->routeIs('pages.transaction.*')"/>
+                </x-sidebar.menu-dropdown>
+
+                <!-- Laporan -->
+                <li class="nav-header">LAPORAN</li>
+                <x-sidebar.menu-dropdown :title="$title = 'Laporan Stock'" :active="request()->routeIs('pages.reporting.*')">
+                    <x-slot name="icon">
+                        <i class="nav-icon fas fa-paperclip"></i>
+                    </x-slot>
+                    <x-sidebar.menu-item :title="$title = 'Transfer Produk'" :href="route('pages.reporting.stock.index')" :active="request()->routeIs('pages.reporting.stock.*')"/>
+                    <x-sidebar.menu-item :title="$title = 'Inventori Produk Masuk'" :href="route('pages.reporting.inventory.index')" :active="request()->routeIs('pages.reporting.inventory.*')"/>
 
                 </x-sidebar.menu-dropdown>
-                <li class="nav-header">LABELS</li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon far fa-circle text-danger"></i>
-                        <p class="text">Important</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon far fa-circle text-warning"></i>
-                        <p>Warning</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon far fa-circle text-info"></i>
-                        <p>Informational</p>
-                    </a>
-                </li>
+{{--                <li class="nav-header">LABELS</li>--}}
+{{--                <li class="nav-item">--}}
+{{--                    <a href="#" class="nav-link">--}}
+{{--                        <i class="nav-icon far fa-circle text-danger"></i>--}}
+{{--                        <p class="text">Important</p>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
+{{--                <li class="nav-item">--}}
+{{--                    <a href="#" class="nav-link">--}}
+{{--                        <i class="nav-icon far fa-circle text-warning"></i>--}}
+{{--                        <p>Warning</p>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
+{{--                <li class="nav-item">--}}
+{{--                    <a href="#" class="nav-link">--}}
+{{--                        <i class="nav-icon far fa-circle text-info"></i>--}}
+{{--                        <p>Informational</p>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
