@@ -20,5 +20,4 @@ class ProductTransfer extends Model
         return $this->belongsTo(User::class);
     }
 
-
 }

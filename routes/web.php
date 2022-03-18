@@ -79,6 +79,17 @@ Route::middleware(['auth'])->group(function (){
                 Route::get('warehouse/create', \App\Http\Pages\Inventories\InventoriesTransferCreate::class)->name('warehouse');
             });
         });
+
+        Route::group(['prefix' => 'reporting', 'as' => 'reporting.'], function (){
+            Route::group(['prefix' => 'stock', 'as' => 'stock.'], function (){
+                Route::get('/', App\Http\Pages\Reporting\ReportTransfer::class)->name('index');
+                Route::get('/{transfer}', App\Http\Pages\Reporting\ReportTransferView::class)->name('view');
+            });
+            Route::group(['prefix' => 'purchase', 'as' => 'purchase.'], function (){
+                Route::get('/', App\Http\Pages\Reporting\ReportPurchase::class)->name('index');
+                Route::get('/{purchase}', App\Http\Pages\Reporting\ReportPurchaseView::class)->name('view');
+            });
+        });
     });
 });
 

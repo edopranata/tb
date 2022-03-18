@@ -73,7 +73,14 @@
 
                 </x-sidebar.menu-dropdown>
 
+                <li class="nav-header">LAPORAN</li>
+                <x-sidebar.menu-dropdown :title="$title = 'Laporan Stock'" :active="request()->routeIs('pages.inventories.*') || request()->routeIs('pages.stock.*')">
+                    <x-slot name="icon">
+                        <i class="nav-icon fas fa-archive"></i>
+                    </x-slot>
+                    <x-sidebar.menu-item :title="$title = 'Inventori Produk Masuk'" :href="route('pages.inventories.index')" :active="request()->routeIs('pages.inventories.*')"/>
 
+                </x-sidebar.menu-dropdown>
                 <li class="nav-header">LABELS</li>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
