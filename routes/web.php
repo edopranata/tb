@@ -80,6 +80,10 @@ Route::middleware(['auth'])->group(function (){
             });
         });
 
+        Route::group(['prefix' => 'transaction', 'as' => 'transaction.'], function (){
+            Route::get('/', \App\Http\Pages\Transaction\TransctionSell::class)->name('index');
+        });
+
         Route::group(['prefix' => 'reporting', 'as' => 'reporting.'], function (){
             Route::group(['prefix' => 'stock', 'as' => 'stock.'], function (){
                 Route::get('/', App\Http\Pages\Reporting\ReportTransfer::class)->name('index');
