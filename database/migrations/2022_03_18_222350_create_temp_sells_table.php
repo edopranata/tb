@@ -20,10 +20,10 @@ class CreateTempSellsTable extends Migration
             $table->string('customer_name');
             $table->dateTime('invoice_date')->nullable();
             $table->string('invoice_number')->nullable();
-            $table->double('bill'); //total tagihan
+            $table->double('bill')->default(0); //total tagihan
             $table->double('discount')->default(0); // discount
-            $table->double('payment'); // total uang diterima
-            $table->string('status'); // LUNAS / BELUM LUNAS
+            $table->double('payment')->default(0); // total uang diterima
+            $table->string('status')->default('BELUM LUNAS'); // LUNAS / BELUM LUNAS
             $table->date('due_date')->nullable();
             $table->timestamps();
         });

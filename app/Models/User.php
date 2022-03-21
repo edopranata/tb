@@ -87,6 +87,11 @@ class User extends Authenticatable implements HasMedia
         return $this->roles()->first()->name;
     }
 
+    public function tempSells()
+    {
+        return $this->hasMany(TempSell::class);
+    }
+
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumb')

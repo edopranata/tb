@@ -23,7 +23,7 @@ class CreateTempSellDetailsTable extends Migration
             $table->string('product_price_quantity'); // Total dari ke satuan terkecil
             $table->double('sell_price');
             $table->double('sell_price_quantity');
-            $table->string('price_category')->default('ECERAN');
+            $table->string('price_category')->default('SELL');
             $table->double('discount')->default(0);
             $table->double('total');
             $table->timestamps();

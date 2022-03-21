@@ -1,4 +1,4 @@
-<div x-data="transferPage()">
+<div>
     <x-slot name="breadcrumb">
         <section class="content-header">
             <div class="container-fluid">
@@ -18,19 +18,60 @@
     </x-slot>
     <x-card.action>
         <x-card.action-link href="{{ route('pages.stock.index') }}" :btn="'light'">Kembali halaman utama</x-card.action-link>
-        @if($transaction)<x-card.action-button wire:click="save()" :disabled="$errors->any()">Simpan Data</x-card.action-button>@endif
+        @if($sells)<x-card.action-button wire:click="save()" :disabled="$errors->any()">Simpan Data</x-card.action-button>@endif
     </x-card.action>
 
-    <div class="row">
+    <div class="row" x-data="transferPage()">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Tanggal Transaksi</label>
+                                <input wire:model="transaction_date" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group" wire:ignore>
+                                <label>Pelanggan</label>
+                                <select id="customer-select" class="form-control">
+                                    <option value="">Pilih Pelanggan</option>
+                                    @foreach($customers as $customer)
+                                        <option value="{{ $customer['id'] }}">{{ $customer['name'] }}</option>
+                                    @endforeach
+                                </select>
+                                @error('customer_id') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Nama Pelanggan</label>
+                                <input wire:model="customer_name" type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>No Nota</label>
+                                <input wire:model="invoice_number" type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            @if($sells)
+                                <button wire:click="cancelTransaction()" type="button" class="btn btn-danger btn-flat">Batalkan Transaksi</button>
+                                <button wire:click="saveDraft()" type="button" class="btn btn-warning btn-flat">Simpan sebagai draf kembali ke halaman utama</button>
+                            @else
+                                <button wire:click="transactionBegin()" type="button" class="btn btn-dark btn-flat">Tambah produk</button>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    @if($transaction)
+    @if($sells)
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
@@ -116,7 +157,7 @@
                 @endif
             </div>
         </div>
-        @if($transaction->details->count())
+        @if($sells->details->count())
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card tw-z-50">
@@ -126,12 +167,27 @@
         @endif
     @endif
 </div>
-@push('script')
+@push('js')
     <script>
+
+        window.addEventListener('transactionBegin', () => {
+            $("#customer-select").select2({
+                disabled: true,
+            });
+        })
+        window.addEventListener('transactionCancel', () => {
+            $("#customer-select").val('').select2({
+                disabled: false,
+            }).trigger('change');
+        })
+
         function transferPage() {
             return {
                 init: function(){
-
+                    $('#customer-select').select2();
+                    $('#customer-select').on('change', function (e) {
+                        @this.set('customer_id', $('#customer-select').select2("val"));
+                    });
                 }
             }
         }
