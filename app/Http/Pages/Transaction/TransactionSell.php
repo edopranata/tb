@@ -201,7 +201,6 @@ class TransactionSell extends Autocomplete
                     'sell_price'                => $price[$this->price_type . '_price'],
                     'sell_price_quantity'       => 1,
                     'price_category'            => Str::upper($this->price_type),
-//                'buying_price'              => $stock ? $stock->buying_price * $price->quantity : 0,
                     'total'                     => $price[$this->price_type . '_price'] * $price['quantity'],
 
                 ]);
