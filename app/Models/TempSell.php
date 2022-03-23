@@ -21,4 +21,9 @@ class TempSell extends Model
     {
         return $this->hasMany(TempSellDetail::class);
     }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
 }

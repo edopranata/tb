@@ -19,8 +19,8 @@ class CreateProductsTable extends Migration
             $table->string('name');
             $table->string('description')->nullable();
             $table->integer('min_stock')->default(1);
-            $table->integer('warehouse_stock')->nullable();
-            $table->integer('store_stock')->nullable();
+            $table->integer('warehouse_stock')->default(0);
+            $table->integer('store_stock')->default(0);
             $table->foreignIdFor(\App\Models\Category::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->foreignIdFor(\App\Models\Unit::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->foreignIdFor(\App\Models\User::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
