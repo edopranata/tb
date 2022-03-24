@@ -32,7 +32,7 @@ class SuppliersEdit extends Component
     public function update(){
 
         $this->validate([
-            'name'          => ['required', 'string', 'min:2', 'max:20', 'unique:units,name,' . $this->suppliers->id],
+            'name'          => ['required', 'string', 'min:2', 'max:20', 'unique:suppliers,name,' . $this->suppliers->id],
             'description'   => ['nullable', 'string', 'min:2', 'max:255'],
             'phone'         => ['nullable', 'string', 'min:2', 'max:255'],
             'address'       => ['nullable', 'string', 'min:2', 'max:100'],

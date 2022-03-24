@@ -41,13 +41,14 @@
                 </x-sidebar.menu-dropdown>
 
                 <!-- Master Data Categories, Suppliers, Products Unit -->
-                <x-sidebar.menu-dropdown :title="$title = 'Master Data'" :active="request()->routeIs('pages.units.*') || request()->routeIs('pages.categories.*') || request()->routeIs('pages.suppliers.*')">
+                <x-sidebar.menu-dropdown :title="$title = 'Master Data'" :active="request()->routeIs('pages.units.*') || request()->routeIs('pages.categories.*') || request()->routeIs('pages.suppliers.*') || request()->routeIs('pages.customers.*')">
                     <x-slot name="icon">
                         <i class="nav-icon fas fa-boxes"></i>
                     </x-slot>
                     <x-sidebar.menu-item :title="$title = 'Satuan Produk'" :href="route('pages.units.index')" :active="request()->routeIs('pages.units.*')"/>
                     <x-sidebar.menu-item :title="$title = 'Kategori Produk'" :href="route('pages.categories.index')" :active="request()->routeIs('pages.categories.*')"/>
                     <x-sidebar.menu-item :title="$title = 'Data Pemasok'" :href="route('pages.suppliers.index')" :active="request()->routeIs('pages.suppliers.*')"/>
+                    <x-sidebar.menu-item :title="$title = 'Data Member'" :href="route('pages.customers.index')" :active="request()->routeIs('pages.customers.*')"/>
 
                 </x-sidebar.menu-dropdown>
 

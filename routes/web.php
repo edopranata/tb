@@ -60,6 +60,12 @@ Route::middleware(['auth'])->group(function (){
             Route::get('/create', \App\Http\Pages\Suppliers\SuppliersCreate::class)->name('create');
             Route::get('/{supplier}', \App\Http\Pages\Suppliers\SuppliersEdit::class)->name('edit');
         });
+
+        Route::group(['prefix' => 'customers', 'as' => 'customers.'], function (){
+            Route::get('/', \App\Http\Pages\Customer\CustomerIndex::class)->name('index');
+            Route::get('/create', \App\Http\Pages\Customer\CustomerCreate::class)->name('create');
+            Route::get('/{customer}', \App\Http\Pages\Customer\CustomerEdit::class)->name('edit');
+        });
         Route::group(['prefix' => 'products', 'as' => 'products.'], function (){
             Route::get('/', \App\Http\Pages\Products\ProductsIndex::class)->name('index');
             Route::get('/create', \App\Http\Pages\Products\ProductsCreate::class)->name('create');
