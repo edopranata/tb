@@ -75,7 +75,7 @@
 
                 </x-sidebar.menu-dropdown>
                 <!-- Transaksi Penjualan -->
-                <x-sidebar.menu-dropdown :title="$title = 'Transaksi'" :active="request()->routeIs('pages.transaction.*')">
+                <x-sidebar.menu-dropdown :title="$title = 'Penjualan'" :active="request()->routeIs('pages.transaction.*')">
                     <x-slot name="icon">
                         <i class="nav-icon fas fa-money-bill"></i>
                     </x-slot>

@@ -234,14 +234,24 @@
 
                                         </td>
                                         <td>
-                                            <div class="form-group col-md-12">
-                                                <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.sell_price" class="form-control mb-2 mr-sm-2 text-right" type="text"/>
+                                            <div class="input-group">
+                                                @php
+
+                                                @endphp
+                                                <div class="input-group-prepend" wire:click="setPrice('{{ $key }}','{{ $customer_id ? 'customer' : 'sell' }}')">
+                                                    <span class="input-group-text {{ \Illuminate\Support\Str::lower($products[$key]['price_category']) != 'wholesale' ? 'text-bold tw-bg-slate-700 tw-text-slate-100' : ''}}">{{ $customer_id ? 'C' : 'S'}}</span>
+                                                </div>
+                                                <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.sell_price" class="form-control text-right" type="text"/>
+                                                <div class="input-group-append" wire:click="setPrice('{{ $key }}','wholesale')">
+                                                    <div class="input-group-text {{ \Illuminate\Support\Str::lower($products[$key]['price_category']) === 'wholesale' ? 'text-bold tw-bg-slate-700 tw-text-slate-100' : ''}}">G</div>
+                                                </div>
                                                 @error('products.' . $key . '.sell_price') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                             </div>
+
                                         </td>
                                         <td>
                                             <div class="form-group col-md-12">
-                                                <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.discount" class="form-control mb-2 mr-sm-2 text-right" type="text"/>
+                                                <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.discount" class="form-control text-right" type="text"/>
                                                 @error('products.' . $key . '.discount') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                             </div>
                                         </td>

@@ -65,26 +65,25 @@ class TransactionSell extends Autocomplete
 
     public function updatedCustomerId()
     {
-        Debugbar::info($this->customer_id);
+
         $this->selectCustomer($this->customer_id);
     }
 
     public function selectCustomer($id = null)
     {
-        Debugbar::info($id);
+
         $customer = Customer::query()
             ->where('id', $id)
             ->first();
 
         $this->sells->update([
-            'customer_id'   => $id,
+            'customer_id'   => $id ?: null,
             'customer_name' => $id ? $customer->name : 'Guest',
         ]);
-        Debugbar::info($customer->name);
 
         $this->customer = $customer;
-        $this->customer_name = $customer ? $customer->name :  "Guest";
-        $this->customer_id = $customer ? $customer->id : null;
+        $this->customer_name = $id ? $customer->name :  "Guest";
+        $this->customer_id = $id ? $customer->id : null;
 
         $this->price_type = $id ? 'customer' : 'sell';
 
@@ -109,7 +108,6 @@ class TransactionSell extends Autocomplete
 
     public function loadTemp()
     {
-        // load table temporary beserta relasi
         $this->sells = [];
         $this->sells = \auth()->user()->tempSells()->with(['details.product.prices.unit', 'details.product.stocks', 'details.price.unit'])->first();
         if($this->sells){
@@ -119,44 +117,38 @@ class TransactionSell extends Autocomplete
                     array_push($this->products, $detail->toArray());
                 }
             }
-//            dd($this->products);
+
             $this->sell_discount    = $this->sells->discount;
             $this->transaction_date = $this->sells->invoice_date->format('Y-m-d');
             $this->customer_id      = $this->sells->customer_id;
             $this->customer_name    = $this->sells->customer_name;
             $this->price_type       = 'customer';
-//            $this->customer         = $this->sells->customer->toArray();
+
         }
-
-//        dd($this->products);
-
     }
 
     public function updateProduct($key)
     {
-        Debugbar::info('Begin update ' . $key);
         $t_details = collect($this->products[$key]);
         $p_prices = collect($t_details['product']['prices'])->where('id', $this->products[$key]['product_price_id'])->first();
-//        $p_stock = collect($t_details['product']['stocks'])->last();
-//        $sell_price = $p_stock['buying_price'] * $p_prices['quantity']; //$p_stock ? $p_stock['buying_price'] * $p_prices['quantity'] : 0;
-//        dd($p_prices);
-        $this->sells
-            ->details()
+
+        $temp_category = $this->customer_id ? 'customer' : 'sell';
+        $price_category = (Str::lower($this->products[$key]['price_category']) == 'wholesale') ? 'wholesale' : $temp_category;
+
+        TempSellDetail::query()
             ->where('id', $t_details['id'])
             ->update([
                 'product_price_id'          => $this->products[$key]['product_price_id'],
                 'quantity'                  => $this->products[$key]['quantity'],
                 'product_price_quantity'    => $this->products[$key]['quantity'] * $p_prices['quantity'],
 
-                'sell_price'                => $p_prices[Str::lower($this->products[$key]['price_category']) . '_price' ?: $this->price_type . '_price'],
+                'sell_price'                => $p_prices[Str::lower($price_category) . '_price' ?: $this->price_type . '_price'],
                 'discount'                  => $this->products[$key]['discount'],
                 'sell_price_quantity'       => 1,
-                'price_category'            => $this->products[$key]['price_category'] ?: Str::upper($this->price_type),
-                'total'                     => ($p_prices[Str::lower($this->products[$key]['price_category']) . '_price' ?: $this->price_type . '_price'] * $this->products[$key]['quantity']) - $this->products[$key]['discount'] ,
+                'price_category'            => Str::upper($price_category),
+                'total'                     => ($p_prices[Str::lower($price_category) . '_price'] * $this->products[$key]['quantity']) - $this->products[$key]['discount'] ,
             ]);
 
-        Debugbar::info('quantity ' . $this->products[$key]['quantity']);
-        Debugbar::info('product_price_quantity ' . $p_prices['quantity']);
         $this->loadTemp();
     }
 
@@ -165,13 +157,6 @@ class TransactionSell extends Autocomplete
         $this->emitUp('userSelected', $product);
         $product->load(['unit', 'prices.unit']);
         $this->addProduct($product);
-//        dd($product);
-//        if($product->store_stock >= 1){
-//
-//        }else{
-//            session()->flash('error', 'Out of stock for ' . $product->product_name . ' store stock ' . $product->store_stock . ' warehouse stock' . $product->warehouse_stock);
-//            return back();
-//        }
     }
 
     public function removeItem(TempSellDetail $details)
@@ -180,15 +165,20 @@ class TransactionSell extends Autocomplete
         $this->loadTemp();
     }
 
+    public function setPrice($index, $type = 'sell')
+    {
+        Debugbar::info($type);
+        $this->products[$index]['price_category'] = $type;
+        Debugbar::info($this->products[$index]);
+        $this->updateProduct($index);
+
+    }
+
     public function addProduct($product)
     {
         if($product->store_stock >= 1){
-// set satuan default adalah yang terakhir (Satuan terbesar)
             $price = collect($product->prices->where('default', '1')->first());
-            // cek harga modal terakhir beli (jika ada)
-//        $stock = $product->stocks->last();
 
-            // Tambahkan produk ke table temp (tabel sementara)
             $this
                 ->sells
                 ->details()
@@ -204,7 +194,6 @@ class TransactionSell extends Autocomplete
                     'total'                     => $price[$this->price_type . '_price'] * $price['quantity'],
 
                 ]);
-            // panggil fungsi loadTemp (Load table transaksi temporari pembeian)
             $this->loadTemp();
         }else{
             session()->flash('error', 'Out of stock for ' . $product->name . ' store stock ' . $product->store_stock . ' warehouse stock ' . $product->warehouse_stock);
