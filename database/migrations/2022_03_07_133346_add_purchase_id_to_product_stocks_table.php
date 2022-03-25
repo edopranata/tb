@@ -14,7 +14,7 @@ class AddPurchaseIdToProductStocksTable extends Migration
     public function up()
     {
         Schema::table('product_stocks', function (Blueprint $table) {
-            $table->foreignId('purchase_id')->nullable()->constrained('purchases')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignId('purchase_id')->after('supplier_id')->nullable()->constrained('purchases')->cascadeOnUpdate()->nullOnDelete();
 //            $table->foreign('purchase_id')->references('id')->on('purchases')->cascadeOnUpdate()->nullOnDelete();
         });
     }

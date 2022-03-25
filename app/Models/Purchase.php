@@ -25,4 +25,9 @@ class Purchase extends Model
     {
         return $this->hasMany(PurchaseHistory::class);
     }
+
+    public function stocks()
+    {
+        return $this->hasMany(ProductStock::class);
+    }
 }

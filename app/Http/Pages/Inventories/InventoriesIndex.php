@@ -7,8 +7,6 @@ use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Supplier;
 use App\Models\TempPurchaseDetail;
-use App\Models\User;
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\Facades\DB;
 
 class InventoriesIndex extends Autocomplete
@@ -65,7 +63,6 @@ class InventoriesIndex extends Autocomplete
                     'invoice_date'      => $this->purchase->invoice_date,
                     'status'            => $this->fund ? 'BELUM LUNAS' : "LUNAS",
                 ]);
-//            dd($this->purchase->details);
             foreach ($this->purchase->details as $detail) {
                 // Insert Into Details Purchase select from tempPurchaseDetails
 
@@ -81,14 +78,17 @@ class InventoriesIndex extends Autocomplete
 
                 $purchase_transaction->with('price');
                 // Insert Into ProductStock every Purchase Details
-                $detail->product->stocks()->create([
+
+//                dd($this->purchase->details);
+                $purchase_transaction->stocks()->create([
+                    'product_id'        => $detail->product_id,
                     'supplier_id'       => $this->purchase->supplier_id,
                     'first_stock'       => $detail->product_price_quantity,
                     'available_stock'   => $detail->product_price_quantity,
                     'buying_price'      => $detail->total / $detail->product_price_quantity,
                     'description'       => 'PENAMBAHAN',
-
                 ]);
+
 //                Debugbar::info('Create Stock');
                 // Increment Warehouse stock in product table
                 // get store stock before increment warehouse stock
@@ -131,8 +131,7 @@ class InventoriesIndex extends Autocomplete
     {
         $t_details = collect($this->products[$key]);
         $p_prices = collect($t_details['product']['prices'])->where('id', $this->products[$key]['product_price_id'])->first();
-        $p_stock = collect($t_details['product']['stocks'])->last();
-        $buying_price = $p_stock['buying_price'] * $p_prices['quantity']; //$p_stock ? $p_stock['buying_price'] * $p_prices['quantity'] : 0;
+        $buying_price = $this->products[$key]['buying_price'];
         $this->purchase
             ->details()
             ->where('id', $t_details['id'])
