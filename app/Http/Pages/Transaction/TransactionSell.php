@@ -16,7 +16,7 @@ class TransactionSell extends Autocomplete
 
     public $transaction_date;
     public $customer_id;
-    public $customer_name;
+    public $customer_name = 'Guest';
     public $invoice_number;
     public $sell_discount;
 
@@ -76,14 +76,17 @@ class TransactionSell extends Autocomplete
             ->where('id', $id)
             ->first();
 
-        $this->sells->update([
-            'customer_id'   => $id ?: null,
-            'customer_name' => $id ? $customer->name : 'Guest',
-        ]);
+        if($this->sells){
+            $this->sells->update([
+                'customer_id'   => $id ?: null,
+                'customer_name' => $id ? $customer->name : 'Guest',
+            ]);
 
-        $this->customer = $customer;
-        $this->customer_name = $id ? $customer->name :  "Guest";
-        $this->customer_id = $id ? $customer->id : null;
+            $this->customer = $customer;
+            $this->customer_name = $id ? $customer->name :  "Guest";
+            $this->customer_id = $id ? $customer->id : null;
+
+        }
 
         $this->price_type = $id ? 'customer' : 'sell';
 
@@ -104,6 +107,32 @@ class TransactionSell extends Autocomplete
         ]);
 
         $this->loadTemp();
+    }
+
+    public function cancelTransaction()
+    {
+        $this->sells->details()->delete();
+        $this->sells->delete();
+        $this->loadTemp();
+        $this->reset([
+            'transaction_date',
+            'customer_id',
+            'customer_name',
+            'invoice_number',
+            'sell_discount',
+            'price_type',
+            'products',
+        ]);
+
+        $this->transaction_date = now()->format('Y-m-d');
+
+        $this->dispatchBrowserEvent('transactionCancel');
+    }
+
+    public function saveDraft()
+    {
+        // ke halaman index (transaksi pembelian terakhir tetap tersimpan berdasarkan User ID)
+        return redirect()->route('dashboard.index');
     }
 
     public function loadTemp()
