@@ -1,4 +1,4 @@
-<div>
+<div x-data="transferPage()">
     <x-slot name="breadcrumb">
         <section class="content-header">
             <div class="container-fluid">
@@ -18,10 +18,10 @@
     </x-slot>
     <x-card.action>
         <x-card.action-link href="{{ route('pages.stock.index') }}" :btn="'light'">Kembali halaman utama</x-card.action-link>
-        @if($sells)<x-card.action-button wire:click="save()" :disabled="$errors->any()">Simpan Data</x-card.action-button>@endif
+        @if($sells)<button class="btn btn-primary btn-flat" type="button" x-on:click="submit()" @if($errors->any()) disabled @endif">Simpan Data</button>@endif
     </x-card.action>
 
-    <div class="row" x-data="transferPage()">
+    <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
@@ -61,9 +61,12 @@
                         <div class="col-12">
                             @if($sells)
                                 <button wire:click="cancelTransaction()" type="button" class="btn btn-danger btn-flat">Batalkan Transaksi</button>
-                                <button wire:click="saveDraft()" type="button" class="btn btn-warning btn-flat">Simpan sebagai draf kembali ke halaman utama</button>
+                                <button type="button" class="btn btn-warning btn-flat">Simpan sebagai draf kembali ke halaman utama</button>
                             @else
-                                <button wire:click="transactionBegin()" type="button" class="btn btn-dark btn-flat">Tambah produk</button>
+                                <button
+                                    x-ref="btnSave"
+                                    x-on:keydown.window.prevent.ctrl.enter="console.log('ctrl enter')"
+                                    wire:click="transactionBegin()" type="button" class="btn btn-dark btn-flat">Tambah produk</button>
                             @endif
                         </div>
                     </div>
@@ -80,7 +83,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Quick Add (Barcode)</label>
-                                    <input wire:model.defer="barcode"wire:keydown.enter="selectBarcode()" type="text" class="form-control-lg form-control rounded-0">
+                                    <input wire:model.lazy="barcode"wire:keydown.enter="selectBarcode()" type="text" class="form-control-lg form-control rounded-0">
                                 </div>
                             </div>
                             <div class="col-md-9">
@@ -177,7 +180,7 @@
         </div>
         @if($sells->details->count())
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-md-8">
                     <div class="card">
                         <div class="table-responsive">
                             <table class="table table-hover">
@@ -185,7 +188,7 @@
                                 <tr>
                                     <th style="min-width: 10px">#</th>
                                     <th style="min-width: 200px;">Nama Produk</th>
-                                    <th style="min-width: 300px;">
+                                    <th style="min-width: 250px;">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 Jumlah Beli
@@ -195,11 +198,14 @@
                                             </div>
                                         </div>
                                     </th>
+
                                     <th style="min-width: 120px;">Total</th>
-                                    <th style="min-width: 250px;">Harga</th>
-                                    <th style="min-width: 250px;">Disc</th>
-                                    <th style="min-width: 250px;">Total Harga</th>
-                                    <th style="min-width: 130px">Act</th>
+                                    <th style="min-width: 200px;">Harga</th>
+                                    @if($show_discount)
+                                    <th style="min-width: 200px;">Disc</th>
+                                    @endif
+                                    <th style="min-width: 200px;">Total Harga</th>
+                                    <th style="min-width: 80px">Act</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -211,12 +217,11 @@
                                             <div class="form-row">
                                                 @if($item->product->prices->count())
                                                     <div class="form-group col-md-6">
-                                                        <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.id" class="form-control mb-2 mr-sm-2" type="hidden" min="1"/>
-                                                        <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.quantity" class="form-control mb-2 mr-sm-2" type="number" min="1"/>
+                                                        <input wire:change="updateProduct({{ $key }})" wire:model.lazy="products.{{ $key }}.quantity" class="form-control mr-sm-2 rupiah" type="text" min="1"/>
                                                         @error('products.' . $key . '.quantity') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                                     </div>
                                                     <div class="form-group col-md-6">
-                                                        <select wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.product_price_id" class="form-control mb-2 mr-sm-2">
+                                                        <select wire:change="updateProduct({{ $key }})" wire:model.lazy="products.{{ $key }}.product_price_id" class="form-control mr-sm-2">
                                                             @foreach($item->product->prices as $product_item)
                                                                 <option value="{{ $product_item->id }}">
                                                                     {{ $product_item->unit->name }}
@@ -229,69 +234,78 @@
                                         </td>
                                         <td>
                                             <div class="form-group col-md-12">
-                                                <input wire:model.defer="products.{{ $key }}.product_price_quantity" class="form-control mb-2 mr-sm-2" type="text" readonly/>
+                                                <input wire:model.lazy="products.{{ $key }}.product_price_quantity" class="form-control mr-sm-2" type="text" readonly/>
                                             </div>
 
                                         </td>
                                         <td>
                                             <div class="input-group">
-                                                @php
-
-                                                @endphp
                                                 <div class="input-group-prepend" wire:click="setPrice('{{ $key }}','{{ $customer_id ? 'customer' : 'sell' }}')">
                                                     <span class="input-group-text {{ \Illuminate\Support\Str::lower($products[$key]['price_category']) != 'wholesale' ? 'text-bold tw-bg-slate-700 tw-text-slate-100' : ''}}">{{ $customer_id ? 'C' : 'S'}}</span>
                                                 </div>
-                                                <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.sell_price" class="form-control text-right" type="text"/>
+                                                <input wire:model.lazy="products.{{ $key }}.sell_price" class="form-control text-right rupiah" type="text" readonly/>
                                                 <div class="input-group-append" wire:click="setPrice('{{ $key }}','wholesale')">
                                                     <div class="input-group-text {{ \Illuminate\Support\Str::lower($products[$key]['price_category']) === 'wholesale' ? 'text-bold tw-bg-slate-700 tw-text-slate-100' : ''}}">G</div>
                                                 </div>
                                                 @error('products.' . $key . '.sell_price') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                             </div>
+                                            <p>{{ $products[$key]['sell_price'] }}</p>
 
                                         </td>
+                                        @if($show_discount)
                                         <td>
                                             <div class="form-group col-md-12">
-                                                <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.discount" class="form-control text-right" type="text"/>
+                                                <input wire:change="updateProduct({{ $key }})" wire:model.lazy="products.{{ $key }}.discount" class="form-control text-right rupiah" type="text"/>
                                                 @error('products.' . $key . '.discount') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                             </div>
                                         </td>
+                                        @endif
                                         <td>
                                             <div class="form-group col-md-12">
-                                                <input wire:model.defer="products.{{ $key }}.total" class="form-control mb-2 mr-sm-2 text-right" type="text" readonly/>
+                                                <input wire:model.lazy="products.{{ $key }}.total" class="form-control mr-sm-2 text-right rupiah" type="text" readonly/>
                                             </div>
                                         </td>
                                         <td>
-                                            <button wire:click="removeItem({{ $item->id }})" class="btn btn-danger"><i class="fas fa-trash"></i> Hapus</button>
+                                            <button wire:click="removeItem({{ $item->id }})" class="btn btn-danger"><i class="fas fa-trash"></i></button>
                                         </td>
 
                                     </tr>
                                 @endforeach
                                 </tbody>
-                                <tfoot>
-                                <tr>
-                                    <th colspan="4" class="text-right pb-4">Total</th>
-                                    <th>
-                                        <div class="form-group col-md-12">
-                                            <input value="{{ $sells->details->sum('sell_price') }}" class="form-control mb-2 mr-sm-2 text-right" type="text" disabled/>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div class="form-group col-md-12">
-                                            <input value="{{ $sells->details->sum('discount') }}" class="form-control mb-2 mr-sm-2 text-right" type="text" disabled/>
-                                        </div>
-                                        <div class="form-group col-md-12">
-                                            <input wire:model.debounce.500ms="sell_discount" class="form-control mb-2 mr-sm-2 text-right" type="text"/>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div class="form-group col-md-12">
-                                            <input value="{{ $sells->details->sum('total') - $sell_discount }}" class="form-control mb-2 mr-sm-2 text-right" type="text" disabled/>
-                                        </div>
-                                    </th>
-                                    <th></th>
-                                </tr>
-                                </tfoot>
                             </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Total tagihan</h5>
+                            <div class="input-group input-group-lg mb-3">
+                                <div class="input-group-prepend rounded-0">
+                                    <span class="input-group-text">Rp.</span>
+                                </div>
+                                <input wire:model="total" type="text" class="form-control form-control-lg rounded-0 rupiah" readonly>
+                            </div>
+
+                            <h5>Total pembayaran</h5>
+                            <div class="input-group input-group-lg mb-3">
+                                <div class="input-group-prepend rounded-0">
+                                    <span class="input-group-text">Rp.</span>
+                                </div>
+                                <input wire:change="updatePayment()" wire:model.lazy="payment"  onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" type="text" class="form-control form-control-lg rounded-0 rupiah">
+                                <div class="input-group-append rounded-0">
+                                    <button wire:click="fixedPayment()" class="btn btn-info btn-flat" type="button">Pas</button>
+                                </div>
+                            </div>
+
+                            <h5>Uang kembali</h5>
+                            <div class="input-group input-group-lg mb-3">
+                                <div class="input-group-prepend rounded-0">
+                                    <span class="input-group-text">Rp.</span>
+                                </div>
+                                <input wire:model="refund" type="text" class="form-control form-control-lg rounded-0 rupiah" readonly>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -313,9 +327,56 @@
             }).trigger('change');
         })
 
+        window.addEventListener('pageReload', () => {
+            $('.rupiah').unmask();
+            $('.rupiah').mask('#,##0', {
+                reverse: true,
+                translation: {
+                    '#': {
+                        pattern: /-|\d/,
+                        recursive: true
+                    }
+                },
+                onChange: function(value, e) {
+                    var target = e.target,
+                        position = target.selectionStart; // Capture initial position
+
+                    target.value = value.replace(/(?!^)-/g, '').replace(/^,/, '').replace(/^-,/, '-');
+
+                    target.selectionEnd = position; // Set the cursor back to the initial position.
+                }
+            });
+        })
+
         function transferPage() {
             return {
+                submit(){
+                    $('.rupiah').unmask();
+                    this.$wire.transactionSave()
+                },
+
+                updatePayment() {
+                    $('.rupiah').unmask();
+                    this.$wire.updatePayment()
+                },
                 init: function(){
+                    $('.rupiah').mask('#,##0', {
+                        reverse: true,
+                        translation: {
+                            '#': {
+                                pattern: /-|\d/,
+                                recursive: true
+                            }
+                        },
+                        onChange: function(value, e) {
+                            var target = e.target,
+                                position = target.selectionStart; // Capture initial position
+
+                            target.value = value.replace(/(?!^)-/g, '').replace(/^,/, '').replace(/^-,/, '-');
+
+                            target.selectionEnd = position; // Set the cursor back to the initial position.
+                        }
+                    });
                     $('#customer-select').select2();
                     $('#customer-select').on('change', function (e) {
                         @this.set('customer_id', $('#customer-select').select2("val"));

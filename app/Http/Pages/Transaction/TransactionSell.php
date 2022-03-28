@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\TempSellDetail;
 use Barryvdh\Debugbar\Facades\Debugbar;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Symfony\Component\ErrorHandler\Debug;
 
@@ -18,9 +19,14 @@ class TransactionSell extends Autocomplete
     public $customer_id;
     public $customer_name = 'Guest';
     public $invoice_number;
-    public $sell_discount;
+    public $sell_discount = 0;
 
-    public $price_type;
+    public $total;
+    public $payment = 0;
+    public $payment_format = 0;
+    public $refund;
+
+    public $price_type = 'sell';
 
     public $sells;
     public $products = [];
@@ -30,6 +36,8 @@ class TransactionSell extends Autocomplete
     public $customers;
     public $customer;
     protected $listeners = ['valueSelected'];
+
+    public $show_discount = false;
 
     public function render()
     {
@@ -44,7 +52,6 @@ class TransactionSell extends Autocomplete
             ->toArray();
 
         $this->transaction_date = now()->format('Y-m-d');
-        $this->price_type = 'sell';
         $this->customer_name = 'Guest';
         $this->loadTemp();
     }
@@ -63,9 +70,28 @@ class TransactionSell extends Autocomplete
         }
     }
 
+    public function fixedPayment()
+    {
+        $this->sells->update([
+            'payment'   => $this->total
+        ]);
+
+        $this->loadTemp();
+    }
+
+    public function updatePayment()
+    {
+        $this->sells->update([
+            'bill'      => $this->sells->details->sum('total'),
+            'discount'  => $this->sell_discount,
+            'payment'   => $this->payment,
+        ]);
+
+        $this->loadTemp();
+    }
+
     public function updatedCustomerId()
     {
-
         $this->selectCustomer($this->customer_id);
     }
 
@@ -86,9 +112,13 @@ class TransactionSell extends Autocomplete
             $this->customer_name = $id ? $customer->name :  "Guest";
             $this->customer_id = $id ? $customer->id : null;
 
+        }else{
+            $this->customer = $customer;
+            $this->customer_name = $id ? $customer->name :  "Guest";
+            $this->customer_id = $id ? $customer->id : null;
         }
 
-        $this->price_type = $id ? 'customer' : 'sell';
+        $this->price_type = ($id != null) ? 'customer' : 'sell';
 
         foreach ($this->products as $key => $product) {
             $this->updateProduct($key);
@@ -140,6 +170,7 @@ class TransactionSell extends Autocomplete
         $this->sells = [];
         $this->sells = \auth()->user()->tempSells()->with(['details.product.prices.unit', 'details.product.stocks', 'details.price.unit'])->first();
         if($this->sells){
+
             if($this->sells->details->count()){
                 $this->products = [];
                 foreach ($this->sells->details as $detail) {
@@ -147,17 +178,58 @@ class TransactionSell extends Autocomplete
                 }
             }
 
+            $this->invoice_number   = $this->sells->invoice_number;
             $this->sell_discount    = $this->sells->discount;
             $this->transaction_date = $this->sells->invoice_date->format('Y-m-d');
             $this->customer_id      = $this->sells->customer_id;
             $this->customer_name    = $this->sells->customer_name;
-            $this->price_type       = 'customer';
+            $this->price_type       = ($this->customer_id != null) ? 'customer' : 'sell';
 
+            $this->total            = $this->sells->details->sum('total');
+            $this->sell_discount    = $this->sells->discount;
+            $this->payment          = $this->sells->payment;
+            $this->payment_format   = $this->sells->payment;
+            $this->refund           = $this->payment - $this->total;
+
+//            $this->updatePayment();
+        }
+
+        $this->dispatchBrowserEvent('pageReload');
+
+    }
+
+    public function transactionSave()
+    {
+        /**
+         * 1. Validasi sebelum simpan data
+         * 2. Cek ketersediaan stock
+         * 3. Ambil harga modal dari tiap stock di table product stok
+         * 4. Simpan data dari temp ke transaksi penjualan beserta detail transasksi dengan status hutang atau lunas
+         * 5. Update stok di table product stock dan table produk
+         * 6. simpan ke table sell history
+         **/
+        
+
+
+        $this->validate([
+            'products'                  => ['required', 'array', 'min:1', 'max:4000000000'],
+            'products.*.quantity'       => ['required', 'numeric', 'min:1', 'max:4000000000'],
+        ]);
+        DB::beginTransaction();
+        try {
+
+            DB::commit();
+        }catch (\Exception $exception){
+
+            DB::rollBack();
         }
     }
 
     public function updateProduct($key)
     {
+        $this->resetErrorBag();
+        $this->resetValidation();
+
         $t_details = collect($this->products[$key]);
         $p_prices = collect($t_details['product']['prices'])->where('id', $this->products[$key]['product_price_id'])->first();
 
@@ -207,7 +279,7 @@ class TransactionSell extends Autocomplete
     {
         if($product->store_stock >= 1){
             $price = collect($product->prices->where('default', '1')->first());
-
+            Debugbar::info($this->price_type);
             $this
                 ->sells
                 ->details()

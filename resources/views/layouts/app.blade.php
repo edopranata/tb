@@ -23,8 +23,6 @@
         @stack('css')
 
 
-        <!-- Scripts -->
-        <script src="{{ mix('js/app.js') }}" defer></script>
     </head>
     <body class="layout-fixed layout-navbar-fixed">
         <div class="wrapper">
@@ -58,13 +56,15 @@
             <!-- /.control-sidebar -->
         </div>
 
+        <!-- Scripts -->
+        <script src="{{ mix('js/app.js') }}" defer></script>
         <script src="{{ asset('dist/plugins/jquery/jquery.min.js') }}"></script>
         <!-- Bootstrap 4 -->
         <script src="{{ asset('dist/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
         <!-- AdminLTE App -->
         <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
         <!-- Select2 -->
-        <script src="{{ asset('dist/plugins/select2/js/select2.full.min.js') }}"></script>
+{{--        <script src="{{ asset('dist/plugins/select2/js/select2.full.min.js') }}"></script>--}}
         <!-- Livewire Script -->
         <livewire:scripts />
         @stack('js')

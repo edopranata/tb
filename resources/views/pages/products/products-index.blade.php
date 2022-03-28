@@ -78,7 +78,7 @@
                                             class="tw-absolute tw-list-none pl-0 tw-border tw-bg-white tw-shadow-md tw-text-left tw-mt-0"
                                         >
                                             <li class="tw-p-2 hover:tw-bg-gray-200" wire:click="editId({{ $product['id'] }})">✏ Ubah Produk</li>
-                                            <li class="tw-p-2 hover:tw-bg-gray-200" wire:click="toRoute('pages.prices.index')">💸 Multi Harga</li>
+                                            <li class="tw-p-2 hover:tw-bg-gray-200" wire:click="toProductPrice({{ $product['id'] }})">💸 Multi Harga</li>
                                         </ul>
                                     </td>
                                     <td>{{ $key + 1 }}</td>
