@@ -41,8 +41,8 @@
                                         <option value="{{ $customer['id'] }}" @if($customer['id'] == $customer_id) selected @endif>{{ $customer['name'] }}</option>
                                     @endforeach
                                 </select>
-                                @error('customer_id') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                             </div>
+                            @error('customer_id') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">

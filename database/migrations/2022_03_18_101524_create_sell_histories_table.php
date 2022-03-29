@@ -16,7 +16,7 @@ class CreateSellHistoriesTable extends Migration
         Schema::create('sell_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\Sell::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->dateTime('pay_date');
+            $table->dateTime('due_date');
             $table->double('bill');
             $table->double('payment');
             $table->double('fund');

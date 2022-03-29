@@ -5,6 +5,7 @@ namespace App\Http\Pages\Transaction;
 use App\Http\Pages\Components\Autocomplete;
 use App\Models\Customer;
 use App\Models\Product;
+use App\Models\ProductStock;
 use App\Models\Sell;
 use App\Models\TempSellDetail;
 use Barryvdh\Debugbar\Facades\Debugbar;
@@ -88,9 +89,11 @@ class TransactionSell extends Autocomplete
             'bill'      => $bill,
             'discount'  => $discount,
             'payment'   => $payment,
+            'due_date'  => $this->due_date ?: null,
             'status'    => (($payment - $bill) >= 0) ? "LUNAS" : "BELUM LUNAS",
         ]);
-
+        $this->resetErrorBag();
+        $this->resetValidation();
         $this->loadTemp();
     }
 
@@ -98,11 +101,19 @@ class TransactionSell extends Autocomplete
     {
         $this->payment = 0;
         $this->updatePayment();
+
     }
 
     public function updatedCustomerId()
     {
         $this->selectCustomer($this->customer_id);
+    }
+
+    public function updatedDueDate()
+    {
+        $this->updatePayment();
+        $this->resetErrorBag();
+        $this->resetValidation();
     }
 
     public function selectCustomer($id = null)
@@ -137,7 +148,7 @@ class TransactionSell extends Autocomplete
 
     public function transactionBegin()
     {
-        $this->invoice_number = $this->prefix . now()->format('Ymdhis');
+        $this->invoice_number = $this->generateInvoiceNumber();
 
         auth()->user()->tempSells()->create([
             'customer_id'   => $this->customer_id ?: null,
@@ -149,11 +160,16 @@ class TransactionSell extends Autocomplete
         $this->loadTemp();
     }
 
+    public function generateInvoiceNumber()
+    {
+        return $this->invoice_number = $this->prefix . now()->format('Ymdhis');
+    }
+
     public function cancelTransaction()
     {
         $this->sells->details()->delete();
         $this->sells->delete();
-        $this->loadTemp();
+
         $this->reset([
             'transaction_date',
             'customer_id',
@@ -166,6 +182,7 @@ class TransactionSell extends Autocomplete
         ]);
 
         $this->transaction_date = now()->format('Y-m-d');
+        $this->loadTemp();
 
         $this->dispatchBrowserEvent('transactionCancel');
     }
@@ -199,6 +216,7 @@ class TransactionSell extends Autocomplete
             $this->sell_discount    = $this->sells->discount;
             $this->payment          = $this->sells->payment;
             $this->payment_format   = $this->sells->payment;
+            $this->due_date         = $this->sells->due_date;
             $this->refund           = $this->payment - $this->total;
 
 //            $this->updatePayment();
@@ -239,6 +257,7 @@ class TransactionSell extends Autocomplete
         $this->validate([
             'products'                  => ['required', 'array', 'min:1', 'max:4000000000'],
             'products.*.quantity'       => ['required', 'numeric', 'min:1', 'max:4000000000'],
+            'customer_id'               => [Rule::requiredIf($this->refund < 0)],
             'due_date'                  => [Rule::requiredIf($this->refund < 0)]
         ]);
 
@@ -263,33 +282,113 @@ class TransactionSell extends Autocomplete
                     'user_id'           => $this->sells->user_id,
                     'customer_id'       => $this->sells->customer_id,
                     'customer_name'     => $this->sells->customer_name,
-                    'invoice_number'    => $this->sells->invoice_number,
+                    'invoice_number'    => $this->generateInvoiceNumber(),
                     'invoice_date'      => now(),
                     'bill'              => $this->sells->bill,
                     'discount'          => $this->sells->discount,
                     'payment'           => $this->sells->payment,
                     'status'            => $this->sells->status,
-                    'due_date'          => $this->due_date ?: null,
+//                    'due_date'          => $this->due_date ?: null,
                 ]);
 
-            foreach ($this->sells->details as $detail) {
-                $fifo_product = collect($detail->product);
-                dd($fifo_product);
+            /**
+             * Looping table temporary details
+             */
+            foreach ($this->sells->details->sortBy('id') as $detail) {
+                /**
+                 * Buat payload stock untuk menghitung besaran harga modal
+                 */
+                $payload_stock = [];
 
-//                $sells_transaction->details()->create([
-//                    'product_id'                => $detail->product_id,
-//                    'product_price_id'          => $detail->product_price_id,
-//                    'product_name'              => $detail->product_name,
-//                    'quantity'                  => $detail->quantity,
-//                    'product_price_quantity'    => $detail->product_price_quantity,
-//                    'buying_price'              => $detail->buying_price,
-//                    'total'                     => $detail->total,
-//                ]);
+                /**
+                 * Cek jumlah penjualan satuan terkecil per item di jual
+                 */
+                $current_quantity = $detail->product_price_quantity;
+                /**
+                 * Looping table stock dari masing masing produk yang di jual
+                 */
+                foreach ($detail->product->stocks()->where('available_stock', '>', 0)->get()->sortBy('created_at') as $stock) {
+//                    dd($stock);
+                    /**
+                     * Set available stock jadi 0 (nol) pada table product_stock (fifo stock) jumlah penjualan lebih besar dari available stock
+                     */
+                    if($current_quantity >= $stock->available_stock){
+                        $stock->update(['available_stock', 0]);
 
+                        /**
+                         * Tambahkan payload stock untuk menghitung harga modal
+                         */
+                        $payload_stock[] = [
+                            'product_stock_id' => $stock->id,
+                            'quantity' => $stock->available_stock,
+                            'buying_price' => $stock->buying_price,
+                            'total' => $stock->available_stock * $stock->buying_price,
+                        ];
+
+                        $current_quantity = $current_quantity - $stock->available_stock;
+                    }else{
+                        /**
+                         * Kurangi available stock pada table product_stock (fifo stock) sesuai degan jumlah atau sisa dari quantity penjualan
+                         */
+
+                        $stock->decrement('available_stock', $current_quantity);
+                        $payload_stock[] = [
+                            'product_stock_id' => $stock->id,
+                            'quantity' => $current_quantity,
+                            'buying_price' => $stock->buying_price,
+                            'total' => $current_quantity * $stock->buying_price,
+                        ];
+                        $current_quantity = 0;
+                    }
+                }
+
+                /**
+                 * Hitung harga modal dari payload yang telah di buat
+                 */
+                $temp_buy_price = collect($payload_stock);
+                $buying_price = $temp_buy_price->sum('total') / $temp_buy_price->sum('quantity');
+
+                /**
+                 * Insert ke table sell_details
+                 */
+                $sells_transaction->details()
+                    ->create([
+                        'product_id'                => $detail->product_id,
+                        'product_price_id'          => $detail->product_price_id,
+                        'product_name'              => $detail->product_name,
+                        'quantity'                  => $detail->quantity,
+                        'product_price_quantity'    => $detail->product_price_quantity,
+                        'buying_price'              => $buying_price,
+                        'payload'                   => json_encode($payload_stock),
+                        'sell_price'                => $detail->sell_price,
+                        'sell_price_quantity'       => $detail->sell_price_quantity,
+                        'price_category'            => $detail->price_category,
+                        'discount'                  => $detail->discount,
+                        'total'                     => $detail->total,
+                    ]);
+
+                /**
+                 * Kurangi stock toko untuk setiap produk yang terjual
+                 */
+
+                $detail->product->decrement('store_stock', $detail->product_price_quantity);
+
+
+//                dd('Decrement');
+                /**
+                 * tambahkan ke tabel sell history (pencatatan hutang)
+                 */
             }
 
-            DB::rollBack();
-            return back()->with(['error' => 'Testing' ]);
+            $sells_transaction->histories()
+                ->create([
+                    'due_date'      => $this->due_date ?: null,
+                    'bill'          => $this->sells->bill - $this->sells->discount,
+                    'payment'       => $this->sells->payment,
+                    'fund'          => (($this->sells->bill - $this->sells->discount) >= $this->sells->payment) ? ($this->sells->bill - $this->sells->discount) - $this->sells->payment + $this->sells->discount : 0
+                ]);
+
+            $this->cancelTransaction();
             DB::commit();
         }catch (\Exception $exception){
             DB::rollBack();
@@ -368,6 +467,7 @@ class TransactionSell extends Autocomplete
                 ]);
 
             $this->resetPayment();
+            $this->reset(['barcode', 'search']);
             $this->loadTemp();
 
 

@@ -21,6 +21,11 @@ class Sell extends Model
         return $this->hasMany(SellDetail::class);
     }
 
+    public function histories()
+    {
+        return $this->hasMany(SellHistory::class);
+    }
+
     public function customer()
     {
         return $this->belongsTo(Customer::class);
