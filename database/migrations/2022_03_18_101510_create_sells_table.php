@@ -24,7 +24,6 @@ class CreateSellsTable extends Migration
             $table->double('discount')->default(0); // discount
             $table->double('payment')->default(0); // total uang diterima
             $table->string('status')->default('LUNAS'); // LUNAS / BELUM LUNAS
-            $table->date('due_date')->nullable();
             $table->timestamps();
         });
     }

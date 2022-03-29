@@ -288,7 +288,6 @@ class TransactionSell extends Autocomplete
                     'discount'          => $this->sells->discount,
                     'payment'           => $this->sells->payment,
                     'status'            => $this->sells->status,
-//                    'due_date'          => $this->due_date ?: null,
                 ]);
 
             /**
@@ -308,12 +307,14 @@ class TransactionSell extends Autocomplete
                  * Looping table stock dari masing masing produk yang di jual
                  */
                 foreach ($detail->product->stocks()->where('available_stock', '>', 0)->get()->sortBy('created_at') as $stock) {
-//                    dd($stock);
+
                     /**
                      * Set available stock jadi 0 (nol) pada table product_stock (fifo stock) jumlah penjualan lebih besar dari available stock
                      */
                     if($current_quantity >= $stock->available_stock){
-                        $stock->update(['available_stock', 0]);
+                        $current_quantity = $current_quantity - $stock->available_stock;
+
+                        $stock->decrement('available_stock', $stock->available_stock);
 
                         /**
                          * Tambahkan payload stock untuk menghitung harga modal
@@ -325,15 +326,15 @@ class TransactionSell extends Autocomplete
                             'total' => $stock->available_stock * $stock->buying_price,
                         ];
 
-                        $current_quantity = $current_quantity - $stock->available_stock;
                     }else{
+
                         /**
                          * Kurangi available stock pada table product_stock (fifo stock) sesuai degan jumlah atau sisa dari quantity penjualan
                          */
 
                         $stock->decrement('available_stock', $current_quantity);
                         $payload_stock[] = [
-                            'product_stock_id' => $stock->id,
+                            'product_sock_id' => $stock->id,
                             'quantity' => $current_quantity,
                             'buying_price' => $stock->buying_price,
                             'total' => $current_quantity * $stock->buying_price,
@@ -385,7 +386,7 @@ class TransactionSell extends Autocomplete
                     'due_date'      => $this->due_date ?: null,
                     'bill'          => $this->sells->bill - $this->sells->discount,
                     'payment'       => $this->sells->payment,
-                    'fund'          => (($this->sells->bill - $this->sells->discount) >= $this->sells->payment) ? ($this->sells->bill - $this->sells->discount) - $this->sells->payment + $this->sells->discount : 0
+                    'bond'          => (($this->sells->bill - $this->sells->discount) >= $this->sells->payment) ? ($this->sells->bill - $this->sells->discount) - $this->sells->payment + $this->sells->discount : 0
                 ]);
 
             $this->cancelTransaction();
