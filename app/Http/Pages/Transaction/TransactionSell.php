@@ -5,10 +5,12 @@ namespace App\Http\Pages\Transaction;
 use App\Http\Pages\Components\Autocomplete;
 use App\Models\Customer;
 use App\Models\Product;
+use App\Models\Sell;
 use App\Models\TempSellDetail;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Symfony\Component\ErrorHandler\Debug;
 
 class TransactionSell extends Autocomplete
@@ -25,6 +27,7 @@ class TransactionSell extends Autocomplete
     public $payment = 0;
     public $payment_format = 0;
     public $refund;
+    public $due_date;
 
     public $price_type = 'sell';
 
@@ -72,22 +75,29 @@ class TransactionSell extends Autocomplete
 
     public function fixedPayment()
     {
+        $this->updatePayment($this->total);
+//        $this->loadTemp();
+    }
+
+    public function updatePayment($pay = 0)
+    {
+        $bill = $this->sells->details->sum('total');
+        $discount = $this->sell_discount;
+        $payment = ($pay ?: $this->payment) - $discount;
         $this->sells->update([
-            'payment'   => $this->total
+            'bill'      => $bill,
+            'discount'  => $discount,
+            'payment'   => $payment,
+            'status'    => (($payment - $bill) >= 0) ? "LUNAS" : "BELUM LUNAS",
         ]);
 
         $this->loadTemp();
     }
 
-    public function updatePayment()
+    public function resetPayment()
     {
-        $this->sells->update([
-            'bill'      => $this->sells->details->sum('total'),
-            'discount'  => $this->sell_discount,
-            'payment'   => $this->payment,
-        ]);
-
-        $this->loadTemp();
+        $this->payment = 0;
+        $this->updatePayment();
     }
 
     public function updatedCustomerId()
@@ -152,6 +162,7 @@ class TransactionSell extends Autocomplete
             'sell_discount',
             'price_type',
             'products',
+            'due_date',
         ]);
 
         $this->transaction_date = now()->format('Y-m-d');
@@ -170,9 +181,8 @@ class TransactionSell extends Autocomplete
         $this->sells = [];
         $this->sells = \auth()->user()->tempSells()->with(['details.product.prices.unit', 'details.product.stocks', 'details.price.unit'])->first();
         if($this->sells){
-
+            $this->products = [];
             if($this->sells->details->count()){
-                $this->products = [];
                 foreach ($this->sells->details as $detail) {
                     array_push($this->products, $detail->toArray());
                 }
@@ -208,20 +218,82 @@ class TransactionSell extends Autocomplete
          * 5. Update stok di table product stock dan table produk
          * 6. simpan ke table sell history
          **/
-        
+
+//        dd($this->products);
+        $group_products = collect($this->products)->groupBy('product_id');
+        $products = $group_products->map(function ($group){
+            return [
+                'product_id'    => $group->first()['product_id'],
+                'product_name'  => $group->first()['product_name'],
+                'quantity'      => $group->sum('product_price_quantity')
+            ];
+        });
+
+        $product_id = $products->pluck('product_id');
+
+
+        $tb_product = Product::query()
+            ->whereIn('id', $product_id)->get();
 
 
         $this->validate([
             'products'                  => ['required', 'array', 'min:1', 'max:4000000000'],
             'products.*.quantity'       => ['required', 'numeric', 'min:1', 'max:4000000000'],
+            'due_date'                  => [Rule::requiredIf($this->refund < 0)]
         ]);
+
         DB::beginTransaction();
         try {
+            /**
+             * Check every product stock
+             */
+            foreach ($products as $product){
+                $selected_product = $tb_product->where('id', $product['product_id'])->first();
+                if($product['quantity'] > $selected_product->store_stock){
+                    return back()->with(['error' => 'Invalid quantity for product ' . $selected_product->barcode . ' ' . $selected_product->name . ' store stock : ' . $selected_product->store_stock ]);
+                    DB::rollBack();
+                }
+            }
 
-            DB::commit();
-        }catch (\Exception $exception){
+            /**
+             * Insert into sell table
+             */
+            $sells_transaction = Sell::query()
+                ->create([
+                    'user_id'           => $this->sells->user_id,
+                    'customer_id'       => $this->sells->customer_id,
+                    'customer_name'     => $this->sells->customer_name,
+                    'invoice_number'    => $this->sells->invoice_number,
+                    'invoice_date'      => now(),
+                    'bill'              => $this->sells->bill,
+                    'discount'          => $this->sells->discount,
+                    'payment'           => $this->sells->payment,
+                    'status'            => $this->sells->status,
+                    'due_date'          => $this->due_date ?: null,
+                ]);
+
+            foreach ($this->sells->details as $detail) {
+                $fifo_product = collect($detail->product);
+                dd($fifo_product);
+
+//                $sells_transaction->details()->create([
+//                    'product_id'                => $detail->product_id,
+//                    'product_price_id'          => $detail->product_price_id,
+//                    'product_name'              => $detail->product_name,
+//                    'quantity'                  => $detail->quantity,
+//                    'product_price_quantity'    => $detail->product_price_quantity,
+//                    'buying_price'              => $detail->buying_price,
+//                    'total'                     => $detail->total,
+//                ]);
+
+            }
 
             DB::rollBack();
+            return back()->with(['error' => 'Testing' ]);
+            DB::commit();
+        }catch (\Exception $exception){
+            DB::rollBack();
+            return back()->with(['error' => $exception->getMessage() ]);
         }
     }
 
@@ -249,7 +321,7 @@ class TransactionSell extends Autocomplete
                 'price_category'            => Str::upper($price_category),
                 'total'                     => ($p_prices[Str::lower($price_category) . '_price'] * $this->products[$key]['quantity']) - $this->products[$key]['discount'] ,
             ]);
-
+        $this->resetPayment();
         $this->loadTemp();
     }
 
@@ -263,6 +335,7 @@ class TransactionSell extends Autocomplete
     public function removeItem(TempSellDetail $details)
     {
         $details->delete();
+        $this->resetPayment();
         $this->loadTemp();
     }
 
@@ -270,7 +343,6 @@ class TransactionSell extends Autocomplete
     {
         Debugbar::info($type);
         $this->products[$index]['price_category'] = $type;
-        Debugbar::info($this->products[$index]);
         $this->updateProduct($index);
 
     }
@@ -279,7 +351,6 @@ class TransactionSell extends Autocomplete
     {
         if($product->store_stock >= 1){
             $price = collect($product->prices->where('default', '1')->first());
-            Debugbar::info($this->price_type);
             $this
                 ->sells
                 ->details()
@@ -295,7 +366,11 @@ class TransactionSell extends Autocomplete
                     'total'                     => $price[$this->price_type . '_price'] * $price['quantity'],
 
                 ]);
+
+            $this->resetPayment();
             $this->loadTemp();
+
+
         }else{
             session()->flash('error', 'Out of stock for ' . $product->name . ' store stock ' . $product->store_stock . ' warehouse stock ' . $product->warehouse_stock);
             return back();

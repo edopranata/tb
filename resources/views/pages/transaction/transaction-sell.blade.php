@@ -305,7 +305,14 @@
                                 </div>
                                 <input wire:model="refund" type="text" class="form-control form-control-lg rounded-0 rupiah" readonly>
                             </div>
-
+                            <h5>Tanggal Jatuh Tempo</h5>
+                            <div class="input-group input-group-lg mb-3">
+                                <div class="input-group-prepend rounded-0">
+                                    <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                                </div>
+                                <input wire:model="due_date" type="date" class="form-control form-control-lg rounded-0">
+                            </div>
+                            @error('due_date') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                         </div>
                     </div>
                 </div>
@@ -351,7 +358,7 @@
         function transferPage() {
             return {
                 submit(){
-                    $('.rupiah').unmask();
+                    // $('.rupiah').unmask();
                     this.$wire.transactionSave()
                 },
 
