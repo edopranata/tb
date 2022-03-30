@@ -22,6 +22,22 @@
     </x-card.action>
 
     <div class="row">
+        <div class="col-12">
+            @if($invoices)
+                <div class="card sr-only">
+                    <div class="card-body p-0">
+                        <div class="tw-prose-base">
+                            <div class="tw-text-sm tw-font-bold">Toko Bangunan</div>
+                            <div class="tw-text-sm tw-font-bold">Jl. Raya Hitam Putih</div>
+                            <div class="tw-border-t-2 tw-border-slate-700 tw-w-full"></div>
+                            <div class="tw-text-sm tw-font-bold tw-flex">TRX-ID: {{ $invoices->id }}</div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+    <div class="row no-print">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
@@ -66,7 +82,7 @@
                                 <button
                                     x-ref="btnSave"
                                     x-on:keydown.window.prevent.ctrl.enter="$wire.transactionBegin()"
-                                    wire:click="transactionBegin()" type="button" class="btn btn-dark btn-flat">Tambah produk (ctrl + enter)</button>
+                                    wire:click="transactionBegin()" type="button" class="btn btn-dark btn-flat">Buat Transaksi (ctrl + enter)</button>
                             @endif
                         </div>
                     </div>
@@ -75,7 +91,7 @@
         </div>
     </div>
     @if($sells)
-        <div class="row">
+        <div class="row no-print">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
@@ -179,7 +195,7 @@
             </div>
         </div>
         @if($sells->details->count())
-            <div class="row">
+            <div class="row no-print">
                 <div class="col-md-8">
                     <div class="card">
                         <div class="table-responsive">

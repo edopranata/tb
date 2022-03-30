@@ -119,7 +119,7 @@ class InventoriesIndex extends Autocomplete
 
         }catch (\Exception $exception){
             DB::rollBack();
-            return $exception->getMessage();
+            return redirect()->back()->with(['status' => 'error', 'message' => $exception->getMessage()]);
         }
 
         $this->cancelPurchase();
@@ -219,7 +219,6 @@ class InventoriesIndex extends Autocomplete
             ]);
         // panggil fungsi loadTemp (Load table transaksi temporari pembeian)
         $this->loadTemp();
-        $this->dispatchBrowserEvent('purchaseBegin');
     }
 
     public function loadTemp()
@@ -239,6 +238,8 @@ class InventoriesIndex extends Autocomplete
             $this->payment = $this->payment ?: 0;
             $this->fund = $this->bill - $this->payment;
         }
+
+        $this->dispatchBrowserEvent('pageReload');
 
     }
 

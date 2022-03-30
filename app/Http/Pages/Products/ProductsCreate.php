@@ -46,6 +46,8 @@ class ProductsCreate extends Component
     {
         $this->new_product ? true : false;
         $this->reset(['first_stock','available_stock', 'buying_price']);
+        $this->dispatchBrowserEvent('pageReload');
+
     }
 
     public function save()

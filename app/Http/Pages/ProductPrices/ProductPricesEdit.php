@@ -95,6 +95,8 @@ class ProductPricesEdit extends Component
         $this->customer_price   = $price->customer_price;
 
         $this->resetErrorBag();
+
+        $this->dispatchBrowserEvent('pageReload');
     }
 
     public function resetForm()

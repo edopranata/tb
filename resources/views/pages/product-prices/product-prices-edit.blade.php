@@ -1,4 +1,4 @@
-<div>
+<div x-data="productPriceEdit()">
     <x-slot name="breadcrumb">
         <section class="content-header">
             <div class="container-fluid">
@@ -143,8 +143,8 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Harga satuan</label>
-                                <input wire:model.defer="sell_price"
-                                       class="form-control @error('sell_price') is-invalid @enderror" type="text"
+                                <input wire:model.defer="sell_price" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})"
+                                       class="form-control rupiah @error('sell_price') is-invalid @enderror" type="text"
                                        placeholder="Harga Satuan">
                                 @error('sell_price')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                             </div>
@@ -152,8 +152,8 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Harga Grosir</label>
-                                <input wire:model.defer="wholesale_price"
-                                       class="form-control @error('wholesale_price') is-invalid @enderror" type="text"
+                                <input wire:model.defer="wholesale_price" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})"
+                                       class="form-control rupiah @error('wholesale_price') is-invalid @enderror" type="text"
                                        placeholder="Harga Grosir">
                                 @error('wholesale_price')<span
                                     class="text-danger text-sm">{{ $message }}</span>@enderror
@@ -162,8 +162,8 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Harga Member</label>
-                                <input wire:model.defer="customer_price"
-                                       class="form-control @error('customer_price') is-invalid @enderror" type="text"
+                                <input wire:model.defer="customer_price" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})"
+                                       class="form-control rupiah @error('customer_price') is-invalid @enderror" type="text"
                                        placeholder="Harga Member">
                                 @error('customer_price')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                             </div>
@@ -201,7 +201,7 @@
                                     <div class="form-group">
                                         <label>Harga
                                             1 {{ $price->unit ? $price->unit->name : 'Satuan tidak ditemukan' }}</label>
-                                        <input class="form-control" value="{{ $price->sell_price }}" type="text"
+                                        <input class="form-control" value="{{ number_format($price->sell_price) }}" type="text"
                                                @if($price->default) disabled @else readonly @endif>
                                     </div>
                                 </div>
@@ -209,7 +209,7 @@
                                     <div class="form-group">
                                         <label>Harga Grosir
                                             1 {{ $price->unit ? $price->unit->name : 'Satuan tidak ditemukan' }}</label>
-                                        <input class="form-control" value="{{ $price->wholesale_price }}" type="text"
+                                        <input class="form-control" value="{{ number_format($price->wholesale_price) }}" type="text"
                                                @if($price->default) disabled @else readonly @endif>
                                     </div>
                                 </div>
@@ -217,7 +217,7 @@
                                     <div class="form-group">
                                         <label>Harga Member
                                             1 {{ $price->unit ? $price->unit->name : 'Satuan tidak ditemukan' }}</label>
-                                        <input class="form-control" value="{{ $price->customer_price }}" type="text"
+                                        <input class="form-control" value="{{ number_format($price->customer_price) }}" type="text"
                                                @if($price->default) disabled @else readonly @endif>
                                     </div>
                                 </div>
@@ -231,6 +231,49 @@
 </div>
 @push('js')
     <script>
+        window.addEventListener('pageReload', () => {
+            $('.rupiah').unmask();
+            $('.rupiah').mask('#,##0', {
+                reverse: true,
+                translation: {
+                    '#': {
+                        pattern: /-|\d/,
+                        recursive: true
+                    }
+                },
+                onChange: function(value, e) {
+                    var target = e.target,
+                        position = target.selectionStart; // Capture initial position
 
+                    target.value = value.replace(/(?!^)-/g, '').replace(/^,/, '').replace(/^-,/, '-');
+
+                    target.selectionEnd = position; // Set the cursor back to the initial position.
+                }
+            });
+        })
+
+        function productPriceEdit() {
+            return {
+                init: function () {
+                    $('.rupiah').mask('#,##0', {
+                        reverse: true,
+                        translation: {
+                            '#': {
+                                pattern: /-|\d/,
+                                recursive: true
+                            }
+                        },
+                        onChange: function (value, e) {
+                            var target = e.target,
+                                position = target.selectionStart; // Capture initial position
+
+                            target.value = value.replace(/(?!^)-/g, '').replace(/^,/, '').replace(/^-,/, '-');
+
+                            target.selectionEnd = position; // Set the cursor back to the initial position.
+                        }
+                    });
+                }
+            }
+        }
     </script>
 @endpush

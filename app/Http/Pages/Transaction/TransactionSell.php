@@ -36,6 +36,7 @@ class TransactionSell extends Autocomplete
     public $products = [];
     public $barcode;
 
+    public $invoices = [];
 
     public $customers;
     public $customer;
@@ -196,7 +197,7 @@ class TransactionSell extends Autocomplete
     public function loadTemp()
     {
         $this->sells = [];
-        $this->sells = \auth()->user()->tempSells()->with(['details.product.prices.unit', 'details.product.stocks', 'details.price.unit'])->first();
+        $this->sells = \auth()->user()->tempSells()->with(['details.product.prices.unit', 'details.product.stocks', 'details.price.unit', 'user'])->first();
         if($this->sells){
             $this->products = [];
             if($this->sells->details->count()){
@@ -221,6 +222,8 @@ class TransactionSell extends Autocomplete
 
 //            $this->updatePayment();
         }
+
+        $this->invoices = $this->sells;
 
         $this->dispatchBrowserEvent('pageReload');
 
@@ -391,6 +394,8 @@ class TransactionSell extends Autocomplete
             $this->cancelTransaction();
 
             DB::commit();
+
+            $this->invoices[] = $sells_transaction->load(['details.product.prices.unit', 'details.product.stocks', 'details.price.unit', 'user']);
         }catch (\Exception $exception){
             DB::rollBack();
             return back()->with(['error' => $exception->getMessage() ]);

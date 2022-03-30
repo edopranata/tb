@@ -91,21 +91,21 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Total Pembayaran</label>
-                                    <input wire:model.defer="bill" type="text" class="form-control" placeholder="Total Pembayaran" disabled>
+                                    <input wire:model.defer="bill" type="text" class="form-control rupiah" placeholder="Total Pembayaran" disabled>
                                     @error('bill') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Jumlah Pembayaran</label>
-                                    <input wire:change="loadTemp()" wire:model.defer="payment" type="text" class="form-control" placeholder="Jumlah Pembayaran">
+                                    <input wire:change="loadTemp()" wire:model.defer="payment" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" type="text" class="form-control rupiah" placeholder="Jumlah Pembayaran">
                                     @error('payment') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Sisa Tagihan</label>
-                                    <input wire:model.defer="fund" type="text" class="form-control" placeholder="Sisa Tagihan" disabled>
+                                    <input wire:model.defer="fund" type="text" class="form-control rupiah" placeholder="Sisa Tagihan" disabled>
                                     @error('fund') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                 </div>
                             </div>
@@ -193,6 +193,14 @@
         @if($purchase->details->count())
             <div class="row">
                 <div class="col-lg-12">
+                    @if(session('status'))
+                        <div class="col-12">
+                            <div class="alert alert-{{ session('status') }} rounded-0 alert-dismissible">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                {!! session('message') !!}
+                            </div>
+                        </div>
+                    @endif
                     <div class="card tw-z-50">
                         <div class="card-body px-0">
                             <div class="table-responsive">
@@ -226,12 +234,12 @@
                                                 <div class="form-row">
                                                     @if($item->product->prices->count())
                                                         <div class="form-group col-md-6">
-                                                            <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.id" class="form-control mb-2 mr-sm-2" type="hidden" min="1"/>
-                                                            <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.quantity" class="form-control mb-2 mr-sm-2" type="number" min="1"/>
+                                                            <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.id" class="form-control mr-sm-2" type="hidden" min="1"/>
+                                                            <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.quantity" class="form-control mr-sm-2" type="number" min="1"/>
                                                             @error('products.' . $key . '.quantity') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                                         </div>
                                                         <div class="form-group col-md-6">
-                                                            <select wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.product_price_id" class="form-control mb-2 mr-sm-2">
+                                                            <select wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.product_price_id" class="form-control mr-sm-2">
                                                                 @foreach($item->product->prices as $product_item)
                                                                     <option value="{{ $product_item->id }}">
                                                                         {{ $product_item->unit->name }}
@@ -244,19 +252,19 @@
                                             </td>
                                             <td>
                                                 <div class="form-group col-md-12">
-                                                    <input wire:model.defer="products.{{ $key }}.product_price_quantity" class="form-control mb-2 mr-sm-2" type="text" readonly/>
+                                                    <input wire:model.defer="products.{{ $key }}.product_price_quantity" class="form-control mr-sm-2" type="text" readonly/>
                                                 </div>
 
                                             </td>
                                             <td>
                                                 <div class="form-group col-md-12">
-                                                    <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.buying_price" class="form-control mb-2 mr-sm-2 text-right" type="text" min="1"/>
+                                                    <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.buying_price" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" class="form-control rupiah mr-sm-2 text-right" type="text" min="1"/>
                                                     @error('products.' . $key . '.buying_price') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="form-group col-md-12">
-                                                    <input wire:model.defer="products.{{ $key }}.total" class="form-control mb-2 mr-sm-2 text-right" type="text" readonly/>
+                                                    <input wire:model.defer="products.{{ $key }}.total" class="form-control rupiah mr-sm-2 text-right" type="text" readonly/>
                                                 </div>
                                             </td>
                                             <td>
@@ -271,12 +279,12 @@
                                         <th colspan="4" class="text-right">Total</th>
                                         <th>
                                             <div class="form-group col-md-12">
-                                                <input value="{{ $purchase->details->sum('buying_price') }}" class="form-control mb-2 mr-sm-2 text-right" type="text" disabled/>
+                                                <input value="{{ $purchase->details->sum('buying_price') }}" class="form-control rupiah mr-sm-2 text-right" type="text" disabled/>
                                             </div>
                                         </th>
                                         <th>
                                             <div class="form-group col-md-12">
-                                                <input value="{{ $purchase->details->sum('total') }}" class="form-control mb-2 mr-sm-2 text-right" type="text" disabled/>
+                                                <input value="{{ $purchase->details->sum('total') }}" class="form-control rupiah mr-sm-2 text-right" type="text" disabled/>
                                             </div>
                                         </th>
                                         <th>Label</th>
@@ -304,6 +312,28 @@
                 disabled: false,
             }).trigger('change');
         })
+
+        window.addEventListener('pageReload', () => {
+            $('.rupiah').unmask();
+            $('.rupiah').mask('#,##0', {
+                reverse: true,
+                translation: {
+                    '#': {
+                        pattern: /-|\d/,
+                        recursive: true
+                    }
+                },
+                onChange: function(value, e) {
+                    var target = e.target,
+                        position = target.selectionStart; // Capture initial position
+
+                    target.value = value.replace(/(?!^)-/g, '').replace(/^,/, '').replace(/^-,/, '-');
+
+                    target.selectionEnd = position; // Set the cursor back to the initial position.
+                }
+            });
+        })
+
         function inventoryPage() {
             return {
 
@@ -315,6 +345,24 @@
                     }, 100)
                 },
                 init: function () {
+
+                    $('.rupiah').mask('#,##0', {
+                        reverse: true,
+                        translation: {
+                            '#': {
+                                pattern: /-|\d/,
+                                recursive: true
+                            }
+                        },
+                        onChange: function (value, e) {
+                            var target = e.target,
+                                position = target.selectionStart; // Capture initial position
+
+                            target.value = value.replace(/(?!^)-/g, '').replace(/^,/, '').replace(/^-,/, '-');
+
+                            target.selectionEnd = position; // Set the cursor back to the initial position.
+                        }
+                    });
 
                     $('#supplier-select').select2();
                     $('#supplier-select').on('change', function (e) {

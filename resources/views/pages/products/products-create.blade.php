@@ -1,4 +1,4 @@
-<div>
+<div x-data="productPage()">
     <x-slot name="breadcrumb">
         <section class="content-header">
             <div class="container-fluid">
@@ -95,17 +95,17 @@
                 <div class="card-body">
                     <div class="form-group">
                         <label>Stok Awal</label>
-                        <input wire:model.defer="first_stock" {{ old('first_stock') }} type="text" @if($new_product) disabled @endif class="form-control @error('first_stock') is-invalid @enderror" placeholder="Stok Awal">
+                        <input wire:model.defer="first_stock" type="text" @if($new_product) disabled @endif class="form-control @error('first_stock') is-invalid @enderror" placeholder="Stok Awal">
                         @error('first_stock')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                     </div>
                     <div class="form-group">
                         <label>Harga Modal (harga modal untuk satuan terkecil)</label>
-                        <input wire:model.defer="buying_price" {{ old('buying_price') }} type="text" @if($new_product) disabled @endif class="form-control @error('buying_price') is-invalid @enderror" placeholder="Harga modal">
+                        <input wire:model.defer="buying_price" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" type="text" @if($new_product) disabled @endif class="form-control rupiah @error('buying_price') is-invalid @enderror" placeholder="Harga modal">
                         @error('buying_price')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                     </div>
                     <div class="form-group">
                         <label>Tanggal Expire Produk</label>
-                        <input wire:model.defer="expired_at" {{ old('expired_at') }} type="date" @if($new_product) disabled @endif class="form-control @error('expired_at') is-invalid @enderror" placeholder="Tanggal Expired">
+                        <input wire:model.defer="expired_at" type="date" @if($new_product) disabled @endif class="form-control @error('expired_at') is-invalid @enderror" placeholder="Tanggal Expired">
                         @error('expired_at')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                     </div>
                     <div class="alert alert-info rounded-0 alert-dismissible tw-px-2 tw-py-1">
@@ -115,21 +115,21 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Harga Satuan</label>
-                                <input wire:model.defer="sell_price" {{ old('sell_price') }} type="number" step="0.01" class="form-control @error('sell_price') is-invalid @enderror" placeholder="Harga satuan">
+                                <input wire:model.defer="sell_price" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" type="text" step="0.01" class="form-control rupiah @error('sell_price') is-invalid @enderror" placeholder="Harga satuan">
                                 @error('sell_price')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Harga grosir</label>
-                                <input wire:model.defer="wholesale_price" {{ old('wholesale_price') }} type="number" step="0.01" class="form-control @error('wholesale_price') is-invalid @enderror" placeholder="Harga grosir">
+                                <input wire:model.defer="wholesale_price" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" type="text" step="0.01" class="form-control rupiah @error('wholesale_price') is-invalid @enderror" placeholder="Harga grosir">
                                 @error('wholesale_price')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Harga member</label>
-                                <input wire:model.defer="customer_price" {{ old('customer_price') }} type="number" step="0.01" class="form-control @error('customer_price') is-invalid @enderror" placeholder="Harga member">
+                                <input wire:model.defer="customer_price" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" type="text" step="0.01" class="form-control rupiah @error('customer_price') is-invalid @enderror" placeholder="Harga member">
                                 @error('customer_price')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                             </div>
                         </div>
@@ -141,6 +141,49 @@
 </div>
 @push('js')
     <script>
+        window.addEventListener('pageReload', () => {
+            $('.rupiah').unmask();
+            $('.rupiah').mask('#,##0', {
+                reverse: true,
+                translation: {
+                    '#': {
+                        pattern: /-|\d/,
+                        recursive: true
+                    }
+                },
+                onChange: function(value, e) {
+                    var target = e.target,
+                        position = target.selectionStart; // Capture initial position
 
+                    target.value = value.replace(/(?!^)-/g, '').replace(/^,/, '').replace(/^-,/, '-');
+
+                    target.selectionEnd = position; // Set the cursor back to the initial position.
+                }
+            });
+        })
+
+        function productPage() {
+            return {
+                init: function () {
+                    $('.rupiah').mask('#,##0', {
+                        reverse: true,
+                        translation: {
+                            '#': {
+                                pattern: /-|\d/,
+                                recursive: true
+                            }
+                        },
+                        onChange: function (value, e) {
+                            var target = e.target,
+                                position = target.selectionStart; // Capture initial position
+
+                            target.value = value.replace(/(?!^)-/g, '').replace(/^,/, '').replace(/^-,/, '-');
+
+                            target.selectionEnd = position; // Set the cursor back to the initial position.
+                        }
+                    });
+                }
+            }
+        }
     </script>
 @endpush

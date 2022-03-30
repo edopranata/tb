@@ -113,11 +113,11 @@
                                                     @foreach($product->prices as $price)
                                                         <tr>
                                                             <td class="p-2">1 {{ $price->unit->name }}
-                                                                Rp. {{ $price->sell_price }}</td>
+                                                                Rp. {{ number_format($price->sell_price) }}</td>
                                                             <td class="p-2">1 {{ $price->unit->name }}
-                                                                Rp. {{ $price->wholesale_price }}</td>
+                                                                Rp. {{ number_format($price->wholesale_price) }}</td>
                                                             <td class="p-2">1 {{ $price->unit->name }}
-                                                                Rp. {{ $price->customer_price }}</td>
+                                                                Rp. {{ number_format($price->customer_price) }}</td>
                                                         </tr>
                                                     @endforeach
                                                     </tbody>

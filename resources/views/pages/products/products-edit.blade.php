@@ -112,19 +112,19 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Harga satuan</label>
-                                    <input class="form-control" value="{{ $price->sell_price }}" type="text" disabled>
+                                    <input class="form-control" value="{{ number_format($price->sell_price) }}" type="text" disabled>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Harga Grosir</label>
-                                    <input class="form-control" value="{{ $price->wholesale_price }}" type="text" disabled>
+                                    <input class="form-control" value="{{ number_format($price->wholesale_price) }}" type="text" disabled>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Harga Member</label>
-                                    <input class="form-control" value="{{ $price->customer_price }}" type="text" disabled>
+                                    <input class="form-control" value="{{ number_format($price->customer_price) }}" type="text" disabled>
                                 </div>
                             </div>
                         </div>
