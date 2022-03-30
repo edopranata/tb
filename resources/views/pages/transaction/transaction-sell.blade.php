@@ -18,7 +18,7 @@
     </x-slot>
     <x-card.action>
         <x-card.action-link href="{{ route('pages.stock.index') }}" :btn="'light'">Kembali halaman utama</x-card.action-link>
-        @if($sells)<button class="btn btn-primary btn-flat" type="button" x-on:click="submit()" @if($errors->any()) disabled @endif">Simpan Data</button>@endif
+        @if($sells)<button x-on:keydown.window.prevent.ctrl.enter="$wire.transactionSave()" class="btn btn-primary btn-flat" type="button" x-on:click="submit()" @if($errors->any()) disabled @endif">Simpan Data (ctrl + enter)</button>@endif
     </x-card.action>
 
     <div class="row">
@@ -65,8 +65,8 @@
                             @else
                                 <button
                                     x-ref="btnSave"
-                                    x-on:keydown.window.prevent.ctrl.enter="console.log('ctrl enter')"
-                                    wire:click="transactionBegin()" type="button" class="btn btn-dark btn-flat">Tambah produk</button>
+                                    x-on:keydown.window.prevent.ctrl.enter="$wire.transactionBegin()"
+                                    wire:click="transactionBegin()" type="button" class="btn btn-dark btn-flat">Tambah produk (ctrl + enter)</button>
                             @endif
                         </div>
                     </div>
@@ -81,12 +81,12 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Quick Add (Barcode)</label>
-                                    <input wire:model.lazy="barcode"wire:keydown.enter="selectBarcode()" type="text" class="form-control-lg form-control rounded-0">
+                                <div class="form-group" x-on:keydown.window.prevent.alt.slash="inputBarcode = true">
+                                    <label>Quick Add Barcode (ALT + /)</label>
+                                    <input placeholder="ALT + /" x-trap="inputBarcode" x-on:focusout="inputBarcode = false" wire:model.lazy="barcode"wire:keydown.enter="selectBarcode()" type="text" class="form-control-lg form-control rounded-0">
                                 </div>
                             </div>
-                            <div class="col-md-9">
+                            <div class="col-md-9" x-on:keydown.window.prevent.ctrl.slash="inputSearch = true">
                                 <div class="form-group"
                                      x-data="
                                 {
@@ -117,12 +117,12 @@
                                         this.search = name;
                                         this.open = false;
                                         this.highlightedIndex = 0;
-                                        },
-                                    }"
+                                    },
+                                }"
                                 >
                                     <div x-on:value-selected="updateSelected($event.detail.id, $event.detail.name)" class="tw-w-full">
-                                        <label>Cari Produk (Barcode / Nama Produk)</label>
-                                        <input x-ref="query" class="form-control-lg form-control rounded-0"
+                                        <label>Cari Produk berdasarkan nama/barcode (CTRL + /)</label>
+                                        <input placeholder="CTRL + /" x-ref="query" x-trap="inputSearch" x-on:focusout="inputSearch = false" class="form-control-lg form-control rounded-0"
                                                wire:model.debounce.600ms="search"
                                                {{--                                       wire:keydown.enter="selectBarcode()"--}}
                                                x-on:keydown.arrow-down.stop.prevent="highlightNext()"
@@ -357,6 +357,9 @@
 
         function transferPage() {
             return {
+                inputBarcode: false,
+                inputSearch:false,
+
                 submit(){
                     // $('.rupiah').unmask();
                     this.$wire.transactionSave()

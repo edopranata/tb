@@ -229,15 +229,14 @@ class TransactionSell extends Autocomplete
     public function transactionSave()
     {
         /**
-         * 1. Validasi sebelum simpan data
-         * 2. Cek ketersediaan stock
-         * 3. Ambil harga modal dari tiap stock di table product stok
-         * 4. Simpan data dari temp ke transaksi penjualan beserta detail transasksi dengan status hutang atau lunas
-         * 5. Update stok di table product stock dan table produk
+         * 1. Validasi sebelum simpan data ✔
+         * 2. Cek ketersediaan stock ✔
+         * 3. Ambil harga modal dari tiap stock di table product stok ✔
+         * 4. Update stok di table product stock dan table produk
+         * 5. Simpan data dari temp ke transaksi penjualan beserta detail transasksi dengan status hutang atau lunas
          * 6. simpan ke table sell history
          **/
 
-//        dd($this->products);
         $group_products = collect($this->products)->groupBy('product_id');
         $products = $group_products->map(function ($group){
             return [
@@ -390,6 +389,7 @@ class TransactionSell extends Autocomplete
                 ]);
 
             $this->cancelTransaction();
+
             DB::commit();
         }catch (\Exception $exception){
             DB::rollBack();
