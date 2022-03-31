@@ -15,7 +15,7 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        $categories = ['Rokok', 'Mie Instan', 'Minyak Goreng'];
+        $categories = ['Paket', 'Bahan Bangunan', 'Cat Air', 'Cat Minyak', 'Alat Tukang'];
         foreach ($categories as $category) {
             Category::query()
                 ->create([

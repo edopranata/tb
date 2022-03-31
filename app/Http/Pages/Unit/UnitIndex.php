@@ -19,6 +19,7 @@ class UnitIndex extends Component
     {
         return view('pages.unit.unit-index', [
             'units' => Unit::query()
+                ->whereNotIn('name', ['Paket'])
                 ->with('user')
                 ->filter($this->search)
                 ->paginate(10)

@@ -31,29 +31,6 @@ Route::middleware(['auth'])->group(function (){
         Route::get('/', [\App\Http\Controllers\DashboardController::class, 'index'])->name('index');
     });
 
-    Route::get('sync', function (){
-        $permissions = collect(Route::getRoutes())->whereNotNull('action.as')->map(function ($route){
-            $action = collect($route->action)->toArray();
-            $method = collect($route->methods)->first();
-
-            if( Str::lower(substr( $action['as'], 0, 5)) === 'pages') {
-                return [
-                    'method'    => $method,
-                    'name' => $action['as'],
-                    'description' => Str::replace('app ', '', Str::replace('.', ' ', $action['as'])),
-                    'action' => $action
-                ];
-            }
-        })->filter(function ($value) { return !is_null($value); });
-        foreach ($permissions as $permission) {
-            Permission::query()->updateOrCreate([
-                'name'  => $permission['description'],
-            ],[
-                'payload'   => json_encode($permission)
-            ]);
-        }
-    });
-
     Route::group(['prefix' => 'pages', 'as' => 'pages.'], function (){
         Route::group(['prefix' => 'management', 'as' => 'management.'], function (){
             Route::group(['prefix' => 'users', 'as' => 'users.'], function (){
@@ -63,11 +40,9 @@ Route::middleware(['auth'])->group(function (){
             });
             Route::group(['prefix' => 'permissions', 'as' => 'permissions.'], function (){
                 Route::get('/', \App\Http\Pages\Management\Permission\ManagementPermissionIndex::class)->name('index');
-                Route::get('create', \App\Http\Pages\Management\Permission\ManagementPermissionCreate::class)->name('create');
             });
             Route::group(['prefix' => 'roles', 'as' => 'roles.'], function (){
                 Route::get('/', \App\Http\Pages\Management\Role\ManagementRoleIndex::class)->name('index');
-                Route::get('create', \App\Http\Pages\Management\Role\ManagementRoleCreate::class)->name('create');
             });
         });
 

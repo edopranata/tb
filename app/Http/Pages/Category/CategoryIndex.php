@@ -20,6 +20,7 @@ class CategoryIndex extends Component
     {
         return view('pages.category.category-index', [
             'categories' => Category::query()
+                ->whereNotIn('name', ['Paket'])
                 ->with('user')
                 ->filter($this->search)
                 ->paginate(10)

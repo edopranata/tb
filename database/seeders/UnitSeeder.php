@@ -15,7 +15,7 @@ class UnitSeeder extends Seeder
      */
     public function run()
     {
-        $units = ['Bungkus', 'Slop', 'Dus', 'Gram', 'Kg', 'Batang', 'Ikat', 'Plastik', 'Sak'];
+        $units = ['Paket', 'Slop', 'Dus', 'Gram', 'Bks', 'Batang', 'Ikat', 'Pcs', 'Sak'];
         foreach ($units as $unit) {
             Unit::query()
                 ->create([
