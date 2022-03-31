@@ -16,6 +16,7 @@ class RoleSeeder extends Seeder
     {
         $data = [
             ['name' => 'Administrator', 'guard_name' => 'web', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Admin', 'guard_name' => 'web', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Warehouse admin', 'guard_name' => 'web', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Store Admin', 'guard_name' => 'web', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Cashier', 'guard_name' => 'web', 'created_at' => now(), 'updated_at' => now()],

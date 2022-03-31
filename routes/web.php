@@ -47,7 +47,7 @@ Route::middleware(['auth'])->group(function (){
         })->filter(function ($value) { return !is_null($value); });
         foreach ($permissions as $permission) {
             Permission::query()->updateOrCreate([
-                'name'  => $permission['name'],
+                'name'  => $permission['description'],
             ],[
                 'payload'   => json_encode($permission)
             ]);
@@ -128,10 +128,6 @@ Route::middleware(['auth'])->group(function (){
             });
         });
     });
-});
-
-Route::get('test', function (){
-    return \App\Models\TempPurchase::query()->with(['details.price'])->first();
 });
 
 
