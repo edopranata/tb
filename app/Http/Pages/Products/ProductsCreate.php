@@ -4,6 +4,7 @@ namespace App\Http\Pages\Products;
 
 use App\Models\Category;
 use App\Models\Unit;
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -52,6 +53,10 @@ class ProductsCreate extends Component
 
     public function save()
     {
+        Debugbar::info($this->buying_price);
+        Debugbar::info($this->sell_price);
+        Debugbar::info($this->wholesale_price);
+        Debugbar::info($this->customer_price);
         $this->validate([
             'barcode'       => ['required', 'string', 'min:2', 'max:20', 'unique:products,barcode'],
             'product_name'  => ['required', 'string', 'min:2', 'max:255'],

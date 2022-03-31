@@ -19,6 +19,6 @@ mix
         require('tailwindcss'),
         require('autoprefixer'),
     ])
-    .version()
-    .sourceMaps();
+    .sourceMaps()
+    .version();
 

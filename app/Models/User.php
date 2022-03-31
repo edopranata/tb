@@ -97,6 +97,16 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(TempSell::class);
     }
 
+    public function scopeFilter($query, $filters)
+    {
+        $query
+            ->when($filters ?? null, function ($query, $search) {
+                $query->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('username', 'like', '%'.$search.'%')
+                    ->orWhere('email', 'like', '%'.$search.'%');
+            });
+    }
+
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumb')

@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,51 +31,75 @@ Route::middleware(['auth'])->group(function (){
         Route::get('/', [\App\Http\Controllers\DashboardController::class, 'index'])->name('index');
     });
 
+    Route::get('sync', function (){
+        $permissions = collect(Route::getRoutes())->whereNotNull('action.as')->map(function ($route){
+            $action = collect($route->action)->toArray();
+            $method = collect($route->methods)->first();
+
+            if( Str::lower(substr( $action['as'], 0, 5)) === 'pages') {
+                return [
+                    'method'    => $method,
+                    'name' => $action['as'],
+                    'description' => Str::replace('app ', '', Str::replace('.', ' ', $action['as'])),
+                    'action' => $action
+                ];
+            }
+        })->filter(function ($value) { return !is_null($value); });
+        foreach ($permissions as $permission) {
+            Permission::query()->updateOrCreate([
+                'name'  => $permission['name'],
+            ],[
+                'payload'   => json_encode($permission)
+            ]);
+        }
+    });
+
     Route::group(['prefix' => 'pages', 'as' => 'pages.'], function (){
         Route::group(['prefix' => 'management', 'as' => 'management.'], function (){
             Route::group(['prefix' => 'users', 'as' => 'users.'], function (){
                 Route::get('/', \App\Http\Pages\Management\User\ManagementUserIndex::class)->name('index');
-                Route::get('/create', \App\Http\Pages\Management\User\ManagementUserCreate::class)->name('create');
+                Route::get('{user}/edit', \App\Http\Pages\Management\User\ManagementUserEdit::class)->name('edit');
+                Route::get('create', \App\Http\Pages\Management\User\ManagementUserCreate::class)->name('create');
             });
             Route::group(['prefix' => 'permissions', 'as' => 'permissions.'], function (){
                 Route::get('/', \App\Http\Pages\Management\Permission\ManagementPermissionIndex::class)->name('index');
-                Route::get('/create', \App\Http\Pages\Management\Permission\ManagementPermissionCreate::class)->name('create');
+                Route::get('create', \App\Http\Pages\Management\Permission\ManagementPermissionCreate::class)->name('create');
             });
             Route::group(['prefix' => 'roles', 'as' => 'roles.'], function (){
                 Route::get('/', \App\Http\Pages\Management\Role\ManagementRoleIndex::class)->name('index');
-                Route::get('/create', \App\Http\Pages\Management\Role\ManagementRoleCreate::class)->name('create');
+                Route::get('create', \App\Http\Pages\Management\Role\ManagementRoleCreate::class)->name('create');
             });
         });
 
         Route::group(['prefix' => 'units', 'as' => 'units.'], function (){
             Route::get('/', \App\Http\Pages\Unit\UnitIndex::class)->name('index');
-            Route::get('/create', \App\Http\Pages\Unit\UnitCreate::class)->name('create');
-            Route::get('/{unit}', \App\Http\Pages\Unit\UnitEdit::class)->name('edit');
+            Route::get('create', \App\Http\Pages\Unit\UnitCreate::class)->name('create');
+            Route::get('{unit}/edit', \App\Http\Pages\Unit\UnitEdit::class)->name('edit');
         });
         Route::group(['prefix' => 'categories', 'as' => 'categories.'], function (){
             Route::get('/', \App\Http\Pages\Category\CategoryIndex::class)->name('index');
-            Route::get('/create', \App\Http\Pages\Category\CategoryCreate::class)->name('create');
-            Route::get('/{category}', \App\Http\Pages\Category\CategoryEdit::class)->name('edit');
+            Route::get('create', \App\Http\Pages\Category\CategoryCreate::class)->name('create');
+            Route::get('{category}/edit', \App\Http\Pages\Category\CategoryEdit::class)->name('edit');
         });
         Route::group(['prefix' => 'suppliers', 'as' => 'suppliers.'], function (){
             Route::get('/', \App\Http\Pages\Suppliers\SuppliersIndex::class)->name('index');
-            Route::get('/create', \App\Http\Pages\Suppliers\SuppliersCreate::class)->name('create');
-            Route::get('/{supplier}', \App\Http\Pages\Suppliers\SuppliersEdit::class)->name('edit');
+            Route::get('create', \App\Http\Pages\Suppliers\SuppliersCreate::class)->name('create');
+            Route::get('{supplier}/edit', \App\Http\Pages\Suppliers\SuppliersEdit::class)->name('edit');
         });
 
         Route::group(['prefix' => 'customers', 'as' => 'customers.'], function (){
             Route::get('/', \App\Http\Pages\Customer\CustomerIndex::class)->name('index');
-            Route::get('/create', \App\Http\Pages\Customer\CustomerCreate::class)->name('create');
-            Route::get('/{customer}', \App\Http\Pages\Customer\CustomerEdit::class)->name('edit');
+            Route::get('create', \App\Http\Pages\Customer\CustomerCreate::class)->name('create');
+            Route::get('{customer}', \App\Http\Pages\Customer\CustomerEdit::class)->name('edit');
         });
         Route::group(['prefix' => 'products', 'as' => 'products.'], function (){
             Route::get('/', \App\Http\Pages\Products\ProductsIndex::class)->name('index');
-            Route::get('/create', \App\Http\Pages\Products\ProductsCreate::class)->name('create');
-            Route::get('/{product}', \App\Http\Pages\Products\ProductsEdit::class)->name('edit');
+            Route::get('create', \App\Http\Pages\Products\ProductsCreate::class)->name('create');
+            Route::get('{product}', \App\Http\Pages\Products\ProductsEdit::class)->name('edit');
         });
         Route::group(['prefix' => 'prices', 'as' => 'prices.'], function (){
             Route::get('/', \App\Http\Pages\ProductPrices\ProductPricesIndex::class)->name('index');
-            Route::get('/{product}', \App\Http\Pages\ProductPrices\ProductPricesEdit::class)->name('edit');
+            Route::get('{product}', \App\Http\Pages\ProductPrices\ProductPricesEdit::class)->name('edit');
         });
         Route::group(['prefix' => 'inventories', 'as' => 'inventories.'], function (){
             Route::get('/', \App\Http\Pages\Inventories\InventoriesIndex::class)->name('index');
@@ -88,16 +114,17 @@ Route::middleware(['auth'])->group(function (){
 
         Route::group(['prefix' => 'transaction', 'as' => 'transaction.'], function (){
             Route::get('/', \App\Http\Pages\Transaction\TransactionSell::class)->name('index');
+            Route::get('{sell}/print', \App\Http\Pages\Transaction\TransactionPrint::class)->name('print');
         });
 
         Route::group(['prefix' => 'reporting', 'as' => 'reporting.'], function (){
             Route::group(['prefix' => 'stock', 'as' => 'stock.'], function (){
                 Route::get('/', App\Http\Pages\Reporting\ReportTransfer::class)->name('index');
-                Route::get('/{transfer}', App\Http\Pages\Reporting\ReportTransferView::class)->name('view');
+                Route::get('{transfer}', App\Http\Pages\Reporting\ReportTransferView::class)->name('view');
             });
             Route::group(['prefix' => 'inventory', 'as' => 'inventory.'], function (){
                 Route::get('/', App\Http\Pages\Reporting\ReportPurchase::class)->name('index');
-                Route::get('/{purchase}', App\Http\Pages\Reporting\ReportPurchaseView::class)->name('view');
+                Route::get('{purchase}', App\Http\Pages\Reporting\ReportPurchaseView::class)->name('view');
             });
         });
     });

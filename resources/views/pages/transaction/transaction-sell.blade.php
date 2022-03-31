@@ -21,22 +21,6 @@
         @if($sells)<button x-on:keydown.window.prevent.ctrl.enter="$wire.transactionSave()" class="btn btn-primary btn-flat" type="button" x-on:click="submit()" @if($errors->any()) disabled @endif">Simpan Data (ctrl + enter)</button>@endif
     </x-card.action>
 
-    <div class="row">
-        <div class="col-12">
-            @if($invoices)
-                <div class="card sr-only">
-                    <div class="card-body p-0">
-                        <div class="tw-prose-base">
-                            <div class="tw-text-sm tw-font-bold">Toko Bangunan</div>
-                            <div class="tw-text-sm tw-font-bold">Jl. Raya Hitam Putih</div>
-                            <div class="tw-border-t-2 tw-border-slate-700 tw-w-full"></div>
-                            <div class="tw-text-sm tw-font-bold tw-flex">TRX-ID: {{ $invoices->id }}</div>
-                        </div>
-                    </div>
-                </div>
-            @endif
-        </div>
-    </div>
     <div class="row no-print">
         <div class="col-md-12">
             <div class="card">

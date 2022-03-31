@@ -22,6 +22,13 @@
         <x-card.action-button wire:click="save()">Simpan Data</x-card.action-button>
     </x-card.action>
     <div class="row">
+        <div class="col-12">
+            @if (session()->has('error'))
+                <div class="card-footer alert-danger">
+                    {{session('error')}}
+                </div>
+            @endif
+        </div>
         <div class="col-md-4">
             <div class="card rounded-0">
                 <div class="card-header">
@@ -48,7 +55,7 @@
                         <div class="form-group" wire:ignore>
                             <label>Role User</label>
                             <select id="role-select" class="form-control">
-                                <option value="">Pilih Role</option>
+                                <option value="{{ $role }}">{{ $role }}</option>
                                 @foreach($roles as $role)
                                     <option value="{{ $role->name }}" @if($role->name == $role) selected @endif>{{ $role->name }}</option>
                                 @endforeach
@@ -56,6 +63,12 @@
                         </div>
                         @error('role')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card rounded-0">
+                <div class="card-body">
                     <div class="form-group">
                         <label>Password</label>
                         <input wire:model.defer="password" type="password" class="form-control @error('password') is-invalid @enderror" placeholder="Password">
@@ -66,6 +79,9 @@
                         <input wire:model.defer="password_confirmation" type="password" class="form-control @error('password_confirmation') is-invalid @enderror" placeholder="Ulangi Password">
                         @error('password_confirmation')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                     </div>
+                </div>
+                <div class="card-footer">
+                    <button type="button" wire:click="changePassword" class="btn btn-sm btn-primary">Ubah Password</button>
                 </div>
             </div>
         </div>
@@ -81,7 +97,7 @@
                 init: function (){
                     $('#role-select').select2();
                     $('#role-select').on('change', function (e) {
-                        @this.set('role', $('#role-select').select2("val"));
+                    @this.set('role', $('#role-select').select2("val"));
                     });
                 }
             }
