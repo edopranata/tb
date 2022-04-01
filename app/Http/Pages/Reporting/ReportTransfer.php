@@ -4,6 +4,7 @@ namespace App\Http\Pages\Reporting;
 
 use App\Models\ProductTransfer;
 use App\Models\Purchase;
+use App\Models\User;
 use Livewire\Component;
 
 class ReportTransfer extends Component
@@ -12,12 +13,15 @@ class ReportTransfer extends Component
     public $user_id;
     public $transfer_date;
     public $transfer_to;
+
+    public $users;
+
     public function render()
     {
 
         return view('pages.reporting.report-transfer', [
             'transfers' => ProductTransfer::query()
-                ->with(['user', 'details.product.unit', 'details.price'])
+                ->with(['user', 'details.product.category', 'details.price.unit'])
                 ->withCount('details')
                 ->when($this->user_id, function ($user, $id){
                     $user->where('user_id', $id);
@@ -34,6 +38,8 @@ class ReportTransfer extends Component
 
     public function mount()
     {
+        $this->users = User::query()->select(['id', 'name'])->get();
+//        $this->transfer_date = now()->format('Y-m-d');
 
     }
 }
