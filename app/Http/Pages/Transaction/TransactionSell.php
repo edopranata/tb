@@ -39,6 +39,9 @@ class TransactionSell extends Autocomplete
 
     public $customers;
     public $customer;
+
+    public $print;
+
     protected $listeners = ['valueSelected'];
 
     public $show_discount = false;
@@ -156,6 +159,8 @@ class TransactionSell extends Autocomplete
             'invoice_date'  => $this->transaction_date,
             'invoice_number'=> $this->invoice_number,
         ]);
+
+        $this->reset(['print']);
 
         $this->loadTemp();
     }
@@ -392,6 +397,10 @@ class TransactionSell extends Autocomplete
             $this->cancelTransaction();
 
             DB::commit();
+            $this->print = [];
+            $this->print = $sells_transaction->load(['details.product.prices.unit', 'details.product.stocks', 'details.price.unit', 'user'])->first();
+
+            $this->dispatchBrowserEvent('pagePrint');
 
         }catch (\Exception $exception){
             DB::rollBack();

@@ -20,7 +20,74 @@
         <x-card.action-link href="{{ route('pages.stock.index') }}" :btn="'light'">Kembali halaman utama</x-card.action-link>
         @if($sells)<button x-on:keydown.window.prevent.ctrl.enter="$wire.transactionSave()" class="btn btn-primary btn-flat" type="button" x-on:click="submit()" @if($errors->any()) disabled @endif">Simpan Data (ctrl + enter)</button>@endif
     </x-card.action>
+    <div class="row d-none d-print-block">
+        @if($print)
+            <div class="card card-body mt-0 tw-text-[45px] tw-font-mono" >
+                <div class="tw-p-0 tw-m-0 tw-flex tw-justify-center">
+                    <img src="{{ asset('dist/img/sbr-logo.png') }}">
+                </div>
+                <div class="tw-p-0 tw-m-0 text-center">Toko Bangunan SBR</div>
+                <div class="tw-p-0 tw-m-0 text-center">Building Material</div>
+                <div class="tw-p-0 tw-m-0 text-center">Pasaman Barat</div>
+                <hr class="bg-black tw-border-black tw-my-1">
+                <table class="tw-table-fixed tw-border-collapse">
+                    <tbody>
+                    <tr class="tw-py-0">
+                        <td class="tw-py-0">TRX-ID</td>
+                        <td class="tw-py-0">: #{{ $print->id }}</td>
+                    </tr>
+                    <tr class="tw-py-0">
+                        <td class="tw-py-0">TRX-USR</td>
+                        <td class="tw-py-0">: {{ $print->user->username }}</td>
+                    </tr>
+                    <tr class="tw-py-0">
+                        <td class="tw-py-0">TRX-INV</td>
+                        <td class="tw-py-0">: {{ $print->invoice_number }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <hr class="bg-black tw-border-black tw-my-1">
+                <div class="divide-y divide-slate-200">
+                    @foreach($print->details as $detail)
+                        <div class="tw-flex">
+                            <div class="tw-grow">
+                                {{ $detail->product_name }}<br>
+                                {{ $detail->quantity . ' ' . $detail->price->unit->name }} @ Rp. {{ number_format($detail->buying_price) . ' ' }}
+                                @if($detail->discount > 0) Discount Rp. {{ number_format($detail->discount) }} @endif
+                            </div>
+                            <div class="tw-flex-none tw-w-auto text-right">
+                                Rp. {{ number_format($detail->total) }}
+                            </div>
+                        </div>
+                        <hr class="tw-bg-slate-500 tw-border-slate-500 tw-my-1">
+                    @endforeach
+                </div>
+                <div class="divide-y divide-slate-200">
 
+                    <div class="tw-flex tw-font-bold">
+                        <div class="tw-grow text-right">Total</div>
+                        <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format($print->details->sum('total') - $print->details->sum('discount')) }}</div>
+                    </div>
+                    <div class="tw-flex tw-font-bold">
+                        <div class="tw-grow text-right">Disc</div>
+                        <div class="tw-flex-none tw-w-[20rem] text-right border-bottom">{{ number_format($print->discount) }}</div>
+                    </div>
+                    <div class="tw-flex tw-font-bold tw-text-[48px]">
+                        <div class="tw-grow text-right">Subtotal</div>
+                        <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format(($print->details->sum('total') - $print->details->sum('discount')) - $print->discount) }}</div>
+                    </div>
+
+                </div>
+                <hr>
+                <div class="tw-flex tw-flex-col tw-items-center">
+                    <div>*** Terima Kasih ***</div><br>
+                    <div><i class="fab fa-facebook"></i></i> SBRPASAMAN BARAT</div>
+                    <div><i class="fab fa-whatsapp-square"></i> SBRPASAMAN BARAT</div>
+                    <div><i class="fab fa-instagram-square"></i> SBRPASAMAN BARAT</div>
+                </div>
+            </div>
+        @endif
+    </div>
     <div class="row no-print">
         <div class="col-md-12">
             <div class="card">
@@ -332,6 +399,10 @@
             $("#customer-select").val('').select2({
                 disabled: false,
             }).trigger('change');
+        })
+
+        window.addEventListener('pagePrint', () => {
+            window.print();
         })
 
         window.addEventListener('pageReload', () => {
