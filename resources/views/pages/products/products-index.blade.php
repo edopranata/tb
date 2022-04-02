@@ -20,6 +20,9 @@
         <x-card.action-link href="{{ route('pages.products.create') }}" :btn="'light'">
             Tambah Produk Baru
         </x-card.action-link>
+        <x-card.action-link href="{{ route('pages.products.import') }}" :btn="'warning'">
+            Upload Product Baru
+        </x-card.action-link>
     </x-card.action>
     <div class="row" x-data="{ 'isDialogOpen': false }">
         <div class="col-lg-12">

@@ -12,8 +12,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 
-class NewProductImport implements ToCollection
+class NewProductImport implements ToCollection, WithChunkReading
 {
     /**
     * @param Collection $collection
@@ -170,5 +171,10 @@ class NewProductImport implements ToCollection
                 }
             }
         }
+    }
+
+    public function chunkSize(): int
+    {
+        return 200;
     }
 }

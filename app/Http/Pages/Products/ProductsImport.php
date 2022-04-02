@@ -27,5 +27,8 @@ class ProductsImport extends Component
         ]);
 
         Excel::import(new NewProductImport($this->transfer), $this->file);
+
+        return redirect()->route('pages.products.index')->with(['status' => 'success', 'message' => 'Data product telah berhasil di import']);
+
     }
 }

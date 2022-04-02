@@ -20,8 +20,8 @@
     <div class="row">
         <div class="col-md-4">
             <div class="card">
-                <div class="card-body">
-                    <form wire:submit.prevent="upload()">
+                <form wire:submit.prevent="upload()">
+                    <div class="card-body">
                         <div class="form-group">
                             <div class="custom-control custom-switch">
                                 <input wire:model.defer="transfer" type="checkbox" class="custom-control-input" id="transfer">
@@ -30,19 +30,14 @@
                         </div>
                         <div class="form-group">
                             <label>Upload Excel File</label>
-                            <div class="input-group">
-                                <div class="custom-file">
-                                    <input wire:model="file" type="file" class="custom-file-input">
-                                    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                                </div>
-                                <div class="input-group-append">
-                                    <button type="submit" class="input-group-text">Upload</button>
-                                </div>
-                            </div>
+                            <input wire:model="file" type="file" class="form-control">
                             @error('file') <span class="tw-text-sm text-danger">{{ $message }}</span> @enderror
                         </div>
-                    </form>
-                </div>
+                    </div>
+                    <div class="card-footer">
+                        <button wire:loading.attr="disabled" type="submit" class="input-group-text"><i wire:loading class="fas fa-fan fa-spin mr-2"></i> Upload</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
