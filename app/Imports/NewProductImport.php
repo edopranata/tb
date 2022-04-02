@@ -48,12 +48,13 @@ class NewProductImport implements ToCollection, WithChunkReading
              * 2. Create Or Update units table ✔
              * 3. Create Or Update categories table ✔
              * 4. Create Or Update suppliers table ✔
-             * 5. Insert into product table
-             *    Create custom barcode (unique)
-             *    Set warehouse_stock
-             * 6. Insert into product_stock as STOCK AWAL
-             * 7. Insert into product_price as default
-             * 8. Add product transfer
+             * 5. Insert into product table ✔
+             *    Create custom barcode (unique) ✔
+             *    Set warehouse_stock ✔
+             * 6. Insert into product_stock as STOCK AWAL ✔
+             * 7. Insert into product_price as default ✔
+             * 8. Add product transfer ✔
+             * 9. Increment store_stock decrement warehouse_stock ✔
              */
 
             if($key == 3) {
@@ -106,12 +107,10 @@ class NewProductImport implements ToCollection, WithChunkReading
                             'user_id'   => $user_id
                         ]);
 
-
-
                     /**
                      * Create products
                      */
-                    $barcode = Str::upper(Str::random(4)) . now()->format('YmdHis');
+                    $barcode = Str::upper(Str::random(2)) . now()->getPreciseTimestamp(3);
 
                     $product = Product::query()
                         ->create([
