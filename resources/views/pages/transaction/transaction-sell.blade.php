@@ -30,19 +30,26 @@
                 <div class="tw-p-0 tw-m-0 text-center">Building Material</div>
                 <div class="tw-p-0 tw-m-0 text-center">Pasaman Barat</div>
                 <hr class="bg-black tw-border-black tw-my-1">
-                <div class="row tw-text-[40px]">
+                <div class="row tw-text-[36px]">
                     <div class="col-6">
-                        ID# {{ $sell->id }}
+                        ID #{{ $sell->id }}
                     </div>
                     <div class="col-6">
-                        INV# {{ $sell->invoice_number }}
+                        INV #{{ $sell->invoice_number }}
                     </div>
 
                     <div class="col-6">
-                        USER# {{ $sell->user->username }}
+                        USER #{{ $sell->user->username }}
                     </div>
                     <div class="col-6">
-                        DATE# {{ $sell->invoice_date->format('d-m-Y H:i:s') }}
+                        DATE #{{ $sell->invoice_date->format('d-m-Y') }}
+                    </div>
+
+                    <div class="col-6">
+                        &nbsp;
+                    </div>
+                    <div class="col-6">
+                        TIME #{{ $sell->invoice_date->format('H:i:s') }}
                     </div>
                 </div>
                 <hr class="bg-black tw-border-black tw-my-1">
