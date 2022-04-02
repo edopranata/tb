@@ -28,7 +28,6 @@ class NewProductImport implements ToCollection
 
     public function collection(Collection $collection)
     {
-        //
 
         $user_id = auth()->id();
 
@@ -73,7 +72,6 @@ class NewProductImport implements ToCollection
 
             }elseif($key >= 1) {
                 if ($row[0] != '') {
-//                    Log::info('Begin upload row index ' . $key);
                     /**
                      * firstOrCreate categories
                      */
@@ -85,7 +83,6 @@ class NewProductImport implements ToCollection
                             'user_id'   => $user_id
                         ]);
 
-//                    Log::info('Category Create ' . $category->name);
 
                     /**
                      * firstOrCreate units
@@ -97,7 +94,7 @@ class NewProductImport implements ToCollection
                             'name'      => $row[6],
                             'user_id'   => $user_id
                         ]);
-//                    Log::info('Unit Create ' . $unit->name);
+
 
                     /**
                      * firstOrCreate suppliers
@@ -108,7 +105,7 @@ class NewProductImport implements ToCollection
                             'user_id'   => $user_id
                         ]);
 
-//                    Log::info('Supplier Create ' . $supplier->name);
+
 
                     /**
                      * Create products
@@ -128,7 +125,7 @@ class NewProductImport implements ToCollection
                         ]);
 
                     /**
-                     * Create product_stock
+                     * Create product_stocks
                      */
                     $product->stocks()->create([
                         'supplier_id'       => $supplier->id,
@@ -138,6 +135,9 @@ class NewProductImport implements ToCollection
                         'description'       => 'STOCK AWAL',
                     ]);
 
+                    /**
+                     * Create product_prices
+                     */
                     $price = $product->prices()->create([
                         'unit_id'           => $unit->id,
                         'quantity'          => 1,
@@ -148,6 +148,9 @@ class NewProductImport implements ToCollection
                     ]);
 
                     if ($this->transfer){
+                        /**
+                         * Create product_transfer_details
+                         */
                         $product_transfer->details()->create([
                             'product_id'                => $product->id,
                             'product_price_id'          => $price->id,
@@ -155,6 +158,10 @@ class NewProductImport implements ToCollection
                             'quantity'                  => $row[4],
                             'product_price_quantity'    => $row[4],
                         ]);
+
+                        /**
+                         * increment store_stock and decrement warehouse_stock
+                         */
 
                         $product->increment('store_stock', $row[4]);
                         $product->decrement('warehouse_stock', $row[4]);

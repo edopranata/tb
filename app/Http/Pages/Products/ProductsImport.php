@@ -21,7 +21,6 @@ class ProductsImport extends Component
 
     public function upload()
     {
-//        dd($this->transfer);
 
         $this->validate([
             'file'  => ['required', 'mimes:xls,xlsx']

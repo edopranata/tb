@@ -20,7 +20,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $faker = Factory::create();
 
         $this->call([
             RoleSeeder::class,
