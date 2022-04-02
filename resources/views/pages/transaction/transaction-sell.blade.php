@@ -30,22 +30,21 @@
                 <div class="tw-p-0 tw-m-0 text-center">Building Material</div>
                 <div class="tw-p-0 tw-m-0 text-center">Pasaman Barat</div>
                 <hr class="bg-black tw-border-black tw-my-1">
-                <table class="tw-table-fixed tw-border-collapse">
-                    <tbody>
-                    <tr class="tw-py-0">
-                        <td class="tw-py-0">TRX-ID</td>
-                        <td class="tw-py-0">: #{{ $print->id }}</td>
-                    </tr>
-                    <tr class="tw-py-0">
-                        <td class="tw-py-0">TRX-USR</td>
-                        <td class="tw-py-0">: {{ $print->user->username }}</td>
-                    </tr>
-                    <tr class="tw-py-0">
-                        <td class="tw-py-0">TRX-INV</td>
-                        <td class="tw-py-0">: {{ $print->invoice_number }}</td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div class="row tw-text-[40px]">
+                    <div class="col-6">
+                        ID# {{ $sell->id }}
+                    </div>
+                    <div class="col-6">
+                        INV# {{ $sell->invoice_number }}
+                    </div>
+
+                    <div class="col-6">
+                        USER# {{ $sell->user->username }}
+                    </div>
+                    <div class="col-6">
+                        DATE# {{ $sell->invoice_date->format('d-m-Y H:i:s') }}
+                    </div>
+                </div>
                 <hr class="bg-black tw-border-black tw-my-1">
                 <div class="divide-y divide-slate-200">
                     @foreach($print->details as $detail)

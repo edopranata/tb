@@ -93,6 +93,9 @@ Route::middleware(['auth'])->group(function (){
         });
 
         Route::group(['prefix' => 'reporting', 'as' => 'reporting.'], function (){
+            Route::group(['prefix' => 'reprint', 'as' => 'reprint.'], function (){
+                Route::get('/', \App\Http\Pages\Reporting\Reprint\Transaction::class)->name('index');
+            });
             Route::group(['prefix' => 'stock', 'as' => 'stock.'], function (){
                 Route::get('/', App\Http\Pages\Reporting\ReportTransfer::class)->name('index');
                 Route::get('{transfer}', App\Http\Pages\Reporting\ReportTransferView::class)->name('view');

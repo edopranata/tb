@@ -84,10 +84,13 @@
 
                 <!-- Laporan -->
                 <li class="nav-header">LAPORAN</li>
+
                 <x-sidebar.menu-dropdown :title="$title = 'Laporan Stock'" :active="request()->routeIs('pages.reporting.*')">
                     <x-slot name="icon">
-                        <i class="nav-icon fas fa-paperclip"></i>
+                        <i class="nav-icon fas fa-file-invoice"></i>
                     </x-slot>
+                    <x-sidebar.menu-item :title="$title = 'Reprint Struk'" :href="route('pages.reporting.reprint.index')" :active="request()->routeIs('pages.reporting.reprint.*')"/>
+
                     <x-sidebar.menu-item :title="$title = 'Transfer Produk'" :href="route('pages.reporting.stock.index')" :active="request()->routeIs('pages.reporting.stock.*')"/>
                     <x-sidebar.menu-item :title="$title = 'Inventori Produk Masuk'" :href="route('pages.reporting.inventory.index')" :active="request()->routeIs('pages.reporting.inventory.*')"/>
 
