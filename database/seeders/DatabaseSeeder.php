@@ -26,11 +26,11 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             UserRoleSeeder::class,
-            UnitSeeder::class,
-            CategorySeeder::class,
-            SupplierSeeder::class,
-            CustomerSeeder::class,
-            ProductSeeder::class,
+//            UnitSeeder::class,
+//            CategorySeeder::class,
+//            SupplierSeeder::class,
+//            CustomerSeeder::class,
+//            ProductSeeder::class,
 //            SingleProductSeeder::class,
 
         ]);
