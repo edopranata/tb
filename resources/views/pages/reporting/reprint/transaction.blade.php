@@ -40,6 +40,13 @@
 
         <div class="col-lg-4">
             @if($sell)
+
+                @php
+                    $total = $sell->details->sum('total') - $sell->details->sum('discount');
+                    $sub_total = $total - $sell->discount;
+                    $bond = $sell->histories()->sum('payment') - $sub_total
+                @endphp
+
                 <div class="card card-body m-0 p-0 tw-text-[22px] tw-font-mono" >
                     @error('invoice')
                         <div class="card-header alert-danger">
@@ -65,7 +72,16 @@
                             USER# {{ $sell->user->username }}
                         </div>
                         <div class="col-6">
-                            DATE# {{ $sell->invoice_date->format('d-m-Y H:i:s') }}
+                            DATE #{{ $sell->invoice_date->format('d-m-Y') }}
+                        </div>
+
+                        <div class="col-6">
+                            @if($sell->customer_id)
+                                TO : {{ $sell->customer_name }}
+                            @endif
+                        </div>
+                        <div class="col-6">
+                            TIME #{{ $sell->invoice_date->format('H:i:s') }}
                         </div>
                     </div>
 
@@ -89,23 +105,37 @@
 
                         <div class="tw-flex tw-font-bold">
                             <div class="tw-grow text-right">Total</div>
-                            <div class="tw-flex-none tw-w-[15rem] text-right">Rp. {{ number_format($sell->details->sum('total') - $sell->details->sum('discount')) }}</div>
+                            <div class="tw-flex-none tw-w-[15rem] text-right">Rp. {{ number_format($total) }}</div>
                         </div>
                         <div class="tw-flex tw-font-bold">
                             <div class="tw-grow text-right">Disc</div>
-                            <div class="tw-flex-none tw-w-[15rem] text-right border-bottom">Rp. {{ number_format($sell->discount) }}</div>
+                            <div class="tw-flex-none tw-w-[15rem] text-right">Rp. {{ number_format($sell->discount) }}</div>
                         </div>
                         <div class="tw-flex tw-font-bold tw-text-[24px]">
                             <div class="tw-grow text-right">Subtotal</div>
-                            <div class="tw-flex-none tw-w-[15rem] text-right">Rp. {{ number_format(($sell->details->sum('total') - $sell->details->sum('discount')) - $sell->discount) }}</div>
+                            <div class="tw-flex-none tw-w-[15rem] text-right border-bottom border-top">Rp. {{ number_format($sub_total) }}</div>
                         </div>
-
+                        <div class="tw-flex tw-font-bold">
+                            <div class="tw-grow text-right">Bayar</div>
+                            <div class="tw-flex-none tw-w-[15rem] text-right">{{ number_format($sell->payment) }}</div>
+                        </div>
+                        @if($sell->payment >= $sub_total)
+                        <div class="tw-flex tw-font-bold">
+                            <div class="tw-grow text-right">Kembali</div>
+                            <div class="tw-flex-none tw-w-[15rem] text-right">{{ number_format( $sell->payment - $sub_total) }}</div>
+                        </div>
+                        @else
+                            <div class="tw-flex tw-font-bold">
+                                <div class="tw-grow text-right">Bond</div>
+                                <div class="tw-flex-none tw-w-[15rem] text-right">{{ number_format($bond) }}</div>
+                            </div>
+                        @endif
                     </div>
                     <hr>
                     <div class="tw-flex tw-flex-col tw-items-center">
                         <div>*** Terima Kasih ***</div><br>
                         <div><i class="fab fa-facebook"></i></i> SBRPASAMAN BARAT</div>
-                        <div><i class="fab fa-whatsapp-square"></i> SBRPASAMAN BARAT</div>
+                        <div><i class="fab fa-whatsapp-square"></i> 0822-1193-5100</div>
                         <div><i class="fab fa-instagram-square"></i> SBRPASAMAN BARAT</div>
                     </div>
                 </div>
@@ -139,7 +169,9 @@
                         </div>
 
                         <div class="col-6">
-                            &nbsp;
+                            @if($sell->customer_id)
+                                TO : {{ $sell->customer_name }}
+                            @endif
                         </div>
                         <div class="col-6">
                             TIME #{{ $sell->invoice_date->format('H:i:s') }}
@@ -162,7 +194,6 @@
                         @endforeach
                     </div>
                     <div class="divide-y divide-slate-200">
-
                         <div class="tw-flex tw-font-bold">
                             <div class="tw-grow text-right">Total</div>
                             <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format($sell->details->sum('total') - $sell->details->sum('discount')) }}</div>
@@ -175,7 +206,21 @@
                             <div class="tw-grow text-right">Subtotal</div>
                             <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format(($sell->details->sum('total') - $sell->details->sum('discount')) - $sell->discount) }}</div>
                         </div>
-
+                        <div class="tw-flex tw-font-bold">
+                            <div class="tw-grow text-right">Bayar</div>
+                            <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format($sell->payment) }}</div>
+                        </div>
+                        @if($sell->payment >= $sub_total)
+                            <div class="tw-flex tw-font-bold">
+                                <div class="tw-grow text-right">Kembali</div>
+                                <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format( $sell->payment - $sub_total) }}</div>
+                            </div>
+                        @else
+                            <div class="tw-flex tw-font-bold">
+                                <div class="tw-grow text-right">Bond</div>
+                                <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format($bond) }}</div>
+                            </div>
+                        @endif
                     </div>
                     <hr>
                     <div class="tw-flex tw-flex-col tw-items-center">

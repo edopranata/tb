@@ -476,6 +476,15 @@
 .tw-w-\[20rem\] {
     width: 20rem !important
 }
+.tw-w-auto {
+    width: auto !important
+}
+.tw-w-\[15rem\] {
+    width: 15rem !important
+}
+.tw-w-\[20rem\] {
+    width: 20rem !important
+}
 .tw-max-w-2xl {
     max-width: 42rem !important
 }
@@ -542,6 +551,10 @@
 .tw-border {
     border-width: 1px !important
 }
+.tw-border-y {
+    border-top-width: 1px !important;
+    border-bottom-width: 1px !important
+}
 .tw-border-red-700 {
     --tw-border-opacity: 1 !important;
     border-color: rgb(185 28 28 / var(--tw-border-opacity)) !important
@@ -561,6 +574,14 @@
 .tw-border-indigo-700 {
     --tw-border-opacity: 1 !important;
     border-color: rgb(67 56 202 / var(--tw-border-opacity)) !important
+}
+.tw-border-black {
+    --tw-border-opacity: 1 !important;
+    border-color: rgb(0 0 0 / var(--tw-border-opacity)) !important
+}
+.tw-border-slate-500 {
+    --tw-border-opacity: 1 !important;
+    border-color: rgb(100 116 139 / var(--tw-border-opacity)) !important
 }
 .tw-border-black {
     --tw-border-opacity: 1 !important;
@@ -1039,6 +1060,24 @@
 }
 .tw-text-\[34px\] {
     font-size: 34px !important
+}
+.tw-text-\[48px\] {
+    font-size: 48px !important
+}
+.tw-text-\[22px\] {
+    font-size: 22px !important
+}
+.tw-text-\[18px\] {
+    font-size: 18px !important
+}
+.tw-text-\[24px\] {
+    font-size: 24px !important
+}
+.tw-text-\[45px\] {
+    font-size: 45px !important
+}
+.tw-text-\[36px\] {
+    font-size: 36px !important
 }
 .tw-text-\[48px\] {
     font-size: 48px !important

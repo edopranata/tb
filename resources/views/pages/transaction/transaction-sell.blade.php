@@ -21,7 +21,13 @@
         @if($sells)<button x-on:keydown.window.prevent.ctrl.enter="$wire.transactionSave()" class="btn btn-primary btn-flat" type="button" x-on:click="submit()" @if($errors->any()) disabled @endif">Simpan Data (ctrl + enter)</button>@endif
     </x-card.action>
     <div class="row d-none d-print-block">
-        @if($print)
+        @if($sell)
+            @php
+                $total = $sell->details->sum('total') - $sell->details->sum('discount');
+                $sub_total = $total - $sell->discount;
+                $bond = $sell->histories()->sum('payment') - $sub_total
+            @endphp
+
             <div class="card card-body mt-0 tw-text-[45px] tw-font-mono" >
                 <div class="tw-p-0 tw-m-0 tw-flex tw-justify-center">
                     <img src="{{ asset('dist/img/sbr-logo.png') }}">
@@ -46,7 +52,9 @@
                     </div>
 
                     <div class="col-6">
-                        &nbsp;
+                        @if($sell->customer_id)
+                            TO : {{ $sell->customer_name }}
+                        @endif
                     </div>
                     <div class="col-6">
                         TIME #{{ $sell->invoice_date->format('H:i:s') }}
@@ -54,7 +62,7 @@
                 </div>
                 <hr class="bg-black tw-border-black tw-my-1">
                 <div class="divide-y divide-slate-200">
-                    @foreach($print->details as $detail)
+                    @foreach($sell->details as $detail)
                         <div class="tw-flex">
                             <div class="tw-grow">
                                 {{ $detail->product_name }}<br>
@@ -69,20 +77,33 @@
                     @endforeach
                 </div>
                 <div class="divide-y divide-slate-200">
-
                     <div class="tw-flex tw-font-bold">
                         <div class="tw-grow text-right">Total</div>
-                        <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format($print->details->sum('total') - $print->details->sum('discount')) }}</div>
+                        <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format($sell->details->sum('total') - $sell->details->sum('discount')) }}</div>
                     </div>
                     <div class="tw-flex tw-font-bold">
                         <div class="tw-grow text-right">Disc</div>
-                        <div class="tw-flex-none tw-w-[20rem] text-right border-bottom">{{ number_format($print->discount) }}</div>
+                        <div class="tw-flex-none tw-w-[20rem] text-right border-bottom">{{ number_format($sell->discount) }}</div>
                     </div>
                     <div class="tw-flex tw-font-bold tw-text-[48px]">
                         <div class="tw-grow text-right">Subtotal</div>
-                        <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format(($print->details->sum('total') - $print->details->sum('discount')) - $print->discount) }}</div>
+                        <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format(($sell->details->sum('total') - $sell->details->sum('discount')) - $sell->discount) }}</div>
                     </div>
-
+                    <div class="tw-flex tw-font-bold">
+                        <div class="tw-grow text-right">Bayar</div>
+                        <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format($sell->payment) }}</div>
+                    </div>
+                    @if($sell->payment >= $sub_total)
+                        <div class="tw-flex tw-font-bold">
+                            <div class="tw-grow text-right">Kembali</div>
+                            <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format( $sell->payment - $sub_total) }}</div>
+                        </div>
+                    @else
+                        <div class="tw-flex tw-font-bold">
+                            <div class="tw-grow text-right">Bond</div>
+                            <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format($bond) }}</div>
+                        </div>
+                    @endif
                 </div>
                 <hr>
                 <div class="tw-flex tw-flex-col tw-items-center">

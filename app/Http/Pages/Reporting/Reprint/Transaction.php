@@ -23,7 +23,7 @@ class Transaction extends Component
         ]);
 
         $this->sell = Sell::query()
-            ->with(['details.product.prices.unit', 'details.product.stocks', 'details.price.unit', 'user'])
+            ->with(['details.product.prices.unit', 'details.product.stocks', 'details.price.unit', 'user', 'histories'])
             ->where('invoice_number', $this->invoice)->first();
 
         $this->dispatchBrowserEvent('pagePrint');
@@ -32,7 +32,7 @@ class Transaction extends Component
     public function lastTransaction()
     {
         $this->sell = Sell::query()
-            ->with(['details.product.prices.unit', 'details.product.stocks', 'details.price.unit', 'user'])
+            ->with(['details.product.prices.unit', 'details.product.stocks', 'details.price.unit', 'user', 'histories'])
             ->where('user_id', auth()->id())
             ->latest()->first();
 

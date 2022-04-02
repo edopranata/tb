@@ -40,7 +40,7 @@ class TransactionSell extends Autocomplete
     public $customers;
     public $customer;
 
-    public $print;
+    public $sell;
 
     protected $listeners = ['valueSelected'];
 
@@ -160,7 +160,7 @@ class TransactionSell extends Autocomplete
             'invoice_number'=> $this->invoice_number,
         ]);
 
-        $this->reset(['print']);
+        $this->reset(['sell']);
 
         $this->loadTemp();
     }
@@ -234,6 +234,7 @@ class TransactionSell extends Autocomplete
 
     public function transactionSave()
     {
+//        dd($this->payment);
         /**
          * 1. Validasi sebelum simpan data ✔
          * 2. Cek ketersediaan stock ✔
@@ -291,7 +292,7 @@ class TransactionSell extends Autocomplete
                     'invoice_date'      => now(),
                     'bill'              => $this->sells->bill,
                     'discount'          => $this->sells->discount,
-                    'payment'           => $this->sells->payment,
+                    'payment'           => $this->payment,
                     'status'            => $this->sells->status,
                 ]);
 
@@ -397,8 +398,10 @@ class TransactionSell extends Autocomplete
             $this->cancelTransaction();
 
             DB::commit();
-            $this->print = [];
-            $this->print = $sells_transaction->load(['details.product.prices.unit', 'details.product.stocks', 'details.price.unit', 'user'])->first();
+
+            $this->reset(['sell']);
+
+            $this->sell = $sells_transaction->load(['details.product.prices.unit', 'details.product.stocks', 'details.price.unit', 'user']);
 
             $this->dispatchBrowserEvent('pagePrint');
 
