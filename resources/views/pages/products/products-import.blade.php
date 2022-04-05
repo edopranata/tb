@@ -18,6 +18,12 @@
     </x-slot>
 
     <div class="row">
+        <div class="col-12">
+            <div class="alert alert-warning rounded-0 p-2">
+                <p class="p-0 m-0">Halaman ini digunakan hanya untuk <strong>import data stock awal dan product/barang yang baru</strong></p>
+                <p class="p-0 m-0">Apabila barang yang di import akan di transfer ke stock toko harap check <strong>Transfer stock to store</strong> pada option dibawah </p>
+            </div>
+        </div>
         <div class="col-md-4">
             <div class="card">
                 <form wire:submit.prevent="upload()">
