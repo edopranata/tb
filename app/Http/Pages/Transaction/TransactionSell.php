@@ -44,7 +44,7 @@ class TransactionSell extends Autocomplete
 
     protected $listeners = ['valueSelected'];
 
-    public $show_discount = false;
+    public $show_discount = true;
 
     public function render()
     {
@@ -79,6 +79,7 @@ class TransactionSell extends Autocomplete
 
     public function fixedPayment()
     {
+//        $total = $this->total - $this->sell_discount;
         $this->updatePayment($this->total);
 //        $this->loadTemp();
     }
@@ -222,7 +223,7 @@ class TransactionSell extends Autocomplete
             $this->payment          = $this->sells->payment;
             $this->payment_format   = $this->sells->payment;
             $this->due_date         = $this->sells->due_date;
-            $this->refund           = $this->payment - $this->total;
+            $this->refund           = $this->payment - ($this->total - $this->sell_discount);
 
 //            $this->updatePayment();
         }
@@ -411,6 +412,26 @@ class TransactionSell extends Autocomplete
         }
     }
 
+    public function setPrice($index, $type = 'sell', $value = null)
+    {
+        if($value){
+            $this->products[$index]['price_category'] = $type;
+            $this->products[$index]['price_category'] = Str::upper($type);
+        }else {
+            $t_details = collect($this->products[$index]);
+            $p_prices = collect($t_details['product']['prices'])->where('id', $this->products[$index]['product_price_id'])->first();
+
+            $this->products[$index]['price_category'] = $type;
+            $temp_category = $this->customer_id ? 'customer' : 'sell';
+            $price_category = (Str::lower($this->products[$index]['price_category']) == 'wholesale') ? 'wholesale' : $temp_category;
+
+            $this->products[$index]['sell_price']       = $p_prices[Str::lower($price_category) . '_price' ?: $this->price_type . '_price'];
+            $this->products[$index]['price_category']   = $price_category;
+        }
+
+        $this->updateProduct($index);
+    }
+
     public function updateProduct($key)
     {
         $this->resetErrorBag();
@@ -419,8 +440,8 @@ class TransactionSell extends Autocomplete
         $t_details = collect($this->products[$key]);
         $p_prices = collect($t_details['product']['prices'])->where('id', $this->products[$key]['product_price_id'])->first();
 
-        $temp_category = $this->customer_id ? 'customer' : 'sell';
-        $price_category = (Str::lower($this->products[$key]['price_category']) == 'wholesale') ? 'wholesale' : $temp_category;
+//        $temp_category = $this->customer_id ? 'customer' : 'sell';
+//        $price_category = (Str::lower($this->products[$key]['price_category']) == 'wholesale') ? 'wholesale' : $temp_category;
 
         TempSellDetail::query()
             ->where('id', $t_details['id'])
@@ -429,11 +450,11 @@ class TransactionSell extends Autocomplete
                 'quantity'                  => $this->products[$key]['quantity'],
                 'product_price_quantity'    => $this->products[$key]['quantity'] * $p_prices['quantity'],
 
-                'sell_price'                => $p_prices[Str::lower($price_category) . '_price' ?: $this->price_type . '_price'],
+                'sell_price'                => $this->products[$key]['sell_price'],
                 'discount'                  => $this->products[$key]['discount'],
                 'sell_price_quantity'       => 1,
-                'price_category'            => Str::upper($price_category),
-                'total'                     => ($p_prices[Str::lower($price_category) . '_price'] * $this->products[$key]['quantity']) - $this->products[$key]['discount'] ,
+                'price_category'            => $this->products[$key]['price_category'],
+                'total'                     => ($this->products[$key]['sell_price'] * $this->products[$key]['quantity']) - $this->products[$key]['discount'],
             ]);
         $this->resetPayment();
         $this->loadTemp();
@@ -451,14 +472,6 @@ class TransactionSell extends Autocomplete
         $details->delete();
         $this->resetPayment();
         $this->loadTemp();
-    }
-
-    public function setPrice($index, $type = 'sell')
-    {
-        Debugbar::info($type);
-        $this->products[$index]['price_category'] = $type;
-        $this->updateProduct($index);
-
     }
 
     public function addProduct($product)

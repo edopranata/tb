@@ -42,12 +42,12 @@
             @if($sell)
 
                 @php
-                    $total = $sell->details->sum('total') - $sell->details->sum('discount');
+                    $total = $sell->details->sum('total');
                     $sub_total = $total - $sell->discount;
                     $bond = $sell->histories()->sum('payment') - $sub_total
                 @endphp
 
-                <div class="card card-body m-0 p-0 tw-text-[22px] tw-font-mono" >
+                <div class="card card-body m-0 p-2 tw-text-[22px] tw-font-mono" >
                     @error('invoice')
                         <div class="card-header alert-danger">
                             {{ $message }}
@@ -91,8 +91,8 @@
                             <div class="tw-flex">
                                 <div class="tw-grow">
                                     {{ $detail->product_name }}<br>
-                                    {{ $detail->quantity . ' ' . $detail->price->unit->name }} @ Rp. {{ number_format($detail->buying_price) . ' ' }}
-                                    @if($detail->discount > 0) Discount Rp. {{ number_format($detail->discount) }} @endif
+                                    {{ $detail->quantity . ' ' . $detail->price->unit->name }} @ Rp. {{ number_format($detail->sell_price) . ' ' }}
+                                    @if($detail->discount > 0) Disc Rp. {{ number_format($detail->discount) }} @endif
                                 </div>
                                 <div class="tw-flex-none tw-w-auto text-right">
                                     Rp. {{ number_format($detail->total) }}
@@ -102,7 +102,6 @@
                         @endforeach
                     </div>
                     <div class="divide-y divide-slate-200">
-
                         <div class="tw-flex tw-font-bold">
                             <div class="tw-grow text-right">Total</div>
                             <div class="tw-flex-none tw-w-[15rem] text-right">Rp. {{ number_format($total) }}</div>
@@ -183,8 +182,8 @@
                             <div class="tw-flex">
                                 <div class="tw-grow">
                                     {{ $detail->product_name }}<br>
-                                    {{ $detail->quantity . ' ' . $detail->price->unit->name }} @ Rp. {{ number_format($detail->buying_price) . ' ' }}
-                                    @if($detail->discount > 0) Discount Rp. {{ number_format($detail->discount) }} @endif
+                                    {{ $detail->quantity . ' ' . $detail->price->unit->name }} @ Rp. {{ number_format($detail->sell_price) . ' ' }}
+                                    @if($detail->discount > 0) Disc Rp. {{ number_format($detail->discount) }} @endif
                                 </div>
                                 <div class="tw-flex-none tw-w-auto text-right">
                                     Rp. {{ number_format($detail->total) }}
@@ -196,15 +195,15 @@
                     <div class="divide-y divide-slate-200">
                         <div class="tw-flex tw-font-bold">
                             <div class="tw-grow text-right">Total</div>
-                            <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format($sell->details->sum('total') - $sell->details->sum('discount')) }}</div>
+                            <div class="tw-flex-none tw-w-[20rem] text-right">Rp. {{ number_format($total) }}</div>
                         </div>
                         <div class="tw-flex tw-font-bold">
                             <div class="tw-grow text-right">Disc</div>
-                            <div class="tw-flex-none tw-w-[20rem] text-right border-bottom">{{ number_format($sell->discount) }}</div>
+                            <div class="tw-flex-none tw-w-[20rem] text-right">Rp. {{ number_format($sell->discount) }}</div>
                         </div>
-                        <div class="tw-flex tw-font-bold tw-text-[48px]">
+                        <div class="tw-flex tw-font-bold tw-text-[24px]">
                             <div class="tw-grow text-right">Subtotal</div>
-                            <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format(($sell->details->sum('total') - $sell->details->sum('discount')) - $sell->discount) }}</div>
+                            <div class="tw-flex-none tw-w-[20rem] text-right border-bottom border-top">Rp. {{ number_format($sub_total) }}</div>
                         </div>
                         <div class="tw-flex tw-font-bold">
                             <div class="tw-grow text-right">Bayar</div>
@@ -226,7 +225,7 @@
                     <div class="tw-flex tw-flex-col tw-items-center">
                         <div>*** Terima Kasih ***</div><br>
                         <div><i class="fab fa-facebook"></i></i> SBRPASAMAN BARAT</div>
-                        <div><i class="fab fa-whatsapp-square"></i> SBRPASAMAN BARAT</div>
+                        <div><i class="fab fa-whatsapp-square"></i> 0822-1193-5100</div>
                         <div><i class="fab fa-instagram-square"></i> SBRPASAMAN BARAT</div>
                     </div>
                 </div>

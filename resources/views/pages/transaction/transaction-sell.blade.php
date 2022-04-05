@@ -23,7 +23,7 @@
     <div class="row d-none d-print-block">
         @if($sell)
             @php
-                $total = $sell->details->sum('total') - $sell->details->sum('discount');
+                $total = $sell->details->sum('total');
                 $sub_total = $total - $sell->discount;
                 $bond = $sell->histories()->sum('payment') - $sub_total
             @endphp
@@ -66,8 +66,8 @@
                         <div class="tw-flex">
                             <div class="tw-grow">
                                 {{ $detail->product_name }}<br>
-                                {{ $detail->quantity . ' ' . $detail->price->unit->name }} @ Rp. {{ number_format($detail->buying_price) . ' ' }}
-                                @if($detail->discount > 0) Discount Rp. {{ number_format($detail->discount) }} @endif
+                                {{ $detail->quantity . ' ' . $detail->price->unit->name }} @ Rp. {{ number_format($detail->sell_price) . ' ' }}
+                                @if($detail->discount > 0) Disc Rp. {{ number_format($detail->discount) }} @endif
                             </div>
                             <div class="tw-flex-none tw-w-auto text-right">
                                 Rp. {{ number_format($detail->total) }}
@@ -79,15 +79,15 @@
                 <div class="divide-y divide-slate-200">
                     <div class="tw-flex tw-font-bold">
                         <div class="tw-grow text-right">Total</div>
-                        <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format($sell->details->sum('total') - $sell->details->sum('discount')) }}</div>
+                        <div class="tw-flex-none tw-w-[20rem] text-right">Rp. {{ number_format($total) }}</div>
                     </div>
                     <div class="tw-flex tw-font-bold">
                         <div class="tw-grow text-right">Disc</div>
-                        <div class="tw-flex-none tw-w-[20rem] text-right border-bottom">{{ number_format($sell->discount) }}</div>
+                        <div class="tw-flex-none tw-w-[20rem] text-right">Rp. {{ number_format($sell->discount) }}</div>
                     </div>
-                    <div class="tw-flex tw-font-bold tw-text-[48px]">
+                    <div class="tw-flex tw-font-bold tw-text-[24px]">
                         <div class="tw-grow text-right">Subtotal</div>
-                        <div class="tw-flex-none tw-w-[20rem] text-right">{{ number_format(($sell->details->sum('total') - $sell->details->sum('discount')) - $sell->discount) }}</div>
+                        <div class="tw-flex-none tw-w-[20rem] text-right border-bottom border-top">Rp. {{ number_format($sub_total) }}</div>
                     </div>
                     <div class="tw-flex tw-font-bold">
                         <div class="tw-grow text-right">Bayar</div>
@@ -109,7 +109,7 @@
                 <div class="tw-flex tw-flex-col tw-items-center">
                     <div>*** Terima Kasih ***</div><br>
                     <div><i class="fab fa-facebook"></i></i> SBRPASAMAN BARAT</div>
-                    <div><i class="fab fa-whatsapp-square"></i> SBRPASAMAN BARAT</div>
+                    <div><i class="fab fa-whatsapp-square"></i> 0822-1193-5100</div>
                     <div><i class="fab fa-instagram-square"></i> SBRPASAMAN BARAT</div>
                 </div>
             </div>
@@ -293,7 +293,7 @@
                                         </div>
                                     </th>
 
-                                    <th style="min-width: 120px;">Total</th>
+{{--                                    <th style="min-width: 120px;">Total</th>--}}
                                     <th style="min-width: 200px;">Harga</th>
                                     @if($show_discount)
                                     <th style="min-width: 200px;">Disc</th>
@@ -326,30 +326,28 @@
                                                 @endif
                                             </div>
                                         </td>
-                                        <td>
-                                            <div class="form-group col-md-12">
-                                                <input wire:model.lazy="products.{{ $key }}.product_price_quantity" class="form-control mr-sm-2" type="text" readonly/>
-                                            </div>
-
-                                        </td>
+{{--                                        <td>--}}
+{{--                                            <div class="form-group col-md-12">--}}
+{{--                                                <input wire:model.lazy="products.{{ $key }}.product_price_quantity" class="form-control mr-sm-2" type="text" readonly/>--}}
+{{--                                            </div>--}}
+{{--                                        </td>--}}
                                         <td>
                                             <div class="input-group">
                                                 <div class="input-group-prepend" wire:click="setPrice('{{ $key }}','{{ $customer_id ? 'customer' : 'sell' }}')">
                                                     <span class="input-group-text {{ \Illuminate\Support\Str::lower($products[$key]['price_category']) != 'wholesale' ? 'text-bold tw-bg-slate-700 tw-text-slate-100' : ''}}">{{ $customer_id ? 'C' : 'S'}}</span>
                                                 </div>
-                                                <input wire:model.lazy="products.{{ $key }}.sell_price" class="form-control text-right rupiah" type="text" readonly/>
+                                                <input wire:model.lazy="products.{{ $key }}.sell_price" wire:change="setPrice('{{ $key }}','sell', 'current')" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" class="form-control text-right rupiah" type="text"/>
                                                 <div class="input-group-append" wire:click="setPrice('{{ $key }}','wholesale')">
                                                     <div class="input-group-text {{ \Illuminate\Support\Str::lower($products[$key]['price_category']) === 'wholesale' ? 'text-bold tw-bg-slate-700 tw-text-slate-100' : ''}}">G</div>
                                                 </div>
                                                 @error('products.' . $key . '.sell_price') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                             </div>
-                                            <p>{{ $products[$key]['sell_price'] }}</p>
 
                                         </td>
                                         @if($show_discount)
                                         <td>
                                             <div class="form-group col-md-12">
-                                                <input wire:change="updateProduct({{ $key }})" wire:model.lazy="products.{{ $key }}.discount" class="form-control text-right rupiah" type="text"/>
+                                                <input wire:change="updateProduct({{ $key }})" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" wire:model.lazy="products.{{ $key }}.discount" class="form-control text-right rupiah" type="text"/>
                                                 @error('products.' . $key . '.discount') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                             </div>
                                         </td>
@@ -362,7 +360,6 @@
                                         <td>
                                             <button wire:click="removeItem({{ $item->id }})" class="btn btn-danger"><i class="fas fa-trash"></i></button>
                                         </td>
-
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -380,13 +377,22 @@
                                 </div>
                                 <input wire:model="total" type="text" class="form-control form-control-lg rounded-0 rupiah" readonly>
                             </div>
+                            @if($show_discount)
+                                <h5>Potongan</h5>
+                                <div class="input-group input-group-lg mb-3">
+                                    <div class="input-group-prepend rounded-0">
+                                        <span class="input-group-text">Rp.</span>
+                                    </div>
+                                    <input wire:model="sell_discount" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" type="text" class="form-control form-control-lg rounded-0 rupiah">
+                                </div>
+                            @endif
 
                             <h5>Total pembayaran</h5>
                             <div class="input-group input-group-lg mb-3">
                                 <div class="input-group-prepend rounded-0">
                                     <span class="input-group-text">Rp.</span>
                                 </div>
-                                <input wire:change="updatePayment()" wire:model.lazy="payment"  onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" type="text" class="form-control form-control-lg rounded-0 rupiah">
+                                <input wire:change="updatePayment()" wire:model.lazy="payment" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" type="text" class="form-control form-control-lg rounded-0 rupiah">
                                 <div class="input-group-append rounded-0">
                                     <button wire:click="fixedPayment()" class="btn btn-info btn-flat" type="button">Pas</button>
                                 </div>
