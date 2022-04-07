@@ -106,7 +106,7 @@ Route::middleware(['auth'])->group(function (){
                 Route::get('{purchase}', App\Http\Pages\Reporting\ReportPurchaseView::class)->name('view');
             });
             Route::group(['prefix' => 'transaction', 'as' => 'transaction.'], function (){
-                Route::get('/', App\Http\Pages\Reporting\ReportPurchase::class)->name('index');
+                Route::get('/', App\Http\Pages\Reporting\Transaction\ReportTransaction::class)->name('index');
             });
         });
     });

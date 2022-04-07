@@ -84,8 +84,16 @@
 
                 <!-- Laporan -->
                 <li class="nav-header">LAPORAN</li>
+                <!-- Laporan Transaksi -->
+                <x-sidebar.menu-dropdown :title="$title = 'Laporan Transaksi'" :active="request()->routeIs('pages.reporting.transaction*')">
+                    <x-slot name="icon">
+                        <i class="nav-icon fas fa-file-invoice"></i>
+                    </x-slot>
+                    <x-sidebar.menu-item :title="$title = 'Laporan transaksi kasir'" :href="route('pages.reporting.transaction.index')" :active="request()->routeIs('pages.reporting.transaction.*')"/>
+                </x-sidebar.menu-dropdown>
 
-                <x-sidebar.menu-dropdown :title="$title = 'Laporan Stock'" :active="request()->routeIs('pages.reporting.*')">
+                <!-- Laporan Stock -->
+                <x-sidebar.menu-dropdown :title="$title = 'Laporan Stock'" :active="request()->routeIs('pages.reporting.reprint.*') || request()->routeIs('pages.reporting.stock.*') || request()->routeIs('pages.reporting.inventory.*')">
                     <x-slot name="icon">
                         <i class="nav-icon fas fa-file-invoice"></i>
                     </x-slot>
@@ -95,6 +103,7 @@
                     <x-sidebar.menu-item :title="$title = 'Inventori Produk Masuk'" :href="route('pages.reporting.inventory.index')" :active="request()->routeIs('pages.reporting.inventory.*')"/>
 
                 </x-sidebar.menu-dropdown>
+
 {{--                <li class="nav-header">LABELS</li>--}}
 {{--                <li class="nav-item">--}}
 {{--                    <a href="#" class="nav-link">--}}
