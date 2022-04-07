@@ -172,8 +172,9 @@ class TransactionSell extends Autocomplete
         $date = str_replace('-', '', $this->transaction_date);
 
         $sells = Sell::query()
-            ->where('invoice_date', $date)->get()->count();
-        $number = $sells ?: 1;
+            ->whereDate('invoice_date', $date)->get()->count();
+
+        $number = $sells ? $sells + 1 : 1;
         $suffix = sprintf('%03d', $number);
 
         return $this->invoice_number = $this->prefix . $date . $suffix;
