@@ -9,6 +9,7 @@ use App\Models\ProductStock;
 use App\Models\Sell;
 use App\Models\TempSellDetail;
 use Barryvdh\Debugbar\Facades\Debugbar;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -16,7 +17,7 @@ use Symfony\Component\ErrorHandler\Debug;
 
 class TransactionSell extends Autocomplete
 {
-    public $prefix = "TB";
+    public $prefix = "SBR";
 
     public $transaction_date;
     public $customer_id;
@@ -153,7 +154,7 @@ class TransactionSell extends Autocomplete
     public function transactionBegin()
     {
         $this->invoice_number = $this->generateInvoiceNumber();
-
+        $this->transaction_date = $this->transaction_date ?: now()->format('Y-m-d');
         auth()->user()->tempSells()->create([
             'customer_id'   => $this->customer_id ?: null,
             'customer_name' => $this->customer_name ?: null,
@@ -168,7 +169,14 @@ class TransactionSell extends Autocomplete
 
     public function generateInvoiceNumber()
     {
-        return $this->invoice_number = $this->prefix . now()->format('Ymdhis');
+        $date = str_replace('-', '', $this->transaction_date);
+
+        $sells = Sell::query()
+            ->where('invoice_date', $date)->get()->count();
+        $number = $sells ?: 1;
+        $suffix = sprintf('%03d', $number);
+
+        return $this->invoice_number = $this->prefix . $date . $suffix;
     }
 
     public function cancelTransaction()
