@@ -57,7 +57,6 @@ class ReportTransaction extends Component
 
                 ];
             });
-//        dd($this->sells);
     }
 
     public function exportExcel()

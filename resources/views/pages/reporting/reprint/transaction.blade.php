@@ -201,7 +201,7 @@
                             <div class="tw-grow text-right">Disc</div>
                             <div class="tw-flex-none tw-w-[20rem] text-right">Rp. {{ number_format($sell->discount) }}</div>
                         </div>
-                        <div class="tw-flex tw-font-bold tw-text-[24px]">
+                        <div class="tw-flex tw-font-bold tw-text-[38px]">
                             <div class="tw-grow text-right">Subtotal</div>
                             <div class="tw-flex-none tw-w-[20rem] text-right border-bottom border-top">Rp. {{ number_format($sub_total) }}</div>
                         </div>
