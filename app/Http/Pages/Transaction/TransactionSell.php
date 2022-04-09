@@ -350,7 +350,7 @@ class TransactionSell extends Autocomplete
                          * Kurangi available stock pada table product_stock (fifo stock) sesuai degan jumlah atau sisa dari quantity penjualan
                          */
                         $payload_stock[] = [
-                            'product_sock_id' => $stock->id,
+                            'product_stock_id' => $stock->id,
                             'quantity' => $current_quantity,
                             'buying_price' => $stock->buying_price,
                             'total' => $current_quantity * $stock->buying_price,
