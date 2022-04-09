@@ -449,6 +449,7 @@ class TransactionSell extends Autocomplete
         $t_details = collect($this->products[$key]);
         $p_prices = collect($t_details['product']['prices'])->where('id', $this->products[$key]['product_price_id'])->first();
 
+//        dd($p_prices);
 //        $temp_category = $this->customer_id ? 'customer' : 'sell';
 //        $price_category = (Str::lower($this->products[$key]['price_category']) == 'wholesale') ? 'wholesale' : $temp_category;
 
@@ -459,11 +460,11 @@ class TransactionSell extends Autocomplete
                 'quantity'                  => $this->products[$key]['quantity'],
                 'product_price_quantity'    => $this->products[$key]['quantity'] * $p_prices['quantity'],
 
-                'sell_price'                => $this->products[$key]['sell_price'],
+                'sell_price'                => $p_prices['sell_price'],
                 'discount'                  => $this->products[$key]['discount'],
                 'sell_price_quantity'       => 1,
                 'price_category'            => $this->products[$key]['price_category'],
-                'total'                     => ($this->products[$key]['sell_price'] * $this->products[$key]['quantity']) - $this->products[$key]['discount'],
+                'total'                     => ($p_prices['sell_price'] * $this->products[$key]['quantity']) - $this->products[$key]['discount'],
             ]);
         $this->resetPayment();
         $this->loadTemp();
