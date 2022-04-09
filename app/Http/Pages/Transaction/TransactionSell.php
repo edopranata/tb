@@ -330,8 +330,6 @@ class TransactionSell extends Autocomplete
                     if($current_quantity >= $stock->available_stock){
                         $current_quantity = $current_quantity - $stock->available_stock;
 
-                        $stock->decrement('available_stock', $stock->available_stock);
-
                         /**
                          * Tambahkan payload stock untuk menghitung harga modal
                          */
@@ -342,19 +340,24 @@ class TransactionSell extends Autocomplete
                             'total' => $stock->available_stock * $stock->buying_price,
                         ];
 
+                        $stock->decrement('available_stock', $stock->available_stock);
+
+
+
                     }else{
 
                         /**
                          * Kurangi available stock pada table product_stock (fifo stock) sesuai degan jumlah atau sisa dari quantity penjualan
                          */
-
-                        $stock->decrement('available_stock', $current_quantity);
                         $payload_stock[] = [
                             'product_sock_id' => $stock->id,
                             'quantity' => $current_quantity,
                             'buying_price' => $stock->buying_price,
                             'total' => $current_quantity * $stock->buying_price,
                         ];
+
+                        $stock->decrement('available_stock', $current_quantity);
+
                         $current_quantity = 0;
                     }
                 }
