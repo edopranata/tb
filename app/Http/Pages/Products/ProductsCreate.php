@@ -7,6 +7,7 @@ use App\Models\Unit;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class ProductsCreate extends Component
@@ -41,6 +42,11 @@ class ProductsCreate extends Component
     {
         $this->units = Unit::all();
         $this->categories = Category::all();
+    }
+
+    public function generateBarcode()
+    {
+        $this->barcode = Str::upper(Str::random(2)) . now()->getPreciseTimestamp(3);
     }
 
     public function switchOption()

@@ -38,7 +38,12 @@
                 <div class="card-body">
                     <div class="form-group">
                         <label>Barcode / Kode Produk</label>
-                        <input wire:model.defer="barcode" {{ old('barcode') }} type="text" class="form-control @error('barcode') is-invalid @enderror" placeholder="Barcode / Kode Produk">
+                        <div class="input-group">
+                            <input wire:model.defer="barcode" {{ old('barcode') }} type="text" class="form-control @error('barcode') is-invalid @enderror" placeholder="Barcode / Kode Produk">
+                            <div class="input-group-append">
+                                <button type="button" wire:click="generateBarcode()" class="input-group-text">Generate new barcode</button>
+                            </div>
+                        </div>
                         @error('barcode')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                     </div>
                     <div class="form-group">
