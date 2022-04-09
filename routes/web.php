@@ -90,6 +90,7 @@ Route::middleware(['auth'])->group(function (){
 
         Route::group(['prefix' => 'transaction', 'as' => 'transaction.'], function (){
             Route::get('/', \App\Http\Pages\Transaction\TransactionSell::class)->name('index');
+            Route::get('return', \App\Http\Pages\Transaction\TransactionReturn::class)->name('return');
             Route::get('{sell}/print', \App\Http\Pages\Transaction\TransactionPrint::class)->name('print');
         });
 

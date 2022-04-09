@@ -79,7 +79,8 @@
                     <x-slot name="icon">
                         <i class="nav-icon fas fa-money-bill"></i>
                     </x-slot>
-                    <x-sidebar.menu-item :title="$title = 'Transaksi Penjualan'" :href="route('pages.transaction.index')" :active="request()->routeIs('pages.transaction.*')"/>
+                    <x-sidebar.menu-item :title="$title = 'Transaksi Penjualan'" :href="route('pages.transaction.index')" :active="request()->routeIs('pages.transaction.index')"/>
+                    <x-sidebar.menu-item :title="$title = 'Return Penjualan'" :href="route('pages.transaction.return')" :active="request()->routeIs('pages.transaction.return')"/>
                 </x-sidebar.menu-dropdown>
 
                 <!-- Laporan -->
