@@ -46,6 +46,16 @@
             {{session('success')}}
         </div>
     @endif
+    @if (session()->has('error'))
+        <div class="alert alert-danger rounded-0">
+            {{session('error')}}
+        </div>
+    @endif
+    @if (session()->has('warning'))
+        <div class="alert alert-warning rounded-0">
+            {{session('warning')}}
+        </div>
+    @endif
     @if($sell)
         <div class="row">
             <div class="col-md-4">
@@ -81,22 +91,44 @@
                 </div>
             </div>
             <div class="col-md-8">
-                <div class="card">
+                @if($sell->returns)
+                    <div class="card card-warning rounded-0">
+                        <div class="card-header">
+                            <h3 class="card-title">List produk yang pernah di retur</h3>
+                        </div>
+
+                        <div class="card-body p-0">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th style="min-width: 10px">#</th>
+                                    <th style="min-width: 200px;">Nama Produk</th>
+                                    <th style="min-width: 150px;">Jumlah Retur</th>
+                                    <th style="min-width: 150px;">Tanggal</th>
+                                    <th style="min-width: 150px;">Oleh Kasir</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($sell->returns as $key => $item)
+                                    <tr class="tw-cursor-pointer">
+                                        <td>{{ $key+1 }}</td>
+                                        <td>{{ $item->product_name }}</td>
+                                        <td>{{ $item->quantity }} {{ $item->price->unit->name }}</td>
+                                        <td>{{ $item->created_at }}</td>
+                                        <td>{{ $item->user->username }}</td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                @endif
+                <div class="card rounded-0">
                     <div class="card-header">
                         <h3 class="card-title">Transaction Product List</h3>
                     </div>
 
                     <div class="card-body p-0">
-                        @if (session()->has('error'))
-                            <div class="alert alert-danger rounded-0">
-                                {{session('error')}}
-                            </div>
-                        @endif
-                        @if (session()->has('warning'))
-                            <div class="alert alert-warning rounded-0">
-                                {{session('warning')}}
-                            </div>
-                        @endif
                         <table class="table table-hover">
                             <thead>
                             <tr>

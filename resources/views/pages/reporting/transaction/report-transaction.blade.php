@@ -57,8 +57,11 @@
         <div class="col-lg-12">
             @if($sells)
             <div class="card">
+                <div class="card-header">
+                    List transaksi {{ $transaction_date }}
+                </div>
                 <div class="card-body table-responsive p-0">
-                    <table class="table table-sm">
+                    <table class="table table-sm border-0">
                         <thead>
                         <tr>
                             <th>No</th>
@@ -87,25 +90,129 @@
                             <td class="text-right">Rp. {{ number_format($sell['refund']) }}</td>
                             <td>{{ $sell['status'] }}</td>
                         </tr>
+                            @if($sell['returns'])
+{{--                                <tr class="border-0">--}}
+{{--                                    <td colspan="3"></td>--}}
+{{--                                    <td class="text-bold">Nama Produk Retur</td>--}}
+{{--                                    <td class="text-right text-bold">Quantity retur</td>--}}
+{{--                                    <td class="text-right text-bold">Harga Produk retur</td>--}}
+{{--                                    <td class="text-right text-bold">Total harga</td>--}}
+{{--                                    <td colspan="3"></td>--}}
+{{--                                </tr>--}}
+                                @foreach($sell['returns'] as $index => $return)
+                                    <tr class="border-0">
+                                        <td colspan="3"></td>
+                                        <td>{{ $return['product_name'] }}</td>
+                                        <td class="text-right">{{ $return['quantity'] }}</td>
+                                        <td class="text-right">Rp. {{ number_format($return['sell_price']) }}</td>
+                                        <td class="text-right">Rp. {{ number_format($return['quantity'] * $return['sell_price']) }}</td>
+                                        <td colspan="3">Retur</td>
+                                    </tr>
+                                @endforeach
+                            @endif
                         @empty
 
                         @endforelse
                         </tbody>
                         <tfoot>
                         <tr>
-                            <th colspan="4" class="text-right">Total</th>
+                            <th colspan="4" class="text-right">Total Penjualan</th>
                             <th class="text-right">Rp. {{ number_format($sells->sum('bill')) }}</th>
                             <th class="text-right">Rp. {{ number_format($sells->sum('discount')) }}</th>
                             <th class="text-right">Rp. {{ number_format($sells->sum('total')) }}</th>
-                            <th class="text-right">Rp. {{ number_format($sells->sum('payment')) }}</th>
-                            <th class="text-right">Rp. {{ number_format($sells->sum('refund')) }}</th>
-                            <th></th>
+                            <th colspan="3"></th>
+                        </tr>
+                        <tr>
+                            <th colspan="4" class="text-right">Total retur</th>
+                            <th colspan="3" class="text-right">Rp. {{ number_format($sells->sum('sum_return')) }}</th>
+                            <th colspan="3"></th>
+                        </tr>
+                        <tr>
+                            <th colspan="4" class="text-right">Total Keseluruhan</th>
+                            <th colspan="3" class="text-right">Rp. {{ number_format($sells->sum('total') - $sells->sum('sum_return')) }}</th>
+                            <th colspan="3"></th>
                         </tr>
                         </tfoot>
                     </table>
                 </div>
             </div>
             @endif
+        </div>
+        <div class="col-lg-12">
+            @if($returns->count() > 0)
+                <div class="card">
+                    <div class="card-header">
+                        Transaksi Retur {{ $transaction_date }}
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table-sm border-0">
+                            <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Kasir</th>
+                                <th>Tanggal Invoice</th>
+                                <th>Invoice</th>
+                                <th>Produk Retur</th>
+                                <th class="text-right">Quantity Retur</th>
+                                <th class="text-right">Harga</th>
+                                <th class="text-right">Total</th>
+                                <th>Keterangan</th>
+                            </tr>
+                            <tbody>
+                            @foreach($returns as $key => $item)
+                                <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $item['user'] }}</td>
+                                    <td>{{ $item['invoice_date'] }}</td>
+                                    <td>{{ $item['invoice_number'] }}</td>
+                                    <td>{{ $item['product_name'] }}</td>
+                                    <td class="text-right">{{ $item['quantity'] }}</td>
+                                    <td class="text-right">Rp. {{ number_format($item['sell_price']) }}</td>
+                                    <td class="text-right">Rp. {{ number_format($item['total']) }}</td>
+                                    <td>Retur</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th colspan="7" class="text-right">Total Retur</th>
+                                <th class="text-right">Rp. {{ number_format($returns->sum('total')) }}</th>
+                                <th></th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-file-invoice"></i>
+                        Transaction Details
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Tanggal Transaksi </dt>
+                        <dd class="col-sm-8">{{ $transaction_date }}</dd>
+                        <dt class="col-sm-4">Kasir</dt>
+                        <dd class="col-sm-8">{{ \auth()->user()->username }}</dd>
+                        <dt class="col-sm-4">Total Penjualan</dt>
+                        <dd class="col-sm-8 text-bold">Rp. {{ number_format($sells->sum('total') - $sells->sum('sum_return')) }}</dd>
+                        <dt class="col-sm-4">Total Retur Barang</dt>
+                        <dd class="col-sm-8 text-bold">Rp. {{ number_format($returns->sum('total')) }}</dd>
+                        <dt class="col-sm-4">Subtotal</dt>
+                        <dd class="col-sm-8 text-bold">Rp. {{ number_format(($sells->sum('total') - $sells->sum('sum_return')) - $returns->sum('total')) }}</dd>
+                    </dl>
+                </div>
+            </div>
         </div>
     </div>
 </div>

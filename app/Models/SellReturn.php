@@ -19,4 +19,19 @@ class SellReturn extends Model
     {
         return $this->belongsTo(Sell::class);
     }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function price()
+    {
+        return $this->belongsTo(ProductPrice::class, 'product_price_id', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -17,10 +17,10 @@ class TransactionReturn extends Component
      * 2. Tampilkan detail barang yang dibeli ✔
      * 3. Input quantity barang yang akan di retur ✔
      * 4. Validasi untuk tiap barang yang akan di retur ✔
-     * 5. Kembalikan stock
-     *    Pada table product
-     *    Pada table product_stock (fifo stock) sesuai payload dari transaksi
-     * 6. Simpan retur pada table sell_returns
+     * 5. Kembalikan stock ✔
+     *    Pada table product ✔
+     *    Pada table product_stock (fifo stock) sesuai payload dari transaksi ✔
+     * 6. Simpan retur pada table sell_returns ✔
      */
 
     public $invoice_number;
@@ -39,6 +39,8 @@ class TransactionReturn extends Component
         $this->sell = Sell::query()
             ->with(['details.product.prices.unit', 'details.product.stocks', 'details.price.unit', 'returns', 'user'])
             ->where('invoice_number', $this->invoice_number)->first();
+
+
     }
 
     public function submitReturn()
@@ -49,7 +51,7 @@ class TransactionReturn extends Component
          * Collect detail dari invoice
          */
         $details = collect($this->sell->details);
-
+        $returns = collect($this->sell->returns);
         /**
          * Cek form product yang akan di retur
          */
@@ -72,12 +74,23 @@ class TransactionReturn extends Component
                 $detail = $details->where('id', $key)->first();
 
                 /**
+                 * Ambil sell_returns sesuai dengan product yang akan di retur
+                 */
+                $stock_return = $returns->where('sell_detail_id', $detail['id'])->first();
+
+                /**
+                 * Quantity yang bisa di return
+                 */
+                $available_return = $detail['quantity'] - $stock_return['quantity'];
+
+                /**
                  * Quantity return harus lebih kecil atau sama dengan quantity yang sudah di beli berdasarkan invoice
                  */
-                if($item['quantity'] > $detail['quantity']){
-                    return back()->with(['error' => 'invalid return quantity for product ' . $detail['product_name']]);
+                if($item['quantity'] > $available_return){
+                    return back()->with(['error' => 'Kesalahan pada quantity untuk produk ' . $detail['product_name'] . ', sisa yang bisa di retur adalah ' . $available_return]);
                     DB::rollBack();
                 }
+
                 /**
                  * Collect payload from sell_details
                  */
@@ -88,7 +101,7 @@ class TransactionReturn extends Component
                  */
                 $current_quantity = $detail['product_price_quantity'];
 
-//                dd($detail);
+
                 /**
                  * Increment store_stock to return quantity from products table
                  */
@@ -99,7 +112,6 @@ class TransactionReturn extends Component
                 /**
                  * Looping payload data from sell_details
                  */
-//                dd($stocks);
                 $payload_stock = [];
                 foreach ($stocks as $stock) {
                     $stock_id = $stock['product_stock_id'];
@@ -155,15 +167,16 @@ class TransactionReturn extends Component
                  */
                 $this->sell->returns()
                     ->create([
-                        'user_id' => auth()->id(),
-                        'product_id' => $detail['product_id'],
-                        'product_price_id' => $detail['product_price_id'],
-                        'product_name' => $detail['product_name'],
-                        'quantity' => $item['quantity'],
-                        'product_price_quantity' => $detail['product_price_quantity'],
-                        'buying_price' => $detail['buying_price'],
-                        'payload' => json_encode($payload_stock),
-                        'sell_price' => $detail['sell_price'],
+                        'user_id'               => auth()->id(),
+                        'product_id'            => $detail['product_id'],
+                        'product_price_id'      => $detail['product_price_id'],
+                        'sell_detail_id'        => $detail['id'],
+                        'product_name'          => $detail['product_name'],
+                        'quantity'              => $item['quantity'],
+                        'product_price_quantity'=> $detail['product_price_quantity'],
+                        'buying_price'          => $detail['buying_price'],
+                        'payload'               => json_encode($payload_stock),
+                        'sell_price'            => $detail['sell_price'],
                     ]);
             }
 

@@ -252,7 +252,12 @@
                                             </td>
                                             <td>
                                                 <div class="form-group col-md-12">
-                                                    <input wire:model.defer="products.{{ $key }}.product_price_quantity" class="form-control mr-sm-2" type="text" readonly/>
+                                                    <div class="input-group">
+                                                        <input wire:model.defer="products.{{ $key }}.product_price_quantity" class="form-control" type="text" readonly/>
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">{{ $item->product->unit->name }}</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
                                             </td>
