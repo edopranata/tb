@@ -53,11 +53,12 @@ class InventoriesTransferCreate extends Autocomplete
 
     public function updateProduct($key)
     {
+
         $t_details = collect($this->products[$key]);
         $p_prices = collect($t_details['product']['prices'])->where('id', $this->products[$key]['product_price_id'])->first();
 
         $this->validate([
-            'products.*.quantity'   => [
+            'products.'.$key.'.quantity'   => [
                 'required',
                 'numeric',
                 function ($attribute, $value, $fail) use ($p_prices, $t_details) {
@@ -65,13 +66,6 @@ class InventoriesTransferCreate extends Autocomplete
                     $current_stock = $t_details['product'][Str::lower($this->transfer_from).'_stock'];
                     $total = $current_stock - $total_q;
                     if ($total < 0) {
-//                        $fail(
-//                            'Current : ' . $current_stock .
-//                            ':::Value :' . $value .
-//                            ':::PP Quantity :' . $p_prices['quantity'] .
-//                            ':::Total Q:' . $total_q .
-//                            ':::Total :' . $total
-//                        );
                         $fail('Out of stock ' . $total);
                     }
                 }
@@ -99,9 +93,10 @@ class InventoriesTransferCreate extends Autocomplete
         if($this->transfer){
             if($this->transfer->details->count()){
                 // kosongkan variable products
-                $this->products = [];
+                $this->reset(['products']);
                 foreach ($this->transfer->details as $detail) {
-                    array_push($this->products, $detail->toArray());
+//                    dd($detail);
+                    $this->products[] = $detail->toArray();
                 }
             }
             $this->transfer_date = $this->transfer['transfer_date']->format('Y-m-d');
