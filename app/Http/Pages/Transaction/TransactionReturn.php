@@ -5,6 +5,7 @@ namespace App\Http\Pages\Transaction;
 use App\Models\Product;
 use App\Models\ProductStock;
 use App\Models\Sell;
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -81,7 +82,8 @@ class TransactionReturn extends Component
                 /**
                  * Quantity yang bisa di return
                  */
-                $available_return = $detail['quantity'] - $stock_return['quantity'];
+
+                $available_return = $detail['quantity'] - ($stock_return ? $stock_return['quantity'] : 0);
 
                 /**
                  * Quantity return harus lebih kecil atau sama dengan quantity yang sudah di beli berdasarkan invoice
@@ -191,7 +193,7 @@ class TransactionReturn extends Component
             return back()->with(['success' => 'Retur untuk invoice ' . $invoice . ' berhasil disimpan, stock produk bertambah']);
         }catch (\Exception $exception) {
             DB::rollBack();
-            return back()->with(['error' => $exception->getMessage()]);
+            return back()->with(['error' => $exception->getMessage() . ' on line ' . $exception->getLine()]);
         }
     }
 }
