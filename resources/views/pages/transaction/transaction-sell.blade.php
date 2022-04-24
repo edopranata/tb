@@ -311,11 +311,11 @@
                                             <div class="form-row">
                                                 @if($item->product->prices->count())
                                                     <div class="form-group col-md-6">
-                                                        <input wire:change="updateProduct({{ $key }})" wire:model.lazy="products.{{ $key }}.quantity" class="form-control mr-sm-2 rupiah" type="text" min="1"/>
+                                                        <input wire:change="setPrice('{{ $key }}','{{ $customer_id ? 'customer' : 'sell' }}')" wire:model.lazy="products.{{ $key }}.quantity" class="form-control mr-sm-2 rupiah" type="text" min="1"/>
                                                         @error('products.' . $key . '.quantity') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                                     </div>
                                                     <div class="form-group col-md-6">
-                                                        <select wire:change="updateProduct({{ $key }})" wire:model.lazy="products.{{ $key }}.product_price_id" class="form-control mr-sm-2">
+                                                        <select wire:change="setPrice('{{ $key }}','{{ $customer_id ? 'customer' : 'sell' }}')" wire:model.lazy="products.{{ $key }}.product_price_id" class="form-control mr-sm-2">
                                                             @foreach($item->product->prices as $product_item)
                                                                 <option value="{{ $product_item->id }}">
                                                                     {{ $product_item->unit->name }}
@@ -347,7 +347,7 @@
                                         @if($show_discount)
                                         <td>
                                             <div class="form-group col-md-12">
-                                                <input wire:change="updateProduct({{ $key }})" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" wire:model.lazy="products.{{ $key }}.discount" class="form-control text-right rupiah" type="text"/>
+                                                <input wire:change="setPrice('{{ $key }}','{{ $customer_id ? 'customer' : 'sell' }}')" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" wire:model.lazy="products.{{ $key }}.discount" class="form-control text-right rupiah" type="text"/>
                                                 @error('products.' . $key . '.discount') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                             </div>
                                         </td>

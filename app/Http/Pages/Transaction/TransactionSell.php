@@ -426,6 +426,7 @@ class TransactionSell extends Autocomplete
 
     public function setPrice($index, $type = 'sell', $value = null)
     {
+
         if($value){
             $this->products[$index]['price_category'] = $type;
             $this->products[$index]['price_category'] = Str::upper($type);
@@ -449,9 +450,10 @@ class TransactionSell extends Autocomplete
         $this->resetErrorBag();
         $this->resetValidation();
 
+
         $t_details = collect($this->products[$key]);
         $p_prices = collect($t_details['product']['prices'])->where('id', $this->products[$key]['product_price_id'])->first();
-
+        $current_price = $this->products[$key]['sell_price'];
 //        dd($p_prices);
 //        $temp_category = $this->customer_id ? 'customer' : 'sell';
 //        $price_category = (Str::lower($this->products[$key]['price_category']) == 'wholesale') ? 'wholesale' : $temp_category;
@@ -463,11 +465,11 @@ class TransactionSell extends Autocomplete
                 'quantity'                  => $this->products[$key]['quantity'],
                 'product_price_quantity'    => $this->products[$key]['quantity'] * $p_prices['quantity'],
 
-                'sell_price'                => $p_prices['sell_price'],
+                'sell_price'                => $current_price,
                 'discount'                  => $this->products[$key]['discount'],
                 'sell_price_quantity'       => 1,
                 'price_category'            => $this->products[$key]['price_category'],
-                'total'                     => ($p_prices['sell_price'] * $this->products[$key]['quantity']) - $this->products[$key]['discount'],
+                'total'                     => ($current_price * $this->products[$key]['quantity']) - $this->products[$key]['discount'],
             ]);
         $this->resetPayment();
         $this->loadTemp();
