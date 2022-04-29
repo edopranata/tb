@@ -5,15 +5,12 @@ namespace App\Http\Pages\Transaction;
 use App\Http\Pages\Components\Autocomplete;
 use App\Models\Customer;
 use App\Models\Product;
-use App\Models\ProductStock;
 use App\Models\Sell;
 use App\Models\TempSellDetail;
 use Barryvdh\Debugbar\Facades\Debugbar;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Symfony\Component\ErrorHandler\Debug;
 
 class TransactionSell extends Autocomplete
 {
