@@ -299,7 +299,7 @@ class TransactionSell extends Autocomplete
                     'customer_id'       => $this->sells->customer_id,
                     'customer_name'     => $this->sells->customer_name,
                     'invoice_number'    => $this->generateInvoiceNumber(),
-                    'invoice_date'      => now(),
+                    'invoice_date'      => $this->transaction_date,
                     'bill'              => $this->sells->bill,
                     'discount'          => $this->sells->discount,
                     'payment'           => $this->payment,
