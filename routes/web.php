@@ -1,8 +1,10 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -111,4 +113,12 @@ Route::middleware(['auth'])->group(function (){
             });
         });
     });
+});
+
+Route::get('/test', function (){
+    return  User::whereHas(
+        'roles', function($q){
+            $q->where('name', '<>','Administrator');
+    }
+    )->get();
 });
