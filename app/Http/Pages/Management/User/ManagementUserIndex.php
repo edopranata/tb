@@ -20,6 +20,9 @@ class ManagementUserIndex extends Component
         return view('pages.management.user.management-user-index', [
             'users' => User::query()
                 ->with(['roles'])
+                ->whereHas('roles', function($q){
+                    $q->where('name', '<>','Administrator');
+                })
                 ->filter($this->search)
                 ->paginate(10)
                 ->withQueryString()

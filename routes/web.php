@@ -2,9 +2,6 @@
 
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,12 +70,14 @@ Route::middleware(['auth'])->group(function (){
             Route::get('/', \App\Http\Pages\Products\ProductsIndex::class)->name('index');
             Route::get('upload', \App\Http\Pages\Products\ProductsImport::class)->name('import');
             Route::get('create', \App\Http\Pages\Products\ProductsCreate::class)->name('create');
-            Route::get('{product}', \App\Http\Pages\Products\ProductsEdit::class)->name('edit');
+            Route::get('{product}/price', \App\Http\Pages\Products\ProductPrices::class)->name('price');
+            Route::get('{product}/edit', \App\Http\Pages\Products\ProductsEdit::class)->name('edit');
+            Route::get('{product}/split', \App\Http\Pages\Products\ProductSplit::class)->name('split');
         });
-        Route::group(['prefix' => 'prices', 'as' => 'prices.'], function (){
-            Route::get('/', \App\Http\Pages\ProductPrices\ProductPricesIndex::class)->name('index');
-            Route::get('{product}', \App\Http\Pages\ProductPrices\ProductPricesEdit::class)->name('edit');
-        });
+//        Route::group(['prefix' => 'prices', 'as' => 'prices.'], function (){
+//            Route::get('/', \App\Http\Pages\ProductPrices\ProductPricesIndex::class)->name('index');
+//            Route::get('{product}', \App\Http\Pages\ProductPrices\ProductPricesEdit::class)->name('edit');
+//        });
         Route::group(['prefix' => 'inventories', 'as' => 'inventories.'], function (){
             Route::get('/', \App\Http\Pages\Inventories\InventoriesIndex::class)->name('index');
         });

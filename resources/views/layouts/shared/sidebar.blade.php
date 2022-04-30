@@ -58,7 +58,7 @@
                         <i class="nav-icon fas fa-dolly"></i>
                     </x-slot>
                     <x-sidebar.menu-item :title="$title = 'Data Produk'" :href="route('pages.products.index')" :active="request()->routeIs('pages.products.*')"/>
-                    <x-sidebar.menu-item :title="$title = 'Multi Harga'" :href="route('pages.prices.index')" :active="request()->routeIs('pages.prices.*')"/>
+{{--                    <x-sidebar.menu-item :title="$title = 'Multi Harga'" :href="route('pages.prices.index')" :active="request()->routeIs('pages.prices.*')"/>--}}
 
                 </x-sidebar.menu-dropdown>
 

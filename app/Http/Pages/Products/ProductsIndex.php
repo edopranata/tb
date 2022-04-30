@@ -49,7 +49,12 @@ class ProductsIndex extends Component
 
     public function toProductPrice(Product $product)
     {
-        return redirect()->route('pages.prices.edit', $product->id);
+        return redirect()->route('pages.products.price', $product->id);
+    }
+
+    public function toProductSplit(Product $product)
+    {
+        return redirect()->route('pages.products.split', $product->id);
     }
 
     public function toRoute($route_name, $params = null)

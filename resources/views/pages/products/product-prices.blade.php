@@ -9,7 +9,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('pages.prices.index') }}">Pencarian Produk</a>
+                            <li class="breadcrumb-item"><a href="{{ route('pages.products.index') }}">Daftar Produk</a>
                             </li>
                             <li class="breadcrumb-item active">Multi Harga {{ $product->name }}</li>
                         </ol>
@@ -19,7 +19,7 @@
         </section>
     </x-slot>
     <x-card.action>
-        <x-card.action-link href="{{ route('pages.prices.index') }}" :btn="'light'">Kembali Pencarian Produk
+        <x-card.action-link href="{{ route('pages.products.index') }}" :btn="'light'">Kembali Ke Daftar Produk
         </x-card.action-link>
     </x-card.action>
     <div class="row">

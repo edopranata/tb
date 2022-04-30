@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Pages\ProductPrices;
+namespace App\Http\Pages\Products;
 
 use App\Models\Product;
 use App\Models\Unit;
 use Livewire\Component;
+use function view;
 
-class ProductPricesEdit extends Component
+class ProductPrices extends Component
 {
     public $price_id;
     public $unit_id;
@@ -20,7 +21,7 @@ class ProductPricesEdit extends Component
     public $price;
     public function render()
     {
-        return view('pages.product-prices.product-prices-edit');
+        return view('pages.products.product-prices');
     }
 
     public function mount(Product $product)

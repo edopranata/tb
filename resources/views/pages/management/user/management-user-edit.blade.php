@@ -19,7 +19,6 @@
     </x-slot>
     <x-card.action>
         <x-card.action-link href="{{ route('pages.customers.index') }}" :btn="'light'">Kembali Ke daftar Pengguna</x-card.action-link>
-        <x-card.action-button wire:click="save()">Simpan Data</x-card.action-button>
     </x-card.action>
     <div class="row">
         <div class="col-12">
@@ -63,6 +62,9 @@
                         </div>
                         @error('role')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                     </div>
+                </div>
+                <div class="card-footer">
+                    <button type="button" wire:click="save" class="btn btn-sm btn-primary">Update Data</button>
                 </div>
             </div>
         </div>
