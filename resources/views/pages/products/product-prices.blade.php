@@ -144,7 +144,7 @@
                             <div class="form-group">
                                 <label>Harga satuan</label>
                                 <input wire:model.defer="sell_price" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})"
-                                       class="form-control rupiah @error('sell_price') is-invalid @enderror" type="text"
+                                       class="form-control @error('sell_price') is-invalid @enderror" type="text"
                                        placeholder="Harga Satuan">
                                 @error('sell_price')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                             </div>
@@ -153,7 +153,7 @@
                             <div class="form-group">
                                 <label>Harga Grosir</label>
                                 <input wire:model.defer="wholesale_price" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})"
-                                       class="form-control rupiah @error('wholesale_price') is-invalid @enderror" type="text"
+                                       class="form-control @error('wholesale_price') is-invalid @enderror" type="text"
                                        placeholder="Harga Grosir">
                                 @error('wholesale_price')<span
                                     class="text-danger text-sm">{{ $message }}</span>@enderror
@@ -163,7 +163,7 @@
                             <div class="form-group">
                                 <label>Harga Member</label>
                                 <input wire:model.defer="customer_price" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})"
-                                       class="form-control rupiah @error('customer_price') is-invalid @enderror" type="text"
+                                       class="form-control @error('customer_price') is-invalid @enderror" type="text"
                                        placeholder="Harga Member">
                                 @error('customer_price')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                             </div>
