@@ -17,6 +17,15 @@ class Product extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
 
+    protected $appends = ['total'];
+
+    /*
+    Accessor for the total price
+     */
+    public function getTotalAttribute()
+    {
+        return $this->store_stock + $this->warehouse_stock;
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

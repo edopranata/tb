@@ -100,9 +100,15 @@
                         <i class="nav-icon fas fa-file-invoice"></i>
                     </x-slot>
 
-                    <x-sidebar.menu-item :title="$title = 'Transfer Produk'" :href="route('pages.reporting.stock.index')" :active="request()->routeIs('pages.reporting.stock.*')"/>
-                    <x-sidebar.menu-item :title="$title = 'Inventori Produk Masuk'" :href="route('pages.reporting.inventory.index')" :active="request()->routeIs('pages.reporting.inventory.*')"/>
+                    <x-sidebar.menu-item :title="$title = 'Stock Produk'" :href="route('pages.reporting.stock.index')" :active="request()->routeIs('pages.reporting.stock.*')"/>
+                </x-sidebar.menu-dropdown>
 
+                <x-sidebar.menu-dropdown :title="$title = 'Laporan Transfer'" :active="request()->routeIs('pages.reporting.transfer.*')">
+                    <x-slot name="icon">
+                        <i class="nav-icon fas fa-file-invoice"></i>
+                    </x-slot>
+
+                    <x-sidebar.menu-item :title="$title = 'Stock Produk'" :href="route('pages.reporting.transfer.index')" :active="request()->routeIs('pages.reporting.transfer.*')"/>
                 </x-sidebar.menu-dropdown>
 
 {{--                <li class="nav-header">LABELS</li>--}}

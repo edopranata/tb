@@ -74,10 +74,7 @@ Route::middleware(['auth'])->group(function (){
             Route::get('{product}/edit', \App\Http\Pages\Products\ProductsEdit::class)->name('edit');
             Route::get('{product}/split', \App\Http\Pages\Products\ProductSplit::class)->name('split');
         });
-//        Route::group(['prefix' => 'prices', 'as' => 'prices.'], function (){
-//            Route::get('/', \App\Http\Pages\ProductPrices\ProductPricesIndex::class)->name('index');
-//            Route::get('{product}', \App\Http\Pages\ProductPrices\ProductPricesEdit::class)->name('edit');
-//        });
+
         Route::group(['prefix' => 'inventories', 'as' => 'inventories.'], function (){
             Route::get('/', \App\Http\Pages\Inventories\InventoriesIndex::class)->name('index');
         });
@@ -99,9 +96,12 @@ Route::middleware(['auth'])->group(function (){
             Route::group(['prefix' => 'reprint', 'as' => 'reprint.'], function (){
                 Route::get('/', \App\Http\Pages\Reporting\Reprint\Transaction::class)->name('index');
             });
-            Route::group(['prefix' => 'stock', 'as' => 'stock.'], function (){
+            Route::group(['prefix' => 'transfer', 'as' => 'transfer.'], function (){
                 Route::get('/', App\Http\Pages\Reporting\ReportTransfer::class)->name('index');
                 Route::get('{transfer}', App\Http\Pages\Reporting\ReportTransferView::class)->name('view');
+            });
+            Route::group(['prefix' => 'stock', 'as' => 'stock.'], function (){
+                Route::get('/', App\Http\Pages\Reporting\Stock\StockProduct::class)->name('index');
             });
             Route::group(['prefix' => 'inventory', 'as' => 'inventory.'], function (){
                 Route::get('/', App\Http\Pages\Reporting\ReportPurchase::class)->name('index');
