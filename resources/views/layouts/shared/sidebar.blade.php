@@ -85,6 +85,14 @@
 
                 <!-- Laporan -->
                 <li class="nav-header">LAPORAN</li>
+
+                <x-sidebar.menu-dropdown :title="$title = 'Laba Rugi'" :active="request()->routeIs('pages.reporting.income*') || request()->routeIs('pages.reporting.income.*')">
+                    <x-slot name="icon">
+                        <i class="nav-icon fas fa-file-invoice"></i>
+                    </x-slot>
+                    <x-sidebar.menu-item :title="$title = 'Laporan Laba Rugi'" :href="route('pages.reporting.income.index')" :active="request()->routeIs('pages.reporting.income.*')"/>
+                </x-sidebar.menu-dropdown>
+
                 <!-- Laporan Transaksi -->
                 <x-sidebar.menu-dropdown :title="$title = 'Laporan Transaksi'" :active="request()->routeIs('pages.reporting.transaction*') || request()->routeIs('pages.reporting.reprint.*')">
                     <x-slot name="icon">
@@ -95,12 +103,14 @@
                 </x-sidebar.menu-dropdown>
 
                 <!-- Laporan Stock -->
-                <x-sidebar.menu-dropdown :title="$title = 'Laporan Stock'" :active="request()->routeIs('pages.reporting.reprint.*') || request()->routeIs('pages.reporting.stock.*')">
+                <x-sidebar.menu-dropdown :title="$title = 'Laporan Product'" :active="request()->routeIs('pages.reporting.stock.*')">
                     <x-slot name="icon">
                         <i class="nav-icon fas fa-file-invoice"></i>
                     </x-slot>
 
-                    <x-sidebar.menu-item :title="$title = 'Stock Produk'" :href="route('pages.reporting.stock.index')" :active="request()->routeIs('pages.reporting.stock.*')"/>
+                    <x-sidebar.menu-item :title="$title = 'Stock Produk'" :href="route('pages.reporting.stock.index')" :active="request()->routeIs('pages.reporting.stock.index')"/>
+                    <x-sidebar.menu-item :title="$title = 'Harga Produk'" :href="route('pages.reporting.stock.price')" :active="request()->routeIs('pages.reporting.stock.price')"/>
+
                 </x-sidebar.menu-dropdown>
 
                 <x-sidebar.menu-dropdown :title="$title = 'Laporan Transfer'" :active="request()->routeIs('pages.reporting.transfer.*')">

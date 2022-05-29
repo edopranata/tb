@@ -96,6 +96,33 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <h6 class="text-bold">Harga modal</h6>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr class="bg-dark">
+                                        <th>#</th>
+                                        <th>Harga</th>
+                                        <th>Keterangan</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($product->stocks as $key => $stock_price)
+                                        <tr>
+                                            <td>{{ $key + 1 }}</td>
+                                            <td>
+                                                <div class="text-bold">Rp. {{ number_format($stock_price->buying_price) }} <span class="text-muted">@ {{ $product->unit->name }}</span></div>
+                                            </td>
+                                            <td>{{ $stock_price->description }}</td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="card rounded-0">

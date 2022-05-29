@@ -7,6 +7,9 @@ use Livewire\Component;
 
 class ProductSplit extends Component
 {
+
+    public $product;
+
     public function render()
     {
         return view('pages.products.product-split');
@@ -14,6 +17,6 @@ class ProductSplit extends Component
 
     public function mount(Product $product)
     {
-        dd($product);
+        $this->product = $product;
     }
 }

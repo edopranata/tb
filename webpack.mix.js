@@ -12,6 +12,7 @@ const mix = require('laravel-mix');
 
 mix
     .copyDirectory('resources/dist', 'public/dist')
+    .copyDirectory('node_modules/jquery-ui/themes', 'public/dist')
     .js('resources/js/app.js', 'public/js')
     .postCss('resources/css/app.css', 'public/css',
     [

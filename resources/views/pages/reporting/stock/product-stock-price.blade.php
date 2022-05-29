@@ -80,103 +80,42 @@
                             <th>Barcode</th>
                             <th>Nama Produk</th>
                             <th>Kategori</th>
-                            <th>Stock Gudang</th>
-                            <th>Stock Toko</th>
-                            <th>Total</th>
                             <th>Harga Satuan</th>
                             <th>Harga Grosir</th>
                             <th>Harga Pelanggan</th>
+                            <th>Harga Modal</th>
                         </tr>
                         <tbody>
                         @foreach($products as $key => $product)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
-                                <td>{{ $product->barcode }}</td>
+                                <td>{{ strtoupper($product->barcode) }}</td>
                                 <td>{{ $product->name }}</td>
                                 <td>{{ \Illuminate\Support\Str::upper($product->category->name) }}</td>
-                                <td class="tw-items-center">
-                                    <div class="tw-text-green-900"><strong>{{ $product->warehouse_stock ?: 0 }}</strong> <span class="tw-text-sm">{{ $product->unit->name }}</span></div>
-                                    <hr>
-                                    @php
-                                        $current_stock = $product->warehouse_stock ?: 0;
-                                        $prices = collect($product->prices)->sortByDesc('quantity');
-                                    @endphp
-
-
-                                    @foreach($prices as $price)
-                                        @php
-                                            $stock = $current_stock / $price['quantity'];
-                                        @endphp
-                                        <div><strong>{{ (int) $stock }}</strong> <span class="text-muted">{{ $price['unit']['name'] }}</span></div>
-                                        @php
-                                            $current_stock = $current_stock - ( (int) $stock * $price['quantity'])
-                                        @endphp
-
-                                    @endforeach
-
-                                </td>
-                                <td class="tw-items-center">
-                                    <div class="tw-text-green-900"><strong>{{ $product->store_stock ?: 0 }}</strong> <span class="tw-text-sm">{{ $product->unit->name }}</span></div>
-                                    <hr>
-                                    @php
-                                        $current_stock = $product->store_stock ?: 0;
-                                        $prices = collect($product->prices)->sortByDesc('quantity');
-                                    @endphp
-
-
-                                    @foreach($prices as $price)
-                                        @php
-                                            $stock = $current_stock / $price['quantity'];
-                                        @endphp
-                                        <div><strong>{{ (int) $stock }}</strong> <span class="text-muted">{{ $price['unit']['name'] }}</span></div>
-                                        @php
-                                            $current_stock = $current_stock - ( (int) $stock * $price['quantity'])
-                                        @endphp
-
-                                    @endforeach
-
-                                </td>
-                                <td class="tw-items-center">
-                                    <div class="tw-text-green-900"><strong>{{ $product->total ?: 0 }}</strong> <span class="tw-text-sm">{{ $product->unit->name }}</span></div>
-                                    <hr>
-                                    @php
-                                        $current_stock = $product->total ?: 0;
-                                        $prices = collect($product->prices)->sortByDesc('quantity');
-                                    @endphp
-
-
-                                    @foreach($prices as $price)
-                                        @php
-                                            $stock = $current_stock / $price['quantity'];
-                                        @endphp
-                                        <div><strong>{{ (int) $stock }}</strong> <span class="text-muted">{{ $price['unit']['name'] }}</span></div>
-                                        @php
-                                            $current_stock = $current_stock - ( (int) $stock * $price['quantity'])
-                                        @endphp
-
-                                    @endforeach
-
-                                </td>
                                 <td>
-                                    <div class="tw-text-green-900">&nbsp;</div>
-                                    <hr>
                                     @foreach($product->prices->sortByDesc('quantity') as $price)
                                         <div><strong>{{ number_format($price->sell_price) }}</strong> <span class="text-muted">1 {{ $price->unit->name }}</span></div>
                                     @endforeach
                                 </td>
                                 <td>
-                                    <div class="tw-text-green-900">&nbsp;</div>
-                                    <hr>
                                     @foreach($product->prices->sortByDesc('quantity') as $price)
                                         <div><strong>{{ number_format($price->wholesale_price) }}</strong> <span class="text-muted">1 {{ $price->unit->name }}</span></div>
                                     @endforeach
                                 </td>
                                 <td>
-                                    <div class="tw-text-green-900">&nbsp;</div>
-                                    <hr>
                                     @foreach($product->prices->sortByDesc('quantity') as $price)
                                         <div><strong>{{ number_format($price->customer_price) }}</strong> <span class="text-muted">1 {{ $price->unit->name }}</span></div>
                                     @endforeach
+                                </td>
+                                <td>
+                                    @php
+                                    $stocks = collect($product->stocks)->where('available_stock', '>', 0)
+
+                                    @endphp
+                                    @foreach($stocks as $stock)
+                                        <div><strong>{{ number_format($stock->buying_price) }}</strong> <span class="text-muted">@ {{ $product->unit->name }}</span></div>
+                                    @endforeach
+{{--                                    {{ dd($stocks) }}--}}
                                 </td>
                             </tr>
                         @endforeach

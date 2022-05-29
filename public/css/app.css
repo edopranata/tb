@@ -203,13 +203,13 @@
 .tw-m-0 {
     margin: 0px !important
 }
-.tw-my-1 {
-    margin-top: 0.25rem !important;
-    margin-bottom: 0.25rem !important
-}
 .-tw-mx-2 {
     margin-left: -0.5rem !important;
     margin-right: -0.5rem !important
+}
+.tw-my-1 {
+    margin-top: 0.25rem !important;
+    margin-bottom: 0.25rem !important
 }
 .tw-mb-4 {
     margin-bottom: 1rem !important
@@ -351,6 +351,14 @@
 .tw-bg-gray-200\/80 {
     background-color: rgb(229 231 235 / 0.8) !important
 }
+.tw-bg-amber-200 {
+    --tw-bg-opacity: 1 !important;
+    background-color: rgb(253 230 138 / var(--tw-bg-opacity)) !important
+}
+.tw-bg-amber-300 {
+    --tw-bg-opacity: 1 !important;
+    background-color: rgb(252 211 77 / var(--tw-bg-opacity)) !important
+}
 .tw-bg-slate-500 {
     --tw-bg-opacity: 1 !important;
     background-color: rgb(100 116 139 / var(--tw-bg-opacity)) !important
@@ -362,18 +370,6 @@
 .tw-bg-slate-200 {
     --tw-bg-opacity: 1 !important;
     background-color: rgb(226 232 240 / var(--tw-bg-opacity)) !important
-}
-.tw-bg-slate-800 {
-    --tw-bg-opacity: 1 !important;
-    background-color: rgb(30 41 59 / var(--tw-bg-opacity)) !important
-}
-.tw-bg-amber-200 {
-    --tw-bg-opacity: 1 !important;
-    background-color: rgb(253 230 138 / var(--tw-bg-opacity)) !important
-}
-.tw-bg-amber-300 {
-    --tw-bg-opacity: 1 !important;
-    background-color: rgb(252 211 77 / var(--tw-bg-opacity)) !important
 }
 .tw-bg-gray-100 {
     --tw-bg-opacity: 1 !important;
@@ -390,6 +386,10 @@
 .tw-bg-slate-100 {
     --tw-bg-opacity: 1 !important;
     background-color: rgb(241 245 249 / var(--tw-bg-opacity)) !important
+}
+.tw-bg-slate-800 {
+    --tw-bg-opacity: 1 !important;
+    background-color: rgb(30 41 59 / var(--tw-bg-opacity)) !important
 }
 .tw-p-0 {
     padding: 0px !important
@@ -545,13 +545,13 @@
     --tw-bg-opacity: 1 !important;
     background-color: rgb(226 232 240 / var(--tw-bg-opacity)) !important
 }
-.hover\:tw-bg-slate-300:hover {
-    --tw-bg-opacity: 1 !important;
-    background-color: rgb(203 213 225 / var(--tw-bg-opacity)) !important
-}
 .hover\:tw-bg-gray-200:hover {
     --tw-bg-opacity: 1 !important;
     background-color: rgb(229 231 235 / var(--tw-bg-opacity)) !important
+}
+.hover\:tw-bg-slate-300:hover {
+    --tw-bg-opacity: 1 !important;
+    background-color: rgb(203 213 225 / var(--tw-bg-opacity)) !important
 }
 .hover\:tw-bg-slate-900:hover {
     --tw-bg-opacity: 1 !important;

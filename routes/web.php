@@ -102,6 +102,7 @@ Route::middleware(['auth'])->group(function (){
             });
             Route::group(['prefix' => 'stock', 'as' => 'stock.'], function (){
                 Route::get('/', App\Http\Pages\Reporting\Stock\StockProduct::class)->name('index');
+                Route::get('/price', App\Http\Pages\Reporting\Stock\ProductStockPrice::class)->name('price');
             });
             Route::group(['prefix' => 'inventory', 'as' => 'inventory.'], function (){
                 Route::get('/', App\Http\Pages\Reporting\ReportPurchase::class)->name('index');
@@ -109,6 +110,9 @@ Route::middleware(['auth'])->group(function (){
             });
             Route::group(['prefix' => 'transaction', 'as' => 'transaction.'], function (){
                 Route::get('/', App\Http\Pages\Reporting\Transaction\ReportTransaction::class)->name('index');
+            });
+            Route::group(['prefix' => 'income', 'as' => 'income.'], function (){
+                Route::get('/', App\Http\Pages\Reporting\Income\IncomeReport::class)->name('index');
             });
         });
     });
