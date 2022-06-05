@@ -33,7 +33,7 @@ class IncomeReport extends Component
 
     public function updatedReportType()
     {
-        $this->dispatchBrowserEvent('reportChanged');
+        $this->reset(['report_day', 'report_month', 'report_year', 'sells', 'inventories', 'assets', 'reports']);
     }
 
     public function viewReport()

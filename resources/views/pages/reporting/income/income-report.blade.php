@@ -40,7 +40,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <div class="form-group">
-                            <select wire:model.defer="report_type" class="form-control">
+                            <select wire:model="report_type" class="form-control">
                                 <option value="daily">Harian</option>
                                 <option value="monthly">Bulanan</option>
                                 <option value="yearly">Tahunan</option>
@@ -54,7 +54,7 @@
                         @elseif($report_type == 'monthly')
                             <div class="row">
                                 <div class="col-6">
-                                    <select wire:model="report_month"  class="form-control">
+                                    <select wire:model.defer="report_month"  class="form-control">
                                         @for($i=1; $i<=12; $i++)
                                             <option value="{{ $i }}">{{ $i }}</option>
                                         @endfor
