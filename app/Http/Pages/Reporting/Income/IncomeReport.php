@@ -56,31 +56,31 @@ class IncomeReport extends Component
     public function dailyReport()
     {
 
-      $sells = Sell::query()
-          ->select('sells.invoice_date', DB::raw('SUM(sell_details.total) As sell_price '), DB::raw('SUM(sell_details.buying_price * sell_details.product_price_quantity) As buying_price'))
-          ->leftJoin('sell_details', 'sells.id', '=', 'sell_details.sell_id')
-          ->where('sells.invoice_date', $this->report_day)
-          ->groupBy('sells.invoice_date')
-          ->get();
+    $sells = Sell::query()
+        ->select('sells.invoice_date', DB::raw('SUM(sell_details.total) As sell_price '), DB::raw('SUM(sell_details.buying_price * sell_details.product_price_quantity) As buying_price'))
+        ->leftJoin('sell_details', 'sells.id', '=', 'sell_details.sell_id')
+        ->where('sells.invoice_date', $this->report_day)
+        ->groupBy('sells.invoice_date')
+        ->get();
 
-      $inventories = Purchase::query()
-          ->select('purchases.invoice_date', DB::raw('SUM(purchase_details.total) As total '))
-          ->leftJoin('purchase_details', 'purchases.id', '=', 'purchase_details.purchase_id')
-          ->where('purchases.invoice_date', $this->report_day)
-          ->groupBy('purchases.invoice_date')
-          ->get();
+    $inventories = Purchase::query()
+        ->select('purchases.invoice_date', DB::raw('SUM(purchase_details.total) As total '))
+        ->leftJoin('purchase_details', 'purchases.id', '=', 'purchase_details.purchase_id')
+        ->where('purchases.invoice_date', $this->report_day)
+        ->groupBy('purchases.invoice_date')
+        ->get();
 
-      $assets = ProductStock::query()
-          ->select(DB::raw('SUM(buying_price * available_stock) as total'))
-          ->where('available_stock', '>' , 0)
-          ->first();
+    $assets = ProductStock::query()
+        ->select(DB::raw('SUM(buying_price * available_stock) as total'))
+        ->where('available_stock', '>' , 0)
+        ->first();
 
-      $reports = Sell::query()
-          ->select('sells.invoice_number', 'sells.invoice_date', DB::raw('SUM(sell_details.total) As sell_price '), DB::raw('SUM(sell_details.buying_price * sell_details.product_price_quantity) As buying_price'))
-          ->leftJoin('sell_details', 'sells.id', '=', 'sell_details.sell_id')
-          ->where('sells.invoice_date', $this->report_day)
-          ->groupBy('sells.id')
-          ->get();
+    $reports = Sell::query()
+        ->select('sells.invoice_number', 'sells.invoice_date', DB::raw('SUM(sell_details.total) As sell_price '), DB::raw('SUM(sell_details.buying_price * sell_details.product_price_quantity) As buying_price'))
+        ->leftJoin('sell_details', 'sells.id', '=', 'sell_details.sell_id')
+        ->whereDate('sells.invoice_date', $this->report_day)
+        ->groupBy('sells.id')
+        ->get();
 
       $this->reports = $reports;
       $this->sells = $sells;
