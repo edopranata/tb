@@ -180,7 +180,7 @@
                                                 <td>{{ $key + 1 }}</td>
                                                 <td>
                                                     @if($report_type == 'daily')
-                                                        {{ \Carbon\Carbon::create($report->invoice_date)->toDateString() }}
+                                                        {{ $report_day }}
                                                     @elseif($report_type == 'monthly')
                                                         {{ \Carbon\Carbon::create($report->invoice_date)->toDateString() }}
                                                     @else
