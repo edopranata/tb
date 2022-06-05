@@ -57,6 +57,11 @@ class ProductsIndex extends Component
         return redirect()->route('pages.products.split', $product->id);
     }
 
+    public function toMaintenancePrice(Product $product)
+    {
+        return redirect()->route('pages.maintenance.products.index', $product->id);
+    }
+
     public function toRoute($route_name, $params = null)
     {
         return redirect()->route($route_name);

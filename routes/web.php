@@ -75,9 +75,9 @@ Route::middleware(['auth'])->group(function (){
             Route::get('{product}/split', \App\Http\Pages\Products\ProductSplit::class)->name('split');
         });
 
-        Route::group(['prefix' => 'maintenance', 'as' => 'maintenance'], function (){
+        Route::group(['prefix' => 'maintenance', 'as' => 'maintenance.'], function (){
             Route::group(['prefix' => 'products', 'as' => 'products.'], function (){
-                Route::get('/', \App\Http\Pages\Maintenance\Product\ProductPrice::class)->name('index');
+                Route::get('{product}/price', \App\Http\Pages\Maintenance\Product\ProductPrice::class)->name('index');
             });
         });
         Route::group(['prefix' => 'inventories', 'as' => 'inventories.'], function (){

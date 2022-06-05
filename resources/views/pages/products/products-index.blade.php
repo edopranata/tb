@@ -83,6 +83,7 @@
                                             <li class="tw-p-2 hover:tw-bg-gray-200" wire:click="editId({{ $product['id'] }})">✏ Ubah Produk</li>
                                             <li class="tw-p-2 hover:tw-bg-gray-200" wire:click="toProductPrice({{ $product['id'] }})">💸 Multi Harga</li>
                                             <li class="tw-p-2 hover:tw-bg-gray-200" wire:click="toProductSplit({{ $product['id'] }})">🖇️ Split Produk</li>
+                                            <li class="tw-p-2 hover:tw-bg-gray-200" wire:click="toMaintenancePrice({{ $product['id'] }})">💰 Maintenance Harga</li>
                                         </ul>
                                     </td>
                                     <td>{{ $key + 1 }}</td>
