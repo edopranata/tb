@@ -116,7 +116,7 @@ class IncomeReport extends Component
             ->leftJoin('sell_details', 'sells.id', '=', 'sell_details.sell_id')
             ->whereYear('sells.invoice_date', $this->report_year)
             ->whereMonth('sells.invoice_date', $this->report_month)
-            ->groupBy('sells.id')
+            ->groupBy('sells.invoice_number')
             ->get();
 
         $this->reports = $reports;
