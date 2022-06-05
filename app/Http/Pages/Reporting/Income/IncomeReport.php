@@ -112,7 +112,7 @@ class IncomeReport extends Component
             ->first();
 
         $reports = Sell::query()
-            ->select('sells.invoice_number', 'sells.invoice_date', DB::raw("DATE_FORMAT(sells.invoice_date,'%m %Y') as months"), DB::raw('SUM(sell_details.total) As sell_price '), DB::raw('SUM(sell_details.buying_price * sell_details.product_price_quantity) As buying_price'))
+            ->select('sells.invoice_number', DB::raw("DATE_FORMAT(sells.invoice_date,'%Y-%m-%d') as invoice_date"), DB::raw("DATE_FORMAT(sells.invoice_date,'%m %Y') as months"), DB::raw('SUM(sell_details.total) As sell_price '), DB::raw('SUM(sell_details.buying_price * sell_details.product_price_quantity) As buying_price'))
             ->leftJoin('sell_details', 'sells.id', '=', 'sell_details.sell_id')
             ->whereYear('sells.invoice_date', $this->report_year)
             ->whereMonth('sells.invoice_date', $this->report_month)
