@@ -79,7 +79,7 @@ class IncomeReport extends Component
         ->select('sells.invoice_number', 'sells.invoice_date', DB::raw('SUM(sell_details.total) As sell_price '), DB::raw('SUM(sell_details.buying_price * sell_details.product_price_quantity) As buying_price'))
         ->leftJoin('sell_details', 'sells.id', '=', 'sell_details.sell_id')
         ->whereDate('sells.invoice_date', $this->report_day)
-        ->groupBy('sells.id')
+        ->groupBy('sells.invoice_number')
         ->get();
 
       $this->reports = $reports;
