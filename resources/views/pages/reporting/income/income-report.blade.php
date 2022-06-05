@@ -182,7 +182,7 @@
                                                     @if($report_type == 'daily')
                                                         {{ $report_day }}
                                                     @elseif($report_type == 'monthly')
-                                                        {{ \Carbon\Carbon::create($report->invoice_date)->toDateString() }}
+                                                        {{ \Carbon\Carbon::createFromFormat('Ymd', substr(\Illuminate\Support\Str::remove('SBR', $report->invoice_number), 0, 8))->toDateString() }}
                                                     @else
                                                         {{ $report->months }}
                                                     @endif
