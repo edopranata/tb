@@ -81,12 +81,10 @@ class IncomeReport extends Component
         ->whereDate('sells.invoice_date', $this->report_day)
         ->groupBy('sells.invoice_number')
         ->get();
-
       $this->reports = $reports;
       $this->sells = $sells;
       $this->inventories = $inventories;
       $this->assets = $assets;
-
     }
 
     public function monthlyReport()
