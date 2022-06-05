@@ -40,7 +40,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <div class="form-group">
-                            <select wire:model="report_type" class="form-control">
+                            <select wire:model.defer="report_type" class="form-control">
                                 <option value="daily">Harian</option>
                                 <option value="monthly">Bulanan</option>
                                 <option value="yearly">Tahunan</option>
@@ -50,7 +50,7 @@
                     <div class="col-md-3 ">
                         <div class="form-group">
                         @if($report_type == 'daily')
-                            <input wire:model="report_day" placeholder="Tanggal laporan" type="date" class="form-control"/>
+                            <input wire:model.defer="report_day" placeholder="Tanggal laporan" type="date" class="form-control"/>
                         @elseif($report_type == 'monthly')
                             <div class="row">
                                 <div class="col-6">
@@ -61,13 +61,13 @@
                                     </select>
                                 </div>
                                 <div class="col-6">
-                                    <input wire:model="report_year" placeholder="Tahun" type="number" min="2022" class="form-control"/>
+                                    <input wire:model.defer="report_year" placeholder="Tahun" type="number" min="2022" class="form-control"/>
                                 </div>
                             </div>
                         @else
                             <div class="row">
                                 <div class="col-4">
-                                    <input wire:model="report_year" placeholder="Tahun" type="number" min="2022" class="form-control"/>
+                                    <input wire:model.defer="report_year" placeholder="Tahun" type="number" min="2022" class="form-control"/>
                                 </div>
                             </div>
                         @endif
