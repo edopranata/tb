@@ -51,6 +51,11 @@ class Product extends Model
         return $this->hasMany(ProductPrice::class);
     }
 
+    public function sells()
+    {
+        return $this->hasMany(SellDetail::class);
+    }
+
     public function scopeFilter($query, $filters)
     {
         $query

@@ -14,6 +14,16 @@ class ProductStock extends Model
     ];
     use HasFactory;
 
+    protected $appends = ['total'];
+
+    /*
+    Accessor for the total price
+     */
+    public function getTotalAttribute()
+    {
+        return $this->available_stock * $this->buying_price;
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class);

@@ -59,7 +59,7 @@ class ProductsIndex extends Component
 
     public function toMaintenancePrice(Product $product)
     {
-        return redirect()->route('pages.maintenance.products.index', $product->id);
+        return redirect()->route('pages.products.maintenance', $product->id);
     }
 
     public function toRoute($route_name, $params = null)
