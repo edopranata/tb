@@ -98,7 +98,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Jumlah Pembayaran</label>
-                                    <input wire:change="loadTemp()" wire:model.defer="payment" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" type="text" class="form-control rupiah" placeholder="Jumlah Pembayaran">
+                                    <input wire:change="loadTemp()" wire:model.defer="payment" onfocus="cursorIn(this)"  onfocusout="cursorOut(this)"  type="text" class="form-control rupiah" placeholder="Jumlah Pembayaran">
                                     @error('payment') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                 </div>
                             </div>
@@ -263,7 +263,7 @@
                                             </td>
                                             <td>
                                                 <div class="form-group col-md-12">
-                                                    <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.buying_price" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" class="form-control rupiah mr-sm-2 text-right" type="text" min="1"/>
+                                                    <input wire:change="updateProduct({{ $key }})" wire:model.defer="products.{{ $key }}.buying_price" onkeyup="changeVal(this)" onfocus="cursorIn(this)"  onfocusout="cursorOut(this)" class="form-control rupiah mr-sm-2 text-right" type="text" min="1"/>
                                                     @error('products.' . $key . '.buying_price') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror
                                                 </div>
                                             </td>
@@ -319,25 +319,56 @@
         })
 
         window.addEventListener('pageReload', () => {
-            $('.rupiah').unmask();
-            $('.rupiah').mask('#,##0', {
-                reverse: true,
-                translation: {
-                    '#': {
-                        pattern: /-|\d/,
-                        recursive: true
+            document.querySelectorAll('.rupiah').forEach((element) => {
+                // element.addEventListener('keyup', function(e) {
+                    let cursorPostion = element.selectionStart;
+                    let value = parseFloat(element.value);
+                    let originalLenght = element.value.length;
+                    if (isNaN(value)) {
+                        element.value = "";
+                    } else {
+                        element.value = value.toLocaleString('id-ID', {
+                            currency: 'IDR',
+                            style: 'currency',
+                            minimumFractionDigits: 0
+                        });
+                        cursorPostion = element.value.length - originalLenght + cursorPostion;
+                        element.setSelectionRange(cursorPostion, cursorPostion);
                     }
-                },
-                onChange: function(value, e) {
-                    var target = e.target,
-                        position = target.selectionStart; // Capture initial position
-
-                    target.value = value.replace(/(?!^)-/g, '').replace(/^,/, '').replace(/^-,/, '-');
-
-                    target.selectionEnd = position; // Set the cursor back to the initial position.
-                }
+                // });
             });
         })
+
+        function cursorOut(content){
+            // content.function((element) => {
+                // element.addEventListener('keyup', function(e) {
+                let cursorPostion = content.selectionStart;
+                let value = parseFloat(content.value.replace(',' , '.'));
+                let originalLenght = content.value.length;
+                if (isNaN(value)) {
+                    content.value = "";
+                } else {
+                    content.value = value.toLocaleString('id-ID', {
+                        currency: 'IDR',
+                        style: 'currency',
+                        minimumFractionDigits: 0
+                    });
+                    cursorPostion = content.value.length - originalLenght + cursorPostion;
+                    content.setSelectionRange(cursorPostion, cursorPostion);
+                }
+                // });
+            // });
+        }
+        //
+
+        function changeVal(content){
+            let number = content.value.replace(/[^,\d]/g, '').replace(/[^\d.]/g, '');
+            content.value = number;
+        }
+        function cursorIn(content){
+            let number = content.value.replace(/[^,\d]/g, '').replace(',', '.') //parseFloat(content.value.replace(/[^\d,-]/g, ''));
+            content.value = number;
+        }
 
         function inventoryPage() {
             return {
@@ -351,22 +382,23 @@
                 },
                 init: function () {
 
-                    $('.rupiah').mask('#,##0', {
-                        reverse: true,
-                        translation: {
-                            '#': {
-                                pattern: /-|\d/,
-                                recursive: true
+                    document.querySelectorAll('.rupiah').forEach((element) => {
+                        // element.addEventListener('keyup', function(e) {
+                            let cursorPostion = element.selectionStart;
+                            let value = parseFloat(element.value);
+                            let originalLenght = element.value.length;
+                            if (isNaN(value)) {
+                                element.value = "";
+                            } else {
+                                element.value = value.toLocaleString('id-ID', {
+                                    currency: 'IDR',
+                                    style: 'currency',
+                                    minimumFractionDigits: 0
+                                });
+                                cursorPostion = element.value.length - originalLenght + cursorPostion;
+                                element.setSelectionRange(cursorPostion, cursorPostion);
                             }
-                        },
-                        onChange: function (value, e) {
-                            var target = e.target,
-                                position = target.selectionStart; // Capture initial position
-
-                            target.value = value.replace(/(?!^)-/g, '').replace(/^,/, '').replace(/^-,/, '-');
-
-                            target.selectionEnd = position; // Set the cursor back to the initial position.
-                        }
+                        // });
                     });
 
                     $('#supplier-select').select2();
