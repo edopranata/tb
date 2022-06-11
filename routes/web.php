@@ -30,7 +30,6 @@ Route::middleware(['auth'])->group(function (){
         Route::get('/', [\App\Http\Controllers\DashboardController::class, 'index'])->name('index');
     });
 
-    Route::get('/test',[\App\Http\Controllers\Inventories\InventoriesController::class, 'index'])->name('inventory.test');
 
     Route::group(['prefix' => 'pages', 'as' => 'pages.'], function (){
         Route::group(['prefix' => 'management', 'as' => 'management.'], function (){
@@ -81,6 +80,8 @@ Route::middleware(['auth'])->group(function (){
 
         Route::group(['prefix' => 'inventories', 'as' => 'inventories.'], function (){
             Route::get('/', \App\Http\Pages\Inventories\InventoriesIndex::class)->name('index');
+            Route::get('/new',[\App\Http\Controllers\Inventories\InventoriesController::class, 'index'])->name('new');
+
         });
         Route::group(['prefix' => 'stock', 'as' => 'stock.'], function (){
             Route::get('/', \App\Http\Pages\Inventories\InventoriesTransfer::class)->name('index');

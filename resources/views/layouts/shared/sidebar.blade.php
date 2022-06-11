@@ -68,7 +68,8 @@
                     <x-slot name="icon">
                         <i class="nav-icon fas fa-dolly-flatbed"></i>
                     </x-slot>
-                    <x-sidebar.menu-item :title="$title = 'Inventori Produk Masuk'" :href="route('pages.inventories.index')" :active="request()->routeIs('pages.inventories.*')"/>
+                    <x-sidebar.menu-item :title="$title = 'Inventori Produk'" :href="route('pages.inventories.new')" :active="request()->routeIs('pages.inventories.new')"><x-slot name="badge">new</x-slot></x-sidebar.menu-item>
+                    <x-sidebar.menu-item :title="$title = 'Inventori Produk Masuk'" :href="route('pages.inventories.index')" :active="request()->routeIs('pages.inventories.index')"/>
                     <x-sidebar.menu-item :title="$title = 'Transfer Stok'" :href="route('pages.stock.index')" :active="request()->routeIs('pages.stock.index')"/>
                     <x-sidebar.menu-item :title="$title = 'Transfer Gudang ke Toko'" :href="route('pages.stock.transfer.store')" :active="request()->routeIs('pages.stock.transfer.store')"/>
                     <x-sidebar.menu-item :title="$title = 'Transfer Toko ke Gudang'" :href="route('pages.stock.transfer.warehouse')" :active="request()->routeIs('pages.stock.transfer.warehouse')"/>

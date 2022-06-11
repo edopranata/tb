@@ -19,10 +19,10 @@ class CreateTempPurchaseDetailsTable extends Migration
             $table->foreignIdFor(\App\Models\Product::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->foreignIdFor(\App\Models\ProductPrice::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->string('product_name');
-            $table->string('quantity'); // Jumlah per id Satuan
-            $table->string('product_price_quantity'); // Total ke satuan terkecil
-            $table->string('buying_price'); // Harga beli Per ID Satuan
-            $table->string('total'); //
+            $table->bigInteger('quantity'); // Jumlah per id Satuan
+            $table->bigInteger('product_price_quantity'); // Total ke satuan terkecil
+            $table->double('buying_price'); // Harga beli Per ID Satuan
+            $table->double('total'); //
             $table->timestamps();
         });
     }

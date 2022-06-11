@@ -6,7 +6,7 @@
         @else
             <i class="far fa-circle nav-icon"></i>
         @endif
-        <p>{{ $title }}</p>
+        <p>{{ $title }} @if(isset($badge))<span class="right badge badge-danger">{{ $badge }}</span>@endif</p>
     </a>
 </li>
 

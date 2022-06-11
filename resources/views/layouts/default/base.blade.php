@@ -56,11 +56,12 @@
 </div>
 
 <!-- Scripts -->
-<script src="{{ mix('js/app.js') }}" defer></script>
+{{--<script src="{{ mix('js/app.js') }}" defer></script>--}}
 <script src="{{ asset('dist/plugins/jquery/jquery.min.js') }}"></script>
 <!-- Bootstrap 4 -->
-<script src="{{ asset('dist/plugins/bootstrap-autocomplete/bootstrap-autocomplete.min.js') }}"></script>
 <script src="{{ asset('dist/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('dist/plugins/select2/js/select2.full.min.js') }}"></script>
+<script src="{{ asset('dist/plugins/jquery-number/jquery.number.js') }}"></script>
 <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
 <!-- Select2 -->
 <script type="text/javascript">

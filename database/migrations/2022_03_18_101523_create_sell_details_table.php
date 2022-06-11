@@ -19,9 +19,9 @@ class CreateSellDetailsTable extends Migration
             $table->foreignIdFor(\App\Models\Product::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->foreignIdFor(\App\Models\ProductPrice::class)->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->string('product_name');
-            $table->string('quantity'); // Jumlah per id Product Price
-            $table->string('product_price_quantity'); // Total dari ke satuan terkecil
-            $table->string('buying_price'); // Harga beli Per ID Satuan
+            $table->bigInteger('quantity'); // Jumlah per id Product Price
+            $table->bigInteger('product_price_quantity'); // Total dari ke satuan terkecil
+            $table->double('buying_price'); // Harga beli Per ID Satuan
             $table->text('payload')->nullable(); // Payload dari table product stock;
             $table->double('sell_price');
             $table->double('sell_price_quantity');

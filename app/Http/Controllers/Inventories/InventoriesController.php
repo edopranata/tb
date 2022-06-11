@@ -17,10 +17,9 @@ class InventoriesController extends Controller
         if($request->ajax()){
             return $inventoryRepositories->navigate($request);
         }else{
-            $data = $inventoryRepositories->loadTemp();
 
             $suppliers = Supplier::query()->get()->toArray();
-            return view('inventories.index', compact('suppliers', 'data'));
+            return view('inventories.index', compact('suppliers'));
         }
     }
 }
