@@ -30,6 +30,7 @@ Route::middleware(['auth'])->group(function (){
         Route::get('/', [\App\Http\Controllers\DashboardController::class, 'index'])->name('index');
     });
 
+    Route::get('/test', [\App\Http\Controllers\Transaction\SellTransactionController::class, 'index'])->name('test');
 
     Route::group(['prefix' => 'pages', 'as' => 'pages.'], function (){
         Route::group(['prefix' => 'management', 'as' => 'management.'], function (){

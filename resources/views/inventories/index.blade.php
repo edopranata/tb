@@ -69,7 +69,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <button id="btn-cancel-transaction" onclick="inventoriesPage.cancel()" type="button" class="btn btn-danger btn-flat">Batalkan Transaksi</button>
-                                <button id="btn-save-draft" type="button" class="btn btn-warning btn-flat">Simpan sebagai draf kembali ke halaman utama</button>
+                                <a id="btn-save-draft" href="{{ route('dashboard.index') }}" class="btn btn-warning btn-flat">Simpan sebagai draf kembali ke halaman utama</a>
 
                                 <button id="btn-begin-transaction" onclick="inventoriesPage.create()" type="button" class="btn btn-dark btn-flat" >Add Product</button>
                             </div>

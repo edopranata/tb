@@ -13,7 +13,7 @@ class SellDetail extends Model
     protected $casts = [
         'created_at'    => 'date:Y-m-d',
         'updated_at'    => 'date:Y-m-d',
-        'payload'       => AsCollection::class
+//        'payload'       => AsCollection::class
     ];
 
     public function product()
