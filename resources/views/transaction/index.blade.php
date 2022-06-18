@@ -52,7 +52,7 @@
                                     <select name="customer_id" id="customer-select" class="form-control">
                                         <option value="">Pilih Pelanggan</option>
                                         @foreach($customers as $customer)
-                                            <option value="{{ $customer['id'] }}" @if($customer['id'] == $customer_id) selected @endif>{{ $customer['name'] }}</option>
+                                            <option value="{{ $customer->id }}">{{ $customer->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -61,7 +61,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>No Nota</label>
-                                    <input name="invoice_number" type="text" class="form-control" readonly>
+                                    <input id="invoice_number" name="invoice_number" type="text" class="form-control" readonly>
                                 </div>
                             </div>
                         </div>
@@ -72,6 +72,45 @@
 
                                 <button id="btn-begin-transaction" onclick="transactionPage.create()" type="button" class="btn btn-dark btn-flat" >Buat Transaksi</button>
 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12" id="content-search">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Cari Barcode </label>
+                                    <input id="barcode" style="width: 100%" name="search-barcode" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <label>Cari Produk (Barcode / Nama Produk)</label>
+                                    <select id="search-barcode" style="width: 100%" name="search" class="form-control"></select>
+                                    {{--                                <input type="text" class="form-control-lg form-control rounded-0"/>--}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" id="content-transaction-list">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card tw-z-50">
+                                    <div class="card-body px-0">
+                                        <div class="table-responsive" id="transaction-list">
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -92,7 +131,13 @@
 
                 let inputCustomerID = $('#customer-select')
                 let inputInvoiceDate = $('#transaction_date');
-                let searchBarcode = $('#search-barcode');
+                let inputInvoiceNumber = $('#invoice_number');
+
+                let inputSearchBarcode = $('#search-barcode');
+                let inputBarcode = $('#barcode');
+
+                let contentSearch = $('#content-search');
+                let contentTransactionList = $('#content-transaction-list');
 
                 let formTransaction = $('#form-transaction');
 
@@ -103,6 +148,10 @@
                     btnCancel.hide();
                     btnDraft.hide();
                     btnBeginTransaction.show();
+                    inputInvoiceDate.val(null).attr('disabled', false);
+                    inputCustomerID.val(null).trigger('change');
+                    inputInvoiceNumber.val(null);
+                    contentSearch.hide();
                 }
 
                 let beginPages = function (){
@@ -112,6 +161,18 @@
                     btnDraft.show();
                     btnCancel.show();
                     btnBeginTransaction.hide();
+                    inputInvoiceDate.attr('disabled', true);
+                    contentSearch.show();
+                }
+
+                let getCurrentDate = function (){
+                    $.ajax({
+                        url: '',
+                        data: {'path': 'getToday'},
+                        success:function (data){
+                            inputInvoiceDate.val(data)
+                        }
+                    })
                 }
 
                 let setupPage = function () {
@@ -124,8 +185,14 @@
                     // Select 2
                     inputCustomerID.select2();
 
+                    inputBarcode.keypress(function (e){
+                        if(e.keyCode == 13){
+                            getProductID('barcode', inputBarcode.val());
+                        }
+                    })
+
                     // Search Barcode
-                    searchBarcode.select2({
+                    inputSearchBarcode.select2({
                         placeholder: 'Cari Produk (Barcode / Nama Produk)',
                         minimumInputLength: 2,
                         ajax: {
@@ -145,6 +212,14 @@
                             }
                         }
                     });
+
+                    // select product
+                    inputSearchBarcode.on("select2:selecting", function(e) {
+                        $('.input-ajax').attr('readonly', true);
+                        let productID = e.params.args.data.id;
+                        getProductID('id', productID);
+
+                    });
                 }
 
                 let sendRequest = function (params){
@@ -159,10 +234,22 @@
                     });
                 }
 
+                let getProductID = function (field, id){
+                    let price_type = (inputCustomerID.val() === '') ? 'sell' : 'customer'
+                    let params = {
+                        'path': 'getProductID',
+                        'field': field,
+                        'price_type': price_type,
+                        'id': id
+                    }
+                    sendRequest(params)
+                }
+
                 let createTransaction = function () {
                     let params = {
                         path: 'createTransaction',
                         invoice_date: inputInvoiceDate.val(),
+                        customer_id: inputCustomerID.val(),
                     }
                     sendRequest(params);
                 }
@@ -178,14 +265,23 @@
                     $.ajax({
                         data : {'path': 'loadTemp'},
                         success:function(data){
-                            if(data){
+                            if(data.sells){
                                 // tampilkan data pembelian
-                                // showProductList(data);
+                                showTransactionList(data);
                             }else{
                                 resetPages();
                             }
+                            inputSearchBarcode.val(null).trigger('change');
+                            inputBarcode.val(null);
                         }
                     });
+                }
+
+                let showTransactionList = function (contents){
+                    console.info(contents)
+                    inputInvoiceDate.val(contents.sells.invoice_date)
+                    inputInvoiceNumber.val(contents.sells.invoice_number)
+                    beginPages();
                 }
 
                 let setMessage = function (res){
@@ -220,16 +316,17 @@
 
                 return {
                     init : function (){
+                        loadTemp();
                         setupPage();
                     },
                     getToday: function (){
-
+                        getCurrentDate();
                     },
                     create: function (){
                         createTransaction()
                     },
                     cancel: function (){
-
+                        cancelTransaction();
                     }
                 };
             }();

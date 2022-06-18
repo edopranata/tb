@@ -275,7 +275,7 @@ class InventoryRepositories
         if($data['purchase']){
             if($data['purchase']->details->count()){
                 foreach ($data['purchase']->details as $detail) {
-                    array_push($data['products'], $detail->toArray());
+                    $data['products'][] = $detail->toArray();
                 }
             }
 

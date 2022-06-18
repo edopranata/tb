@@ -13,19 +13,11 @@ class SellTransactionController extends Controller
 
     public function index(Request $request, SellTransactionRepositories $transactionRepositories)
     {
-
-        $datas = SellDetail::query()
-            ->where('payload', 'like', '%'.'product_sock_id'.'%')
-            ->get();
-
-        foreach ($datas as $data){
-            $pattern = '/product_sock_id/i';
-            $payload = preg_replace($pattern, 'product_stock_id', $data->payload);
-            $data->update([
-                'payload'   => $payload
-            ]);
+        if($request->ajax()){
+            return $transactionRepositories->navigate($request);
+        }else{
+            $customers = Customer::all();
+            return view('transaction.index', compact('customers'));
         }
-
-        return 'Done';
     }
 }
