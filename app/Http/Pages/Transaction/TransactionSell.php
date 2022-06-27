@@ -405,14 +405,12 @@ class TransactionSell extends Autocomplete
                     'bond'          => (($this->sells->bill - $this->sells->discount) >= $this->sells->payment) ? ($this->sells->bill - $this->sells->discount) - $this->sells->payment + $this->sells->discount : 0
                 ]);
 
-            $this->cancelTransaction();
 
             DB::commit();
 
             $this->reset(['sell']);
-
             $this->sell = $sells_transaction->load(['details.product.prices.unit', 'details.product.stocks', 'details.price.unit', 'user']);
-
+            $this->cancelTransaction();
             $this->dispatchBrowserEvent('pagePrint');
 
         }catch (\Exception $exception){

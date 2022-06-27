@@ -100,24 +100,69 @@
                         </div>
                     </div>
                 </div>
-                <div class="card" id="content-transaction-list">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="card tw-z-50">
-                                    <div class="card-body px-0">
-                                        <div class="table-responsive" id="transaction-list">
+            </div>
+        </div>
+        <div class="row no-print">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="table-responsive" id="content-transaction-list">
 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="col-md-3">
+                <div class="card" id="content-transaction-summaries">
 
+                </div>
+{{--                <div class="card">--}}
+{{--                    <div class="card-body">--}}
+{{--                        <h5>Total tagihan</h5>--}}
+{{--                        <div class="input-group input-group-lg mb-3">--}}
+{{--                            <div class="input-group-prepend rounded-0">--}}
+{{--                                <span class="input-group-text">Rp.</span>--}}
+{{--                            </div>--}}
+{{--                            <input wire:model="total" type="text" class="form-control form-control-lg rounded-0 rupiah" readonly>--}}
+{{--                        </div>--}}
+{{--                        @if($show_discount)--}}
+{{--                            <h5>Potongan</h5>--}}
+{{--                            <div class="input-group input-group-lg mb-3">--}}
+{{--                                <div class="input-group-prepend rounded-0">--}}
+{{--                                    <span class="input-group-text">Rp.</span>--}}
+{{--                                </div>--}}
+{{--                                <input wire:model="sell_discount" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" type="text" class="form-control form-control-lg rounded-0 rupiah">--}}
+{{--                            </div>--}}
+{{--                        @endif--}}
+
+{{--                        <h5>Total pembayaran</h5>--}}
+{{--                        <div class="input-group input-group-lg mb-3">--}}
+{{--                            <div class="input-group-prepend rounded-0">--}}
+{{--                                <span class="input-group-text">Rp.</span>--}}
+{{--                            </div>--}}
+{{--                            <input wire:change="updatePayment()" wire:model.lazy="payment" onfocus="$(this).unmask()" onfocusout="$(this).mask('#,##0', {reverse: true})" type="text" class="form-control form-control-lg rounded-0 rupiah">--}}
+{{--                            <div class="input-group-append rounded-0">--}}
+{{--                                <button wire:click="fixedPayment()" class="btn btn-info btn-flat" type="button">Pas</button>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+
+{{--                        <h5>Uang kembali</h5>--}}
+{{--                        <div class="input-group input-group-lg mb-3">--}}
+{{--                            <div class="input-group-prepend rounded-0">--}}
+{{--                                <span class="input-group-text">Rp.</span>--}}
+{{--                            </div>--}}
+{{--                            <input wire:model="refund" type="text" class="form-control form-control-lg rounded-0 rupiah" readonly>--}}
+{{--                        </div>--}}
+{{--                        <h5>Tanggal Jatuh Tempo</h5>--}}
+{{--                        <div class="input-group input-group-lg mb-3">--}}
+{{--                            <div class="input-group-prepend rounded-0">--}}
+{{--                                <span class="input-group-text"><i class="fas fa-clock"></i></span>--}}
+{{--                            </div>--}}
+{{--                            <input wire:model="due_date" type="date" class="form-control form-control-lg rounded-0">--}}
+{{--                        </div>--}}
+{{--                        @error('due_date') <div class="text-sm text-muted text-red">{{ $message }}</div> @enderror--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+            </div>
+        </div>
     </form>
     @push('js')
         <script>
@@ -138,6 +183,7 @@
 
                 let contentSearch = $('#content-search');
                 let contentTransactionList = $('#content-transaction-list');
+                let contentTransactionSummaries = $('#content-transaction-summaries');
 
                 let formTransaction = $('#form-transaction');
 
@@ -148,7 +194,7 @@
                     btnCancel.hide();
                     btnDraft.hide();
                     btnBeginTransaction.show();
-                    inputInvoiceDate.val(null).attr('disabled', false);
+                    inputInvoiceDate.val(null).attr('readonly', false);
                     inputCustomerID.val(null).trigger('change');
                     inputInvoiceNumber.val(null);
                     contentSearch.hide();
@@ -218,7 +264,12 @@
                         $('.input-ajax').attr('readonly', true);
                         let productID = e.params.args.data.id;
                         getProductID('id', productID);
+                    });
 
+                    inputCustomerID.on("select2:selecting", function(e) {
+                        $('.input-ajax').attr('readonly', true);
+                        let customer_id = e.params.args.data.id;
+                        changeCustomer(customer_id);
                     });
                 }
 
@@ -232,6 +283,30 @@
                             setMessage(err);
                         }
                     });
+                }
+
+                let updateProductList = function (id){
+                    let product_price_id = $('#product_price_id-'+id).val()
+                    let quantity = $('#quantity-'+id).val()
+                    let sell_price = $('#sell_price-'+id).val()
+                    let discount = $('#discount-'+id).val()
+                    let params = {
+                        'path': 'updateProductList',
+                        'id': id,
+                        'product_price_id': product_price_id,
+                        'quantity': quantity,
+                        'sell_price': sell_price,
+                        'discount': discount,
+                    }
+                    console.info(params)
+                }
+
+                let changeCustomer = function (id){
+                    let params = {
+                        'path': 'changeCustomer',
+                        'id': id
+                    }
+                    sendRequest(params)
                 }
 
                 let getProductID = function (field, id){
@@ -278,10 +353,112 @@
                 }
 
                 let showTransactionList = function (contents){
-                    console.info(contents)
+                    console.log(contents);
+                    beginPages();
+                    let data = contents.sells;
+
+                    inputCustomerID.val(contents.customer_id).trigger('change')
                     inputInvoiceDate.val(contents.sells.invoice_date)
                     inputInvoiceNumber.val(contents.sells.invoice_number)
-                    beginPages();
+
+                    if(data.details.length) {
+                        contentTransactionList.show();
+
+                        let tableBody = '';
+                        let opt = '';
+                        let lClasses = '';
+                        let rClasses = '';
+
+
+                        data.details.forEach(function (item, key){
+                            opt = '';
+                            let i = 0;
+                            lClasses = (item.price_category == 'customer' || item.price_category == 'sell') ? 'text-bold tw-bg-slate-700 tw-text-slate-100' : '';
+                            rClasses = (item.price_category == 'wholesale') ? 'text-bold tw-bg-slate-700 tw-text-slate-100' : '';
+                            item.product.prices.forEach(function (quantity){
+                                if(item.product_price_id === quantity.id){
+                                    opt += `<option value="${quantity.id}" selected>${quantity.unit.name}</option>`
+                                }else{
+                                    opt += `<option value="${quantity.id}">${quantity.unit.name}</option>`
+                                }
+                            })
+
+
+                            tableBody += `<tr>`
+                            tableBody += `<td>${key + 1}</td>`
+                            tableBody += `<td>${item.product_name}</td>`
+                            tableBody += `<td>
+                                              <div class="form-row">
+                                                  <div class="form-group col-md-6">
+                                                       <input onfocusout="transactionPage.updateProductList(${item.id})" type="text" id="quantity-${item.id}" name="quantity[${i}]" value="${item.quantity}" class="form-control mr-sm-2 input-ajax">
+                                                  </div>
+                                                  <div class="form-group col-md-6">
+                                                       <select id="product_price_id-${item.id}" name="product_price_quantity[${i}]" class="form-control mr-sm-2 input-ajax">
+                                                            ${opt}
+                                                       </select>
+                                                  </div>
+                                              </div>
+                                          </td>`
+
+                            tableBody += `<td>
+                                              <div class="input-group">
+                                                  <div class="input-group-prepend">
+                                                      <span class="input-group-text tw-cursor-pointer ${lClasses}">${contents.customer_id ? 'C' : 'S'}</span>
+                                                  </div>
+                                                  <input value="${item.sell_price}" id="sell_price-${item.id}" name="sell_price[${i}]" class="form-control text-right rupiah input-ajax" type="text"/>
+                                                  <div class="input-group-append">
+                                                      <span class="input-group-text tw-cursor-pointer ${rClasses}">G</span>
+                                                  </div>
+                                              </div>
+                                          </td>`;
+
+                            tableBody += `<td>
+                                            <div class="form-group col-md-12">
+                                                <input value="${item.discount}" name="discount[${i}]" class="form-control text-right rupiah input-ajax" type="text"/>
+                                            </div>
+                                          </td>`
+
+                            tableBody += `<td>
+                                            <div class="form-group col-md-12">
+                                                <input readonly value="${item.total}" name="total[${i}]" class="form-control text-right rupiah input-ajax" type="text"/>
+                                            </div>
+                                          </td>`
+
+                            tableBody += `<td>
+                                              <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                          </td>`
+                            tableBody += `</tr>`;
+                            i++;
+                        })
+
+                        let tableHead = `<table class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th style="min-width: 10px">#</th>
+                                            <th style="min-width: 200px;">Nama Produk</th>
+                                            <th style="min-width: 250px;">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        Jumlah Beli
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        Satuan
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th style="min-width: 200px;">Harga</th>
+                                            <th style="min-width: 200px;">Disc</th>
+                                            <th style="min-width: 200px;">Total Harga</th>
+                                            <th style="min-width: 80px">Act</th>
+                                        </tr>
+                                        </thead>`;
+
+                        let tableFoot = `</table>`
+                        contentTransactionList.html(tableHead + '<tbody>' + tableBody + '</tbody>' + tableFoot)
+                        $('.rupiah').number(true,2);
+                    }
+
+
                 }
 
                 let setMessage = function (res){
@@ -327,6 +504,9 @@
                     },
                     cancel: function (){
                         cancelTransaction();
+                    },
+                    updateProductList: function (id){
+                        updateProductList(id)
                     }
                 };
             }();

@@ -11,7 +11,7 @@
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
                     <div class="input-group mb-3">
-                        <input name="username" type="text" class="form-control @error('username') tw-border-red-700 @enderror" placeholder="Username" value="{{ old('username') }}">
+                        <input id="username" name="username" type="text" class="form-control @error('username') tw-border-red-700 @enderror" placeholder="Username" value="{{ old('username') }}">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-envelope"></span>
@@ -19,7 +19,7 @@
                         </div>
                     </div>
                     <div class="input-group mb-3">
-                        <input name="password" type="password" class="form-control @error('password') tw-border-red-700 @enderror" placeholder="Password">
+                        <input id="password" name="password" type="password" class="form-control @error('password') tw-border-red-700 @enderror" placeholder="Password">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,8 @@ class SellDetail extends Model
         'payload'       => AsCollection::class
     ];
 
+    protected $appends = ['payloads'];
+
     public function product()
     {
         return $this->belongsTo(Product::class);
@@ -24,5 +27,15 @@ class SellDetail extends Model
     public function price()
     {
         return $this->belongsTo(ProductPrice::class, 'product_price_id', 'id');
+    }
+
+    public function getPayloadsAttribute()
+    {
+        return collect($this->payload);
+    }
+
+    public function sell()
+    {
+        return $this->belongsTo(Sell::class);
     }
 }

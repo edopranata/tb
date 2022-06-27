@@ -17,6 +17,7 @@ class SellTransactionRepositories
 
     public function navigate(Request $request)
     {
+
         switch ($request->path){
             case 'loadTemp':
                 return $this->loadTemp();
@@ -38,6 +39,9 @@ class SellTransactionRepositories
                 break;
             case 'cancelTransaction':
                 return $this->cancelTransaction($request);
+                break;
+            case 'changeCustomer':
+                return $this->changeCustomer($request);
                 break;
 //            case 'saveTransaction':
 //                return $this->saveTransaction($request);
@@ -67,6 +71,33 @@ class SellTransactionRepositories
         $suffix = sprintf('%03d', $number);
 
         return $this->prefix . $date . $suffix;
+    }
+
+    public function changeCustomer(Request $request)
+    {
+
+        $customer = Customer::find($request->id);
+        DB::beginTransaction();
+        try {
+            $sell = \auth()->user()->tempSells()->with(['details'])->first();
+            if($customer){
+                $sell->update([
+                    'customer_id' => $customer->id,
+                    'customer_name' => $customer->name,
+                ]);
+            }else{
+                $sell->update([
+                    'customer_id' => null,
+                    'customer_name' => 'Guest',
+                ]);
+            }
+
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Customer changed'], 201);
+        }catch (\Exception $exception){
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Customer change failed ' . $exception->getMessage()], 401);
+        }
     }
 
     public function getProductID(Request $request)

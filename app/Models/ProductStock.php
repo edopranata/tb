@@ -14,7 +14,7 @@ class ProductStock extends Model
     ];
     use HasFactory;
 
-    protected $appends = ['total'];
+    protected $appends = ['total', 'first_total'];
 
     /*
     Accessor for the total price
@@ -23,6 +23,13 @@ class ProductStock extends Model
     {
         return $this->available_stock * $this->buying_price;
     }
+
+    public function getFirstTotalAttribute()
+    {
+        return $this->first_stock * $this->buying_price;
+    }
+
+
 
     public function product()
     {
