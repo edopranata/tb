@@ -5,6 +5,8 @@ namespace App\Http\Repositories\Transaction;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sell;
+use App\Models\SellDetail;
+use App\Models\TempSellDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -43,9 +45,12 @@ class SellTransactionRepositories
             case 'changeCustomer':
                 return $this->changeCustomer($request);
                 break;
-//            case 'saveTransaction':
-//                return $this->saveTransaction($request);
-//                break;
+            case 'setPrice':
+                return $this->setPrice($request);
+                break;
+            case 'updateProductList':
+                return $this->updateProductList($request);
+                break;
 //            case 'editProduct':
 //                return $this->editProduct($request);
 //                break;
@@ -116,9 +121,7 @@ class SellTransactionRepositories
                     ->first();
                 return $this->getProduct($request, $product);
                 break;
-
         }
-
     }
 
     public function getProduct(Request $request, $product)
@@ -156,6 +159,8 @@ class SellTransactionRepositories
 
         }
     }
+
+
 
     public function cancelTransaction(Request $request)
     {
@@ -223,6 +228,43 @@ class SellTransactionRepositories
 
         }
         return $data;
+    }
+
+    public function setPrice(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $sell = TempSellDetail::query()
+                ->with(['price'])
+                ->where('id', $request->id)
+                ->first();
+
+            $price = $sell->price;
+
+            $sell->update([
+                'sell_price'        => $price[Str::lower($request->price_type) . '_price'],
+                'price_category'    => $request->price_type,
+            ]);
+
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Price updated'], 201);
+        }catch (\Exception $exception){
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Updated price failed ' . $exception->getMessage()], 401);
+        }
+    }
+
+    public function updateProductList(Request $request)
+    {
+        $sell = TempSellDetail::query()
+            ->with(['price', 'product.prices'])
+            ->where('id', $request->id)
+            ->first();
+
+        $product_price = $sell->product->prices->where('id', $request->product_price_id)->first();
+
+
+        return $product_price;
     }
 
     public function searchProduct(Request $request)

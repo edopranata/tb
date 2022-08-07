@@ -20,8 +20,26 @@ class ProductPriceMaintenance extends Component
                 ->with(['sell', 'price', 'product'])
                 ->where('product_id', $this->product->id)
                 ->get()
+                ->map(function ($sells){
+                    return [
+                        'id'                => $sells->id,
+                        'invoice_number'    => $sells->sell->invoice_number,
+                        'buying_price'      => $sells->buying_price,
+                        'sell_price'        => $sells->sell_price,
+                        'quantity'          => $sells->quantity,
+                        'payloads'          => $this->payloads(json_decode($sells->payload)),
+                    ];
+                })
             ]
         );
+    }
+
+    private function payloads($payload){
+        $array = [];
+        foreach ($payload as $item) {
+            array_push($array,$item);
+        }
+        return $array;
     }
 
     public function mount(Product $product)

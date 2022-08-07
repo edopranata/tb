@@ -17,7 +17,7 @@ class SellDetail extends Model
         'payload'       => AsCollection::class
     ];
 
-    protected $appends = ['payloads'];
+//    protected $appends = ['payloads'];
 
     public function product()
     {
@@ -29,13 +29,18 @@ class SellDetail extends Model
         return $this->belongsTo(ProductPrice::class, 'product_price_id', 'id');
     }
 
-    public function getPayloadsAttribute()
-    {
-        return collect($this->payload);
-    }
+//    public function getPayloadsAttribute()
+//    {
+//        return collect($this->payload);
+//    }
 
     public function sell()
     {
         return $this->belongsTo(Sell::class);
+    }
+
+    public function payloads()
+    {
+        return $this->hasMany(PricePayload::class);
     }
 }

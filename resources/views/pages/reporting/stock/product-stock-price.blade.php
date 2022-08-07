@@ -83,7 +83,12 @@
                             <th>Harga Satuan</th>
                             <th>Harga Grosir</th>
                             <th>Harga Pelanggan</th>
-                            <th>Harga Modal</th>
+                            <th class="tw-max-h-8">
+                                <div class="d-flex justify-content-between">
+                                    <span>Stock</span>
+                                    <span>Harga Modal</span>
+                                </div>
+                            </th>
                         </tr>
                         <tbody>
                         @foreach($products as $key => $product)
@@ -108,14 +113,14 @@
                                     @endforeach
                                 </td>
                                 <td>
-                                    @php
-                                    $stocks = collect($product->stocks)->where('available_stock', '>', 0)
-
-                                    @endphp
+                                    @php($stocks = collect($product->stocks)->where('available_stock', '>', 0))
+                                    @php($sell_price = $product->prices->where('default', '1')->first()->sell_price)
                                     @foreach($stocks as $stock)
-                                        <div><strong>{{ number_format($stock->buying_price) }}</strong> <span class="text-muted">@ {{ $product->unit->name }}</span></div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="@if($sell_price < $stock->buying_price) text-danger @endif"> ({{ $stock->available_stock }} {{ $product->unit->name }})</span>
+                                            <span class="text-right @if($sell_price < $stock->buying_price) text-danger @endif"><strong>@ Rp. {{ number_format($stock->buying_price) }}</strong></span>
+                                        </div>
                                     @endforeach
-{{--                                    {{ dd($stocks) }}--}}
                                 </td>
                             </tr>
                         @endforeach

@@ -198,6 +198,7 @@
                     inputCustomerID.val(null).trigger('change');
                     inputInvoiceNumber.val(null);
                     contentSearch.hide();
+                    contentTransactionList.html('')
                 }
 
                 let beginPages = function (){
@@ -274,6 +275,7 @@
                 }
 
                 let sendRequest = function (params){
+                    $('.input-ajax').attr('readonly', true);
                     $.ajax({
                         data : params,
                         success:function(data){
@@ -298,7 +300,7 @@
                         'sell_price': sell_price,
                         'discount': discount,
                     }
-                    console.info(params)
+                    sendRequest(params)
                 }
 
                 let changeCustomer = function (id){
@@ -336,6 +338,17 @@
                     sendRequest(params);
                 }
 
+                let setPrice = function (id, type = null, value = null){
+                    let params = {
+                        path: 'setPrice',
+                        id: id,
+                        price_type: type,
+                        value: value
+                    }
+
+                    sendRequest(params)
+                }
+
                 let loadTemp = function (){
                     $.ajax({
                         data : {'path': 'loadTemp'},
@@ -353,7 +366,7 @@
                 }
 
                 let showTransactionList = function (contents){
-                    console.log(contents);
+                    // console.log(contents);
                     beginPages();
                     let data = contents.sells;
 
@@ -373,8 +386,8 @@
                         data.details.forEach(function (item, key){
                             opt = '';
                             let i = 0;
-                            lClasses = (item.price_category == 'customer' || item.price_category == 'sell') ? 'text-bold tw-bg-slate-700 tw-text-slate-100' : '';
-                            rClasses = (item.price_category == 'wholesale') ? 'text-bold tw-bg-slate-700 tw-text-slate-100' : '';
+                            lClasses = (item.price_category.toUpperCase() == 'CUSTOMER' || item.price_category.toUpperCase() == 'SELL') ? 'text-bold tw-bg-slate-700 tw-text-slate-100' : '';
+                            rClasses = (item.price_category.toUpperCase() == 'WHOLESALE') ? 'text-bold tw-bg-slate-700 tw-text-slate-100' : '';
                             item.product.prices.forEach(function (quantity){
                                 if(item.product_price_id === quantity.id){
                                     opt += `<option value="${quantity.id}" selected>${quantity.unit.name}</option>`
@@ -382,7 +395,6 @@
                                     opt += `<option value="${quantity.id}">${quantity.unit.name}</option>`
                                 }
                             })
-
 
                             tableBody += `<tr>`
                             tableBody += `<td>${key + 1}</td>`
@@ -393,7 +405,7 @@
                                                        <input onfocusout="transactionPage.updateProductList(${item.id})" type="text" id="quantity-${item.id}" name="quantity[${i}]" value="${item.quantity}" class="form-control mr-sm-2 input-ajax">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <select id="product_price_id-${item.id}" name="product_price_quantity[${i}]" class="form-control mr-sm-2 input-ajax">
+                                                       <select id="product_price_id-${item.id}" name="product_price_id[${i}]" class="form-control mr-sm-2 input-ajax">
                                                             ${opt}
                                                        </select>
                                                   </div>
@@ -403,11 +415,11 @@
                             tableBody += `<td>
                                               <div class="input-group">
                                                   <div class="input-group-prepend">
-                                                      <span class="input-group-text tw-cursor-pointer ${lClasses}">${contents.customer_id ? 'C' : 'S'}</span>
+                                                      <span onclick="transactionPage.setPrice(${item.id}, '${contents.customer_id ? 'CUSTOMER' : 'SELL'}')" class="input-group-text tw-cursor-pointer ${lClasses}">${contents.customer_id ? 'C' : 'S'}</span>
                                                   </div>
                                                   <input value="${item.sell_price}" id="sell_price-${item.id}" name="sell_price[${i}]" class="form-control text-right rupiah input-ajax" type="text"/>
                                                   <div class="input-group-append">
-                                                      <span class="input-group-text tw-cursor-pointer ${rClasses}">G</span>
+                                                      <span onclick="transactionPage.setPrice(${item.id}, 'WHOLESALE')" class="input-group-text tw-cursor-pointer ${rClasses}">G</span>
                                                   </div>
                                               </div>
                                           </td>`;
@@ -420,7 +432,7 @@
 
                             tableBody += `<td>
                                             <div class="form-group col-md-12">
-                                                <input readonly value="${item.total}" name="total[${i}]" class="form-control text-right rupiah input-ajax" type="text"/>
+                                                <input readonly value="${item.total}" name="total[${i}]" class="form-control text-right rupiah" type="text"/>
                                             </div>
                                           </td>`
 
@@ -457,8 +469,6 @@
                         contentTransactionList.html(tableHead + '<tbody>' + tableBody + '</tbody>' + tableFoot)
                         $('.rupiah').number(true,2);
                     }
-
-
                 }
 
                 let setMessage = function (res){
@@ -507,6 +517,10 @@
                     },
                     updateProductList: function (id){
                         updateProductList(id)
+
+                    },
+                    setPrice: function (id, type = null, value = null){
+                        return setPrice(id, type, value)
                     }
                 };
             }();

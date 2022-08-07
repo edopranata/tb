@@ -30,7 +30,10 @@ Route::middleware(['auth'])->group(function (){
         Route::get('/', [\App\Http\Controllers\DashboardController::class, 'index'])->name('index');
     });
 
-    Route::get('/test', [\App\Http\Controllers\Transaction\SellTransactionController::class, 'index'])->name('test');
+    Route::group(['prefix' => 'test', 'as' => 'test.'], function (){
+        Route::get('/payloads', [\App\Http\Controllers\Transaction\SellTransactionController::class, 'payloads'])->name('payloads');
+        Route::get('/customer', [\App\Http\Controllers\Transaction\SellTransactionController::class, 'customer'])->name('customer');
+    });
 
     Route::group(['prefix' => 'pages', 'as' => 'pages.'], function (){
         Route::group(['prefix' => 'management', 'as' => 'management.'], function (){
@@ -75,7 +78,8 @@ Route::middleware(['auth'])->group(function (){
             Route::get('{product}/price', \App\Http\Pages\Products\ProductPrices::class)->name('price');
             Route::get('{product}/edit', \App\Http\Pages\Products\ProductsEdit::class)->name('edit');
             Route::get('{product}/split', \App\Http\Pages\Products\ProductSplit::class)->name('split');
-            Route::get('{product}/maintenance', \App\Http\Pages\Products\ProductPriceMaintenance::class)->name('maintenance');
+            Route::get('{product}/maintenances', \App\Http\Pages\Products\ProductPriceMaintenance::class)->name('maintenance');
+            Route::get('{product}/maintenance', [\App\Http\Controllers\Product\ProductMaintenance::class, 'index'])->name('maintenance');
 
         });
 

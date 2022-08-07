@@ -6,9 +6,9 @@ use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Supplier;
 use App\Models\TempPurchaseDetail;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use mysql_xdevapi\Exception;
 
 class InventoryRepositories
 {
@@ -155,13 +155,13 @@ class InventoryRepositories
 
         DB::beginTransaction();
         try {
-            $supplier_name = Supplier::query()
+            $supplier = Supplier::query()
                 ->find($request->supplier_id);
 
             \auth()->user()->tempPurchase()
                 ->create([
                     'supplier_id'       => $request->supplier_id,
-                    'supplier_name'     => $supplier_name,
+                    'supplier_name'     => $supplier->name,
                     'invoice_number'    => $request->invoice_number,
                     'invoice_date'      => $request->invoice_date,
                 ]);

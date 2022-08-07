@@ -282,8 +282,9 @@ class TransactionSell extends Autocomplete
             foreach ($products as $product){
                 $selected_product = $tb_product->where('id', $product['product_id'])->first();
                 if($product['quantity'] > $selected_product->store_stock){
-                    return back()->with(['error' => 'Invalid quantity for product ' . $selected_product->barcode . ' ' . $selected_product->name . ' store stock : ' . $selected_product->store_stock ]);
                     DB::rollBack();
+                    return back()->with(['error' => 'Invalid quantity for product ' . $selected_product->barcode . ' ' . $selected_product->name . ' store stock : ' . $selected_product->store_stock ]);
+
                 }
             }
 
@@ -339,12 +340,10 @@ class TransactionSell extends Autocomplete
 
                         $stock->decrement('available_stock', $stock->available_stock);
 
-
-
                     }else{
 
                         /**
-                         * Kurangi available stock pada table product_stock (fifo stock) sesuai degan jumlah atau sisa dari quantity penjualan
+                         * Tambahkan payload stock untuk menghitung harga modal
                          */
                         $payload_stock[] = [
                             'product_stock_id' => $stock->id,
@@ -352,7 +351,9 @@ class TransactionSell extends Autocomplete
                             'buying_price' => $stock->buying_price,
                             'total' => $current_quantity * $stock->buying_price,
                         ];
-
+                        /**
+                         * Kurangi available stock pada table product_stock (fifo stock) sesuai degan jumlah atau sisa dari quantity penjualan
+                         */
                         $stock->decrement('available_stock', $current_quantity);
 
                         $current_quantity = 0;
@@ -368,7 +369,7 @@ class TransactionSell extends Autocomplete
                 /**
                  * Insert ke table sell_details
                  */
-                $sells_transaction->details()
+                $sell_details = $sells_transaction->details()
                     ->create([
                         'product_id'                => $detail->product_id,
                         'product_price_id'          => $detail->product_price_id,
@@ -376,13 +377,18 @@ class TransactionSell extends Autocomplete
                         'quantity'                  => $detail->quantity,
                         'product_price_quantity'    => $detail->product_price_quantity,
                         'buying_price'              => $buying_price,
-                        'payload'                   => json_encode($payload_stock),
+                        'payload'                   => $payload_stock,
                         'sell_price'                => $detail->sell_price,
                         'sell_price_quantity'       => $detail->sell_price_quantity,
                         'price_category'            => $detail->price_category,
                         'discount'                  => $detail->discount,
                         'total'                     => $detail->total,
                     ]);
+
+                foreach ($temp_buy_price as $item) {
+                    $sell_details->payloads()->create($item);
+                }
+
 
                 /**
                  * Kurangi stock toko untuk setiap produk yang terjual
@@ -423,7 +429,7 @@ class TransactionSell extends Autocomplete
     {
 
         if($value){
-            $this->products[$index]['price_category'] = $type;
+//            $this->products[$index]['price_category'] = $type;
             $this->products[$index]['price_category'] = Str::upper($type);
         }else {
             $t_details = collect($this->products[$index]);

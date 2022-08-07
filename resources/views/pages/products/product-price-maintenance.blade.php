@@ -8,7 +8,7 @@
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Maintenance</a></li>
+{{--                            <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Maintenance</a></li>--}}
                             <li class="breadcrumb-item active">Product</li>
                         </ol>
                     </div>
@@ -185,31 +185,32 @@
                         </tr>
                         </thead>
                         <tbody>
+
                         @foreach($sells as $key => $sell)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
-                                <td>{{ $sell->sell->invoice_number }}</td>
+                                <td>{{ $sell['invoice_number'] }}</td>
                                 <td class="text-right rupiah">
-                                    {{ number_format($sell->buying_price, 2) }}
+                                    {{ number_format($sell['buying_price'], 2) }}
 
                                 </td>
-                                <td class="text-right rupiah">{{ number_format($sell->sell_price, 2) }}</td>
-                                <td class="text-right">{{ $sell->quantity }}</td>
+                                <td class="text-right rupiah">{{ number_format($sell['sell_price'], 2) }}</td>
+                                <td class="text-right">{{ $sell['quantity'] }}</td>
                                 <td class="text-right rupiah">
-                                    {{ number_format($sell->buying_price * $sell->quantity, 2) }}
+                                    {{ number_format($sell['buying_price'] * $sell['quantity'], 2) }}
                                     <hr>
-                                    @php
-                                        $payloads = collect($sell->payloads)
-                                    @endphp
-                                    @forelse($payloads as $i => $payload)
-                                        @if($payload['quantity'] > 0)
-                                            <span>{{ $payload['quantity'] }} x {{ number_format($payload['buying_price'],2) }} = Rp. {{ number_format($payload['total'],2) }} </span>
-                                        @endif
-                                    @empty
-                                        <div class="d-block">-</div>
-                                    @endforelse
+                                    @php($payloads = collect($sell['payloads']))
+{{--                                    {{ dd($sell['payloads']) }}--}}
+{{--                                    @forelse($payloads as $i => $item)--}}
+{{--                                        {!! dd(collect($item)['quantity']) !!}--}}
+{{--                                        @if($item['quantity'] > 0)--}}
+{{--                                            <span>{!! json_encode($item[]) !!} </span>--}}
+{{--                                        @endif--}}
+{{--                                    @empty--}}
+{{--                                        <div class="d-block">-</div>--}}
+{{--                                    @endforelse--}}
                                 </td>
-                                <td class="text-right rupiah">{{ number_format($sell->sell_price * $sell->quantity, 2) }}</td>
+                                <td class="text-right rupiah">{{ number_format($sell['sell_price'] * $sell['quantity'], 2) }}</td>
                             </tr>
                         @endforeach
                         </tbody>

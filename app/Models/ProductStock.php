@@ -30,7 +30,6 @@ class ProductStock extends Model
     }
 
 
-
     public function product()
     {
         return $this->belongsTo(Product::class);
@@ -39,5 +38,10 @@ class ProductStock extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function payloads()
+    {
+        return $this->hasMany(PricePayload::class, 'product_stock_id', 'id');
     }
 }
