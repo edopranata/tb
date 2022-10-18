@@ -35,9 +35,4 @@ class StockProduct extends Component
     {
         $this->categories = Category::all();
     }
-
-
-
-
-
 }

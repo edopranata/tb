@@ -86,6 +86,7 @@
                             <th>Harga Satuan</th>
                             <th>Harga Grosir</th>
                             <th>Harga Pelanggan</th>
+                            <th>Total Modal</th>
                         </tr>
                         <tbody>
                         @foreach($products as $key => $product)
@@ -176,6 +177,20 @@
                                     <hr>
                                     @foreach($product->prices->sortByDesc('quantity') as $price)
                                         <div><strong>{{ number_format($price->customer_price) }}</strong> <span class="text-muted">1 {{ $price->unit->name }}</span></div>
+                                    @endforeach
+                                </td>
+                                <td>
+                                    @php($stocks = collect($product->stocks)->where('available_stock', '>', 0))
+                                    @php($sell_price = $product->prices->where('default', '1')->first()->sell_price)
+
+                                    <div class="tw-text-green-900 d-flex justify-content-end"><strong>Rp. {{ number_format($stocks->sum('total')) }}</strong></div>
+                                    <hr>
+
+                                    @foreach($stocks as $stock)
+                                        <div class="d-flex justify-content-between">
+                                            <span class="@if($sell_price < $stock->buying_price) text-danger @endif pr-2"> {{ $stock->available_stock }} {{ $product->unit->name }} </span>
+                                            <span class="text-right @if($sell_price < $stock->buying_price) text-danger @endif"> <strong> Rp. {{ number_format($stock->buying_price) }}</strong></span>
+                                        </div>
                                     @endforeach
                                 </td>
                             </tr>
