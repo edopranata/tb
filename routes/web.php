@@ -27,7 +27,7 @@ Route::middleware(['auth'])->group(function (){
     Route::post('logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     Route::group(['prefix' => 'dashboard', 'as' => 'dashboard.'], function (){
-        Route::get('/', [\App\Http\Controllers\DashboardController::class, 'index'])->name('index');
+        Route::get('/', \App\Http\Pages\Dashboard\DashboardIndex::class)->name('index');
     });
 
     Route::group(['prefix' => 'test', 'as' => 'test.'], function (){
