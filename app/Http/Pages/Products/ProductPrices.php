@@ -5,7 +5,6 @@ namespace App\Http\Pages\Products;
 use App\Models\Product;
 use App\Models\Unit;
 use Livewire\Component;
-use function view;
 
 class ProductPrices extends Component
 {
